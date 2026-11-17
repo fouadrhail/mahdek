@@ -33,7 +33,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load',function(){ nav
   --cobalt:#2340c4; --cobalt-ink:#ffffff; --cobalt-soft:#e3e8fb;
   --cyan:#00a3d9; --magenta:#d81b72; --yellow:#f2c200;
   --warn:#9a5600; --warn-soft:#fff1dc; --bad:#b3261e; --shadow:rgba(18,24,43,.12);
-  --wash:rgba(35,64,196,.07); --grid:rgba(18,24,43,.035); --grid-strong:rgba(18,24,43,.06); --glass:rgba(255,255,255,.78);
+  --sky-a:#eef1fb; --sky-b:#e5e9f7; --glow-a:rgba(35,64,196,.18); --glow-b:rgba(118,86,230,.11); --glow-c:rgba(0,150,200,.10); --stripe:rgba(35,64,196,.035); --glass:rgba(255,255,255,.78);
   --font-display:"Secular One","Heebo",system-ui,sans-serif;
   --font-body:"Heebo",system-ui,"Segoe UI",Arial,sans-serif;
 }
@@ -41,24 +41,24 @@ if('serviceWorker' in navigator){ window.addEventListener('load',function(){ nav
   --desk:#0f1320; --paper:#1a2033; --ink:#e7ebf5; --muted:#9aa3bd; --rule:#2c3450;
   --cobalt:#8ea2ff; --cobalt-ink:#0d1122; --cobalt-soft:#1f2850;
   --warn:#f3b562; --warn-soft:#2f2414; --bad:#ff8a80; --shadow:rgba(0,0,0,.45);
-  --wash:rgba(142,162,255,.07); --grid:rgba(255,255,255,.035); --grid-strong:rgba(255,255,255,.06); --glass:rgba(26,32,51,.80); color-scheme:dark}}
+  --sky-a:#0f1424; --sky-b:#0b0f1c; --glow-a:rgba(80,110,255,.22); --glow-b:rgba(140,100,255,.14); --glow-c:rgba(0,160,210,.10); --stripe:rgba(255,255,255,.025); --glass:rgba(26,32,51,.80); color-scheme:dark}}
 :root[data-theme="dark"]{
   --desk:#0f1320; --paper:#1a2033; --ink:#e7ebf5; --muted:#9aa3bd; --rule:#2c3450;
   --cobalt:#8ea2ff; --cobalt-ink:#0d1122; --cobalt-soft:#1f2850;
   --warn:#f3b562; --warn-soft:#2f2414; --bad:#ff8a80; --shadow:rgba(0,0,0,.45);
-  --wash:rgba(142,162,255,.07); --grid:rgba(255,255,255,.035); --grid-strong:rgba(255,255,255,.06); --glass:rgba(26,32,51,.80); color-scheme:dark}
+  --sky-a:#0f1424; --sky-b:#0b0f1c; --glow-a:rgba(80,110,255,.22); --glow-b:rgba(140,100,255,.14); --glow-c:rgba(0,160,210,.10); --stripe:rgba(255,255,255,.025); --glass:rgba(26,32,51,.80); color-scheme:dark}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{background:var(--desk);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.55;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 0;
   background-image:
-    linear-gradient(180deg,var(--wash),transparent 480px),
-    linear-gradient(var(--grid-strong) 1px,transparent 1px),
-    linear-gradient(90deg,var(--grid-strong) 1px,transparent 1px),
-    linear-gradient(var(--grid) 1px,transparent 1px),
-    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:auto,120px 120px,120px 120px,24px 24px,24px 24px;background-attachment:fixed;min-height:100%}
+    radial-gradient(60rem 38rem at 105% -10%,var(--glow-a),transparent 62%),
+    radial-gradient(46rem 34rem at -12% 38%,var(--glow-b),transparent 64%),
+    radial-gradient(52rem 30rem at 70% 112%,var(--glow-c),transparent 62%),
+    repeating-linear-gradient(135deg,var(--stripe) 0 1px,transparent 1px 16px),
+    linear-gradient(160deg,var(--sky-a),var(--sky-b));
+  background-size:auto;background-attachment:fixed;min-height:100%}
 .wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
 
 /* Masthead */
@@ -252,6 +252,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .racts button{padding:5px 9px;font-size:.82rem;line-height:1.2;white-space:nowrap}
 .racts .rm:hover{border-color:var(--bad);color:var(--bad)}
 .racts .pick{align-self:auto}
+.ftable tr.empty{display:table-row}
 .ftable .empty td{text-align:center;color:var(--muted);padding:30px 12px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .vpages{display:flex;flex-direction:column;gap:16px;align-items:center}
@@ -487,7 +488,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
       </div>
     </div>
   </div>
-  <footer class="ver">מהדק · גרסה 2.3 · עודכן 17.11.2026</footer>
+  <footer class="ver">מהדק · גרסה 2.4 · עודכן 17.11.2026</footer>
 </div>
 
 <script>
