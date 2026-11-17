@@ -505,7 +505,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver">מהדק · גרסה 2.5 · עודכן 17.11.2026</footer>
+  <footer class="ver">מהדק · גרסה 2.6 · עודכן 17.11.2026</footer>
 </div>
 
 <script>
@@ -1060,11 +1060,14 @@ window.__nf=normalizeFile;
       const raw=tc.items.map(t=>t.str).join(' ');
       const fwd=DOC_HINTS.filter(h=>normQ(raw).includes(h)).length, bwd=DOC_HINTS.filter(h=>normQ(raw).includes(revStr(h))).length;
       const reverse=bwd>fwd;
-      const items=tc.items.filter(it=>it.str&&it.str.trim()).map(it=>({s:normQ(reverse?revStr(it.str):it.str),x:it.transform[4],y:it.transform[5]}));
+      const pageH=page.getViewport({scale:1}).height;
+      const items=tc.items.filter(it=>it.str&&it.str.trim()).map(it=>({s:normQ(reverse?revStr(it.str):it.str),x:it.transform[4],y:it.transform[5],h:Math.hypot(it.transform[2],it.transform[3])||it.height||0}));
       items.sort((a,b)=>b.y-a.y||b.x-a.x);
       const lines=[];
       for(const it of items){const L=lines[lines.length-1]; if(L&&Math.abs(L.y-it.y)<3) L.items.push(it); else lines.push({y:it.y,items:[it]});}
-      return lines.map(L=>L.items.sort((a,b)=>b.x-a.x).map(t=>t.s.trim()).join(' ').replace(/\s+/g,' '));
+      const out=lines.map(L=>L.items.sort((a,b)=>b.x-a.x).map(t=>t.s.trim()).join(' ').replace(/\s+/g,' '));
+      out.header=headerFrom(items,pageH);
+      return out;
     }finally{ pdf.destroy(); }
   }
   function docType(lines){
@@ -1090,9 +1093,36 @@ window.__nf=normalizeFile;
   function cleanCompany(t){
     return t.replace(/[0-9|:;,()\[\]\/\\_@#*+]+/g,' ').replace(/(^|\s)\.+|\.+(\s|$)/g,' ').split(/\s+/).filter(w=>(HEB.test(w)||/^[A-Za-z]{2,}$/.test(w))&&!LABEL_WORDS.test(w)&&(/^[A-Za-z]+$/.test(w)||(w.replace(/[^\u05D0-\u05EA]/g,'').length>=2||/\./.test(w)))).slice(-4).join(' ').trim();
   }
+  /* The supplier's name is usually the biggest text at the top of the page */
+  const HDR_DROP=/^(?:רח'|רח|רחוב|ת\.?ד|טל'?|טלפון|פקס|נייד|חשבונית|מס|קבלה|מקור|העתק|נאמן|למקור|ריכוז|זיכוי|עסקה|חשבון|תאריך|מספר|עמוד|דף|בע"?'?מ|בעמ|ltd\.?|tax|invoice|receipt|copy|original)$/i;
+  function headerName(text){
+    if(/(?:^|\s)(?:רח'|רח|רחוב|ת\.?ד\.?|טל'?|טלפון|פקס|נייד|כתובת|מיקוד|דוא"ל|www|http)(?=\s|$|[:.\d])/i.test(normQ(text))||/@|\d{2,3}-?\d{6,7}/.test(text)) return '';
+    const w=normQ(text).replace(/בע"?'?מ/g,' ').replace(/[0-9|:;,()\[\]\/\\_@#*+]+/g,' ').split(/\s+/).filter(x=>
+      x&&(HEB.test(x)||/^[A-Za-z]{2,}$/.test(x))&&!HDR_DROP.test(x)&&!LABEL_WORDS.test(x)&&
+      (x.replace(/[^א-ת]/g,'').length>=2||/^[A-Za-z]{2,}$/.test(x)||/\./.test(x)));
+    const n=w.slice(0,5).join(' ').trim();
+    return goodName(n)?n:'';
+  }
+  function headerFrom(items,pageH){
+    const top=items.filter(it=>it.y>=pageH*0.70&&it.s&&it.s.trim());
+    if(!top.length) return '';
+    const groups=[];
+    [...top].sort((a,b)=>b.y-a.y).forEach(it=>{
+      const g=groups.find(g=>Math.abs(g.y-it.y)<Math.max(3,(it.h||8)*0.5));
+      if(g) g.items.push(it); else groups.push({y:it.y,items:[it]});
+    });
+    const cands=groups.map(g=>({text:g.items.sort((a,b)=>b.x-a.x).map(t=>t.s.trim()).join(' '),h:Math.max(...g.items.map(t=>t.h||0)),y:g.y}))
+      .filter(c=>!/לכבוד|לקוח|נמען|עבור/.test(c.text));
+    if(!cands.length) return '';
+    const maxH=Math.max(...cands.map(c=>c.h));
+    cands.sort((a,b)=>(Math.abs(b.h-a.h)>0.5?b.h-a.h:0)||(b.y-a.y));
+    for(const c of cands.slice(0,6)){ if(c.h<maxH*0.55) break; const n=headerName(c.text); if(n) return n; }
+    return '';
+  }
   function docSupplier(lines){
     const top=lines.slice(0,18);
     for(const name of [...KNOWN].sort((a,b)=>b.length-a.length)) if(top.some(l=>hasWord(l,name))) return name;
+    if(lines.header) return lines.header;
     const skip=new Set();
     lines.forEach((l,i)=>{ if(/לכבוד|שם\s*הלקוח|לקוח\s*:|נמען|עבור\s*:/.test(l)){ skip.add(i); skip.add(i+1); } });
     const scan=lines.slice(0,25);
@@ -1138,7 +1168,24 @@ window.__nf=normalizeFile;
   }
   async function ocrLines(canvas){
     const w=await getOcr(); const r=await w.recognize(canvas);
-    return (r.data.text||'').split('\n').map(l=>normQ(l).replace(/\s+/g,' ').trim()).filter(l=>l.replace(/[^א-תa-zA-Z0-9]/g,'').length>=2);
+    const out=(r.data.text||'').split('\n').map(l=>normQ(l).replace(/\s+/g,' ').trim()).filter(l=>l.replace(/[^א-תa-zA-Z0-9]/g,'').length>=2);
+    let L=r.data.lines;
+    if(!L&&r.data.blocks){ L=[]; r.data.blocks.forEach(b=>(b.paragraphs||[]).forEach(p=>(p.lines||[]).forEach(l=>L.push(l)))); }
+    if(L&&L.length){
+      const H=canvas.height;
+      const items=L.filter(l=>l.bbox&&l.text&&(l.confidence==null||l.confidence>40)).map(l=>({s:normQ(l.text).replace(/\s+/g,' ').trim(),x:l.bbox.x1,y:H-l.bbox.y0,h:l.bbox.y1-l.bbox.y0}));
+      out.header=headerFrom(items,H);
+    }
+    return out;
+  }
+  /* Read only the top of the first page as an image, where the logo usually is */
+  async function logoName(file,kind){
+    const full=kind==='image'?await imageCanvas(file):await pdfCanvas(file);
+    const c=document.createElement('canvas'); c.width=full.width; c.height=Math.round(full.height*0.3);
+    c.getContext('2d').drawImage(full,0,0);
+    const lines=await ocrLines(c);
+    for(const name of [...KNOWN].sort((a,b)=>b.length-a.length)) if(lines.some(l=>hasWord(l,name))) return name;
+    return lines.header||'';
   }
   async function detectDocNow(file,kind){
     let lines=[];
@@ -1148,7 +1195,9 @@ window.__nf=normalizeFile;
       lines=await ocrLines(canvas);
     }
     if(!lines.length) return null;
-    const sup=docSupplier(lines), type=docType(lines), num=docNumber(lines);
+    let sup=docSupplier(lines);
+    const type=docType(lines), num=docNumber(lines);
+    if(!sup){ try{ sup=await logoName(file,kind); }catch(_){} }
     if(!sup&&!type) return null;
     return [sup,[type,num].filter(Boolean).join(' ')].filter(Boolean).join(' - ').replace(/[\\/:*?"<>|]/g,'-');
   }
@@ -1346,12 +1395,14 @@ window.__nf=normalizeFile;
     const rev=t=>[...t].reverse().join('');
     const HINTS=['תלוש','שכר','עובד','ברוטו','נטו','ניכויים','תשלומים','חשבונית','קבלה','תאריך','לתשלום'];
     async function pageLines(pdf,i,reverse){
-      const page=await pdf.getPage(i); const tc=await page.getTextContent(); page.cleanup();
-      const items=tc.items.filter(it=>it.str&&it.str.trim()).map(it=>({s:normQ(reverse?rev(it.str):it.str),x:it.transform[4],y:it.transform[5]}));
+      const page=await pdf.getPage(i); const tc=await page.getTextContent(); const pageH=page.getViewport({scale:1}).height; page.cleanup();
+      const items=tc.items.filter(it=>it.str&&it.str.trim()).map(it=>({s:normQ(reverse?rev(it.str):it.str),x:it.transform[4],y:it.transform[5],h:Math.hypot(it.transform[2],it.transform[3])||it.height||0}));
       items.sort((a,b)=>b.y-a.y||b.x-a.x);
       const lines=[];
       for(const it of items){const L=lines[lines.length-1]; if(L&&Math.abs(L.y-it.y)<3) L.items.push(it); else lines.push({y:it.y,items:[it]});}
-      return lines.map(L=>L.items.sort((a,b)=>b.x-a.x).map(t=>t.s.trim()).join(' ').replace(/\s+/g,' '));
+      const out=lines.map(L=>L.items.sort((a,b)=>b.x-a.x).map(t=>t.s.trim()).join(' ').replace(/\s+/g,' '));
+      out.header=headerFrom(items,pageH);
+      return out;
     }
     async function pageCanvas(pdf,i){
       const page=await pdf.getPage(i); const v1=page.getViewport({scale:1});
