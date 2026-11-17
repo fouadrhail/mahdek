@@ -1,0 +1,17 @@
+{
+  "name": "מהדק",
+  "short_name": "מהדק",
+  "description": "איחוד קבצים ל־PDF להדפסה, המרת קבצים, ופיצול ומחיקת עמודים",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#e9edf3",
+  "theme_color": "#2340c4",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

@@ -1,0 +1,1539 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="מהדק: איחוד קבצים ל־PDF להדפסה, המרת קבצים, ופיצול ומחיקת עמודים. הכול נעשה בדפדפן, והקבצים לא נשלחים לשום מקום.">
+<meta name="theme-color" content="#2340c4">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="מהדק">
+<style>body{margin:0}img{max-width:100%}</style>
+<script>
+/* Standalone site: save files as normal browser downloads */
+window.claude={use:async function(n){ if(n!=='downloads') return null; return {save:async function(o){
+  var b=o.data instanceof Blob?o.data:new Blob([o.data]); var u=URL.createObjectURL(b);
+  var a=document.createElement('a'); a.href=u; a.download=o.filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){URL.revokeObjectURL(u)},5000); return {status:'saved'}; }}; }};
+if('serviceWorker' in navigator){ window.addEventListener('load',function(){ navigator.serviceWorker.register('./sw.js').catch(function(){}); }); }
+</script>
+<title>מהדק</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Secular+One&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<style>
+/* Layout: print-shop desk. Wordmark + CMYK strip, a drop tray with crop marks,
+   a grid of A4 sheet previews in print order, and a sticky output bar. */
+:root{
+  --desk:#e9edf3; --paper:#ffffff; --ink:#12182b; --muted:#5d6680; --rule:#d3d9e4;
+  --cobalt:#2340c4; --cobalt-ink:#ffffff; --cobalt-soft:#e3e8fb;
+  --cyan:#00a3d9; --magenta:#d81b72; --yellow:#f2c200;
+  --warn:#9a5600; --warn-soft:#fff1dc; --bad:#b3261e; --shadow:rgba(18,24,43,.12);
+  --wash:rgba(35,64,196,.07); --grid:rgba(18,24,43,.035); --grid-strong:rgba(18,24,43,.06); --glass:rgba(255,255,255,.78);
+  --font-display:"Secular One","Heebo",system-ui,sans-serif;
+  --font-body:"Heebo",system-ui,"Segoe UI",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --desk:#0f1320; --paper:#1a2033; --ink:#e7ebf5; --muted:#9aa3bd; --rule:#2c3450;
+  --cobalt:#8ea2ff; --cobalt-ink:#0d1122; --cobalt-soft:#1f2850;
+  --warn:#f3b562; --warn-soft:#2f2414; --bad:#ff8a80; --shadow:rgba(0,0,0,.45);
+  --wash:rgba(142,162,255,.07); --grid:rgba(255,255,255,.035); --grid-strong:rgba(255,255,255,.06); --glass:rgba(26,32,51,.80); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --desk:#0f1320; --paper:#1a2033; --ink:#e7ebf5; --muted:#9aa3bd; --rule:#2c3450;
+  --cobalt:#8ea2ff; --cobalt-ink:#0d1122; --cobalt-soft:#1f2850;
+  --warn:#f3b562; --warn-soft:#2f2414; --bad:#ff8a80; --shadow:rgba(0,0,0,.45);
+  --wash:rgba(142,162,255,.07); --grid:rgba(255,255,255,.035); --grid-strong:rgba(255,255,255,.06); --glass:rgba(26,32,51,.80); color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--desk);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 0;
+  background-image:
+    linear-gradient(180deg,var(--wash),transparent 480px),
+    linear-gradient(var(--grid-strong) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-strong) 1px,transparent 1px),
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:auto,120px 120px,120px 120px,24px 24px,24px 24px;background-attachment:fixed;min-height:100%}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+
+/* Masthead */
+.mast{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px}
+.brand svg{width:54px;height:54px;flex:none}
+.brand h1{background:linear-gradient(120deg,var(--cobalt) 10%,var(--magenta) 95%);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:var(--font-display);font-weight:400;font-size:clamp(2.4rem,7vw,3.4rem);line-height:1;margin:0;letter-spacing:-.01em}
+.tag{margin:6px 0 0;color:var(--muted);max-width:44ch;text-wrap:balance}
+.cmyk{display:flex;height:6px;border-radius:3px;overflow:hidden;width:100%}
+.cmyk i{flex:1}.cmyk i:nth-child(1){background:var(--cyan)}.cmyk i:nth-child(2){background:var(--magenta)}.cmyk i:nth-child(3){background:var(--yellow)}.cmyk i:nth-child(4){background:var(--ink)}
+.specs{display:flex;gap:6px;flex-wrap:wrap}
+.spec{font-size:.75rem;letter-spacing:.03em;padding:4px 10px;border-radius:6px;border:1px solid var(--rule);background:var(--paper);color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* Drop tray with printer's crop marks */
+.tray{position:relative;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:14px;padding:38px 20px;text-align:center;cursor:pointer;
+  box-shadow:0 1px 0 var(--rule),0 8px 24px -12px var(--shadow);transition:transform .15s,box-shadow .15s}
+.tray::before,.tray::after,.tray .cm::before,.tray .cm::after{content:"";position:absolute;width:22px;height:22px;border-color:var(--cobalt);border-style:solid;opacity:.55;transition:all .15s}
+.tray::before{top:10px;right:10px;border-width:2px 2px 0 0}
+.tray::after{top:10px;left:10px;border-width:2px 0 0 2px}
+.tray .cm::before{bottom:10px;right:10px;border-width:0 2px 2px 0}
+.tray .cm::after{bottom:10px;left:10px;border-width:0 0 2px 2px}
+.tray:hover,.tray.over{transform:translateY(-2px);box-shadow:0 1px 0 var(--rule),0 14px 30px -12px var(--shadow)}
+.tray:hover::before,.tray:hover::after,.tray:hover .cm::before,.tray:hover .cm::after,
+.tray.over::before,.tray.over::after,.tray.over .cm::before,.tray.over .cm::after{opacity:1;width:30px;height:30px}
+.tray:focus-visible{outline:3px solid var(--cobalt);outline-offset:4px}
+.tray strong{display:block;font-family:var(--font-display);font-weight:400;font-size:1.4rem;margin-bottom:4px}
+.tray span{color:var(--muted);font-size:.9rem}
+.tray .plus{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--cobalt-soft);color:var(--cobalt);font-size:1.6rem;margin-bottom:10px;font-weight:700}
+
+/* Section head */
+.head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.head h2{font-family:var(--font-display);font-weight:400;font-size:1.25rem;margin:0}
+.head .count{color:var(--muted);font-size:.9rem;font-variant-numeric:tabular-nums;margin-inline-start:8px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);padding:7px 14px;transition:border-color .12s,background .12s}
+button:hover{border-color:var(--cobalt)}
+button:focus-visible{outline:3px solid var(--cobalt);outline-offset:2px}
+button:disabled{opacity:.4;cursor:not-allowed}
+
+/* Sheets grid */
+.grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px 14px}
+.card{display:flex;flex-direction:column;gap:8px;min-width:0;cursor:grab}
+.card.dragging{opacity:.35}
+.card.target .frame{outline:3px dashed var(--cobalt);outline-offset:4px;border-radius:6px}
+.frame{position:relative;width:100%;aspect-ratio:4/5;display:grid;place-items:center}
+.sheet{position:relative;background:#fff;box-shadow:0 1px 2px var(--shadow),0 6px 14px -6px var(--shadow);padding:4.7%;display:grid;place-items:center;overflow:hidden}
+.sheet.p{height:100%;aspect-ratio:210/297}
+.sheet.l{width:100%;aspect-ratio:297/210}
+.sheet img{width:100%;height:100%;object-fit:contain;display:block}
+.sheet.stack{box-shadow:0 1px 2px var(--shadow),5px 5px 0 -1px #fff,5px 5px 0 0 var(--rule),10px 10px 0 -1px #fff,10px 10px 0 0 var(--rule)}
+.pdfface{width:100%;height:100%;display:flex;flex-direction:column;gap:7%;padding:8% 6%}
+.pdfface b{font-family:var(--font-display);font-weight:400;color:#d81b72;font-size:1.3rem;line-height:1}
+.pdfface i{display:block;height:5%;background:#dde2ec;border-radius:2px}
+.pdfface i:nth-child(3){width:80%}.pdfface i:nth-child(5){width:60%}.pdfface i:nth-child(7){width:70%}
+.badpage{background:repeating-linear-gradient(45deg,#fff 0 8px,#fff4e2 8px 16px)}
+.badpage em{font-style:normal;color:#9a5600;font-weight:700;font-size:.85rem;text-align:center}
+.num{position:absolute;top:-8px;right:-6px;min-width:28px;height:28px;padding:0 6px;border-radius:14px;background:var(--cobalt);color:var(--cobalt-ink);font-weight:700;font-size:.85rem;display:grid;place-items:center;font-variant-numeric:tabular-nums;z-index:2;box-shadow:0 2px 6px var(--shadow)}
+.num.warn{background:var(--warn)}
+.label{min-width:0}
+.dname{font:inherit;font-size:.9rem;font-weight:700;color:var(--ink);background:transparent;border:1px solid transparent;border-radius:6px;padding:2px 4px;margin:0 -4px;width:calc(100% + 8px);min-width:0;text-overflow:ellipsis}
+.dname:hover{border-color:var(--rule)}
+.dname:focus-visible{outline:none;border-color:var(--cobalt);background:var(--paper)}
+.fname.orig{font-size:.72rem;color:var(--muted)}
+.fname{font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;unicode-bidi:plaintext;text-align:right}
+.meta{font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.acts{display:flex;gap:4px;opacity:.75;transition:opacity .12s}
+.card:hover .acts,.card:focus-within .acts{opacity:1}
+.acts button{padding:3px 0;flex:1;font-size:.8rem;line-height:1.3}
+.acts .rm:hover{border-color:var(--bad);color:var(--bad)}
+
+.empty{grid-column:1/-1;display:flex;gap:18px;align-items:center;justify-content:center;padding:26px 10px;color:var(--muted);flex-wrap:wrap;text-align:center}
+.ghosts{display:flex;gap:10px}
+.ghosts span{width:44px;aspect-ratio:210/297;border:2px dashed var(--rule);border-radius:2px}
+.ghosts span:nth-child(2){width:62px;aspect-ratio:297/210;align-self:center}
+
+.skipped{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:10px 14px;font-size:.9rem}
+.notes{color:var(--muted);font-size:.85rem;margin:0;padding-inline-start:18px;display:grid;gap:4px}
+
+/* Sticky output bar */
+.bar{position:sticky;bottom:0;z-index:20;margin-top:6px;padding-block:14px calc(14px + env(safe-area-inset-bottom,0px));
+  background:transparent}
+.bar-in{background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-radius:12px;box-shadow:0 10px 30px -10px var(--shadow),0 0 0 1px var(--rule);padding:14px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.sum{flex:1 1 180px;min-width:0}
+.sum b{font-family:var(--font-display);font-weight:400;font-size:1.15rem;display:block;font-variant-numeric:tabular-nums}
+.sum small{color:var(--muted)}
+.field{display:flex;align-items:center;border:1px solid var(--rule);border-radius:8px;background:var(--desk);flex:1 1 200px;min-width:0}
+.field input{font:inherit;color:var(--ink);background:transparent;border:0;padding:9px 12px;min-width:0;flex:1}
+.field input:focus-visible{outline:none}
+.field:focus-within{outline:3px solid var(--cobalt);outline-offset:1px}
+.field span{padding:0 12px;color:var(--muted);direction:ltr;font-size:.9rem}
+.go{background:var(--cobalt);color:var(--cobalt-ink);border-color:var(--cobalt);font-weight:700;padding:11px 22px;font-size:1rem;display:flex;align-items:center;gap:8px}
+.go:hover{filter:brightness(1.08)}
+.progress{flex-basis:100%;height:4px;background:var(--rule);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--magenta));transition:width .2s}
+.status{flex-basis:100%;font-size:.9rem;min-height:1.4em}
+.status.err{color:var(--bad)}
+.status.ok{color:var(--cobalt)}
+
+/* Tabs */
+.tabs{display:flex;flex-wrap:wrap;gap:4px;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);padding:4px;border-radius:12px;box-shadow:0 0 0 1px var(--rule);align-self:flex-start;max-width:100%}
+.tabs button{border:0;border-radius:9px;padding:9px 18px;background:transparent;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:8px}
+.tabs button[aria-selected="true"]{box-shadow:0 4px 12px -4px var(--cobalt);background:var(--cobalt);color:var(--cobalt-ink)}
+.tabs button:hover{border:0}
+.panel{display:flex;flex-direction:column;gap:22px}
+
+/* Converter rows */
+.rows{list-style:none;margin:0;padding:0;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:12px;box-shadow:0 0 0 1px var(--rule);overflow:hidden}
+.rows li{display:grid;grid-template-columns:54px minmax(0,1fr) auto auto auto;gap:12px;align-items:center;padding:10px 14px;border-top:1px solid var(--rule)}
+.rows li:first-child{border-top:0}
+.ftag{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-align:center;padding:4px 0;border-radius:6px;color:#fff}
+.ftag.image{background:#0089b8}.ftag.pdf{background:#d81b72}.ftag.docx{background:#2b579a}.ftag.sheet{background:#1e7145}.ftag.txt{background:#5d6680}.ftag.other{background:var(--warn)}
+.rows .arrow{color:var(--muted);font-size:1.1rem}
+.rows select,.allsel{font:inherit;color:var(--ink);background:var(--desk);border:1px solid var(--rule);border-radius:8px;padding:6px 10px}
+.rows select:focus-visible,.allsel:focus-visible{outline:3px solid var(--cobalt);outline-offset:1px}
+.rows .rm{padding:5px 10px;font-size:.85rem}
+.rows .rm:hover{border-color:var(--bad);color:var(--bad)}
+.rows .empty{display:block;text-align:center;padding:26px 10px;color:var(--muted)}
+.rows .state{font-size:.75rem;color:var(--muted)}
+.rows .state.ok{color:var(--cobalt)}.rows .state.err{color:var(--bad)}
+.matrix{background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:12px;box-shadow:0 0 0 1px var(--rule);padding:16px 18px}
+.matrix h3{font-family:var(--font-display);font-weight:400;font-size:1.1rem;margin:0 0 10px}
+.mtable{overflow-x:auto}
+.matrix table{border-collapse:collapse;width:100%;font-size:.9rem}
+.matrix td,.matrix th{padding:8px 6px;border-top:1px solid var(--rule);text-align:right;vertical-align:middle}
+.matrix th{font-weight:500;color:var(--muted);font-size:.8rem;border-top:0}
+.pill{display:inline-block;font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--cobalt-soft);color:var(--cobalt);margin:2px 0 2px 4px}
+.matrix p{margin:10px 0 0;color:var(--muted);font-size:.85rem}
+
+/* Off-screen paper used when turning Word/Excel/text into PDF */
+.render-doc{background:#fff;color:#111;font-family:"Heebo",Arial,sans-serif;font-size:12px;line-height:1.5}
+.render-doc h1,.render-doc h2,.render-doc h3{line-height:1.25;margin:.8em 0 .4em}
+.render-doc table{border-collapse:collapse;margin:6px 0;max-width:100%}
+.render-doc td,.render-doc th{border:1px solid #9aa;padding:3px 6px;font-size:10px}
+.render-doc img{max-width:100%}
+.render-doc pre{white-space:pre-wrap;font-family:inherit;margin:0}
+.render-doc h3.sheetname{font-size:13px;color:#1e7145}
+
+.sheet.raw{padding:0}
+.sheet.raw canvas{width:100%;height:100%;object-fit:contain;display:block}
+.sheet .ph{font-family:var(--font-display);font-size:2rem;color:#c3cad8}
+.pages .card{cursor:pointer;outline:none}
+.pages .card:focus-visible .frame{outline:3px solid var(--cobalt);outline-offset:4px;border-radius:6px}
+.pages .meta{text-align:center}
+.tick{position:absolute;top:-8px;left:-6px;width:28px;height:28px;border-radius:50%;background:var(--magenta);color:#fff;display:none;place-items:center;font-weight:700;z-index:2;box-shadow:0 2px 6px var(--shadow)}
+.card.sel .tick{display:grid}
+.card.sel .sheet{outline:3px solid var(--magenta);outline-offset:3px}
+.card.sel .num{background:var(--magenta)}
+.splitopts{display:flex;flex-direction:column;gap:10px}
+.splitopts label{display:flex;align-items:center;gap:8px;flex-wrap:wrap;cursor:pointer}
+.splitopts input[type=radio]{accent-color:var(--cobalt);width:18px;height:18px;margin:0}
+.splitopts input[type=text]{font:inherit;color:var(--ink);background:var(--desk);border:1px solid var(--rule);border-radius:8px;padding:7px 10px;min-width:0;flex:1 1 180px;direction:ltr;text-align:right}
+.splitopts input[type=text]:disabled{opacity:.5}
+.splitopts input[type=text]:focus-visible{outline:3px solid var(--cobalt);outline-offset:1px}
+.splitrow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:6px}
+.sliplist{display:flex;flex-direction:column;gap:6px;max-height:360px;overflow:auto;border:1px solid var(--rule);border-radius:8px;padding:10px;background:var(--desk);margin-top:6px}
+.sliprow{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:8px;align-items:center}
+.sliprow span{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.sliprow em{font-style:normal;font-size:.75rem;color:var(--warn);white-space:nowrap}
+.sliprow input{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:6px 10px;min-width:0}
+.sliprow.miss input{border-color:var(--warn)}
+.sliprow input:focus-visible{outline:3px solid var(--cobalt);outline-offset:1px}
+.pick{font-size:.8rem;padding:4px 10px;align-self:flex-start;color:var(--cobalt);border-color:var(--cobalt-soft);background:var(--paper)}
+.meta.cut{color:var(--magenta);font-weight:500}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(10,14,28,.55);display:flex;align-items:flex-start;justify-content:center;overflow:auto;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.modal-in{background:var(--paper);color:var(--ink);border-radius:14px;max-width:920px;width:100%;padding:20px;display:flex;flex-direction:column;gap:14px;margin:20px 0;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+.modal-in h2{font-family:var(--font-display);font-weight:400;font-size:1.25rem;margin:0;min-width:0;overflow-wrap:anywhere}
+.pm-actions{display:flex;gap:8px;justify-content:flex-start;position:sticky;bottom:-20px;background:var(--paper);padding-block:12px 4px;border-top:1px solid var(--rule)}
+.ftable-wrap{background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:12px;box-shadow:0 0 0 1px var(--rule);overflow-x:auto}
+.ftable{width:100%;border-collapse:collapse;font-size:.92rem;table-layout:fixed}
+.ftable col.c-n{width:58px}.ftable col.c-t{width:78px}.ftable col.c-p{width:66px}.ftable col.c-s{width:78px}.ftable col.c-a{width:262px}
+.ftable td.namec{overflow:hidden}
+.ftable td.namec .dname{width:100%;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ftable td.namec .fname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ftable th{text-align:right;font-weight:500;color:var(--muted);font-size:.8rem;padding:10px 12px;background:var(--desk);border-bottom:1px solid var(--rule);white-space:nowrap}
+.ftable td{padding:9px 12px;border-top:1px solid var(--rule);vertical-align:middle}
+.ftable tbody tr:first-child td{border-top:0}
+.ftable tbody tr:hover td{background:var(--cobalt-soft)}
+.ftable tr.dragging{opacity:.4}
+.ftable tr.target td{box-shadow:inset 0 3px 0 var(--cobalt)}
+.ftable .nc{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;cursor:grab;width:58px}
+.ftable .grip{opacity:.55;margin-inline-end:6px;letter-spacing:-2px}
+.ftype{display:inline-block;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:5px;color:#fff;white-space:nowrap}
+.ftype.pdf{background:#c2185b}.ftype.image{background:#00739a}.ftype.other{background:#9a5600}
+
+.ftable .pgc{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ftable .pgc small{display:block;font-weight:400;color:var(--muted);font-size:.75rem}
+.ftable .pgc.cut{color:var(--magenta)}
+.ftable .szc{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.racts{display:flex;gap:4px;justify-content:flex-end;flex-wrap:wrap}
+.racts button{padding:5px 9px;font-size:.82rem;line-height:1.2;white-space:nowrap}
+.racts .rm:hover{border-color:var(--bad);color:var(--bad)}
+.racts .pick{align-self:auto}
+.ftable .empty td{text-align:center;color:var(--muted);padding:30px 12px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.vpages{display:flex;flex-direction:column;gap:16px;align-items:center}
+.vp{display:flex;flex-direction:column;gap:4px;align-items:center;width:100%}
+.vp canvas,.vpages > img{max-width:100%;height:auto;display:block;background:#fff;box-shadow:0 2px 12px var(--shadow)}
+.vp small{color:var(--muted);font-size:.8rem}
+.vp.off canvas{opacity:.35}
+.vhead{display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:-20px;background:var(--paper);padding-block:12px 8px;z-index:1;border-bottom:1px solid var(--rule)}
+.etable col.c-chk{width:44px}.etable col.c-n{width:58px}.etable col.c-th{width:76px}.etable col.c-v{width:84px}
+.etable td{padding-block:6px}
+.etable .chk{width:18px;height:18px;accent-color:var(--magenta);margin:0;cursor:pointer}
+.etable .thumb{width:52px;height:68px;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--rule);border-radius:3px;overflow:hidden;color:#9aa3b6;font-size:.8rem}
+.etable .thumb canvas{max-width:100%;max-height:100%;display:block}
+.etable tr.sel td{background:color-mix(in srgb,var(--magenta) 10%,transparent)}
+.etable .pnum{font-weight:700;font-variant-numeric:tabular-nums}
+.etable td.namec{overflow:hidden}
+.etable td.namec .dname{width:100%;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.etable .nstate{font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.etable .nstate.miss{color:var(--warn)}
+@media (max-width:520px){.etable col.c-th{width:0;visibility:collapse}.etable th:nth-child(3),.etable td:nth-child(3){display:none}}
+.go.alt{background:var(--paper);color:var(--bad);border-color:var(--bad)}
+.hint{color:var(--muted);font-size:.85rem;margin:0}
+@media (max-width:760px){
+  .ftable col.c-t,.ftable col.c-s{visibility:collapse;width:0}
+  .ftable th:nth-child(2),.ftable td:nth-child(2),.ftable th:nth-child(5),.ftable td:nth-child(5){display:none}
+  .ftable col.c-a{width:132px}.ftable col.c-n{width:40px}
+  .ftable td,.ftable th{padding-inline:8px}
+}
+@media (max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.acts{opacity:1}
+  .rows li{grid-template-columns:48px minmax(0,1fr) auto;row-gap:8px}.rows .arrow{display:none}
+  .rows select{grid-column:2}.rows .rm{grid-column:3}}
+.ver{text-align:center;color:var(--muted);font-size:.78rem;padding-block:6px 18px;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap" dir="rtl">
+  <header class="mast">
+    <div>
+      <div class="brand">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMzMzU1ZTAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxYTJmOWMiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSIyNDAiIGhlaWdodD0iMjQwIiByeD0iNTYiIGZpbGw9InVybCgjZykiLz4KICA8cmVjdCB4PSI1OCIgeT0iNDQiIHdpZHRoPSIxMTIiIGhlaWdodD0iMTUyIiByeD0iNiIgZmlsbD0iI2M5ZDNmZiIgdHJhbnNmb3JtPSJyb3RhdGUoLTggMTE0IDEyMCkiLz4KICA8cmVjdCB4PSI4NCIgeT0iNjIiIHdpZHRoPSIxMTIiIGhlaWdodD0iMTUyIiByeD0iNiIgZmlsbD0iI2ZmZmZmZiIvPgogIDxyZWN0IHg9IjEwNCIgeT0iMTA0IiB3aWR0aD0iNzIiIGhlaWdodD0iOSIgcng9IjQuNSIgZmlsbD0iI2QzZDllNCIvPgogIDxyZWN0IHg9IjEwNCIgeT0iMTI2IiB3aWR0aD0iNzIiIGhlaWdodD0iOSIgcng9IjQuNSIgZmlsbD0iI2QzZDllNCIvPgogIDxyZWN0IHg9IjEwNCIgeT0iMTQ4IiB3aWR0aD0iNTAiIGhlaWdodD0iOSIgcng9IjQuNSIgZmlsbD0iI2QzZDllNCIvPgogIDxwYXRoIGQ9Ik0xMTIgNjYgVjQ2IEgxNjggVjY2IiBmaWxsPSJub25lIiBzdHJva2U9IiNkODFiNzIiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxyZWN0IHg9IjEwNCIgeT0iMTgwIiB3aWR0aD0iMTgiIGhlaWdodD0iOSIgcng9IjIiIGZpbGw9IiMwMGEzZDkiLz4KICA8cmVjdCB4PSIxMjIiIHk9IjE4MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjkiIGZpbGw9IiNkODFiNzIiLz4KICA8cmVjdCB4PSIxNDAiIHk9IjE4MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjkiIGZpbGw9IiNmMmMyMDAiLz4KICA8cmVjdCB4PSIxNTgiIHk9IjE4MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjkiIHJ4PSIyIiBmaWxsPSIjMTIxODJiIi8+Cjwvc3ZnPgo=" alt="" width="54" height="54" style="width:54px;height:54px;flex:none">
+        <h1>מהדק</h1>
+      </div>
+      <p class="tag">מהדקים קבצים ל־PDF אחד להדפסה, ממירים קבצים מפורמט לפורמט, ומפצלים או מוחקים עמודים ב־PDF. בלי הגבלה על מספר הקבצים, והכול נשאר אצלך בדפדפן.</p>
+    </div>
+    <div class="specs"><span class="spec">A4 · 210×297 מ״מ</span><span class="spec">שוליים 1 ס״מ</span><span class="spec">בלי חיתוך</span></div>
+    <div class="cmyk" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="שירותים">
+    <button type="button" role="tab" id="t-merge" aria-controls="p-merge" aria-selected="true">הידוק לקובץ אחד</button>
+    <button type="button" role="tab" id="t-convert" aria-controls="p-convert" aria-selected="false">המרת קבצים</button>
+    <button type="button" role="tab" id="t-edit" aria-controls="p-edit" aria-selected="false">פיצול ומחיקת עמודים</button>
+  </div>
+
+  <div class="panel" id="p-merge" role="tabpanel" aria-labelledby="t-merge">
+  <div class="tray" id="drop" tabindex="0" role="button" aria-label="בחירת קבצים">
+    <span class="cm" aria-hidden="true"></span>
+    <div class="plus" aria-hidden="true">+</div>
+    <strong>גררו קבצים לכאן או לחצו לבחירה</strong>
+    <span>PDF, JPG, PNG, WEBP, GIF · אפשר להוסיף עוד בכל שלב</span>
+    <input type="file" id="picker" multiple accept=".pdf,application/pdf,image/*" hidden>
+  </div>
+
+  <section style="display:flex;flex-direction:column;gap:14px">
+    <div class="head">
+      <h2>סדר ההדפסה<span class="count" id="count"></span></h2>
+      <div class="tools">
+        <button id="saveNamed" type="button">הורדת הקבצים בשמות המזוהים</button>
+        <button id="sortName" type="button">מיון לפי שם</button>
+        <button id="clearAll" type="button">ניקוי הכול</button>
+      </div>
+    </div>
+    <div class="ftable-wrap"><table class="ftable">
+      <colgroup><col class="c-n"><col class="c-t"><col><col class="c-p"><col class="c-s"><col class="c-a"></colgroup>
+      <thead><tr><th scope="col">#</th><th scope="col">סוג</th><th scope="col">שם המסמך</th><th scope="col">עמודים</th><th scope="col">גודל</th><th scope="col"><span class="sr">פעולות</span></th></tr></thead>
+      <tbody id="list"></tbody>
+    </table></div>
+    <div id="skipped" class="skipped" hidden></div>
+    <ul class="notes">
+      <li>כל שורה היא קובץ אחד. תמונה רחבה מקבלת בהדפסה עמוד לרוחב.</li>
+      <li>מהדק מזהה בכל קובץ את הספק ואת סוג המסמך, גם בצילומים, ונותן לו שם. אפשר לתקן את השם בלחיצה עליו. השמות נכנסים כסימניות לקובץ המאוחד.</li>
+      <li>"עיון" פותח את המסמך המלא לקריאה לפני ההידוק.</li>
+      <li>גוררים שורה כדי לשנות סדר, או משתמשים בחצים.</li>
+      <li>בקובץ PDF ארוך לוחצים על "עמודים" ומשאירים רק את העמודים שצריך.</li>
+      <li>קבצי Word, Excel ו־HEIC לא נתמכים. שמרו אותם קודם כ־PDF.</li>
+    </ul>
+  </section>
+
+  <div class="bar">
+    <div class="bar-in">
+      <div class="sum"><b id="sumMain">0 עמודים</b><small id="sumSub">עוד לא נוספו קבצים</small></div>
+      <label class="field" for="fname"><input id="fname" type="text" value="מאוחד להדפסה" aria-label="שם הקובץ"><span>.pdf</span></label>
+      <button class="go" id="merge" type="button" disabled>
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 3V1.5h8V3M3 3h12v14H3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        הידוק ל־PDF
+      </button>
+      <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+  </div>
+
+  <div class="panel" id="p-convert" role="tabpanel" aria-labelledby="t-convert" hidden>
+    <div class="tray" id="cdrop" tabindex="0" role="button" aria-label="בחירת קבצים להמרה">
+      <span class="cm" aria-hidden="true"></span>
+      <div class="plus" aria-hidden="true">⇄</div>
+      <strong>גררו קבצים להמרה או לחצו לבחירה</strong>
+      <span>תמונות, PDF, Word, Excel וטקסט · כל קובץ מומר בנפרד</span>
+      <input type="file" id="cpicker" multiple accept=".pdf,application/pdf,image/*,.docx,.xlsx,.xls,.csv,.ods,.txt" hidden>
+    </div>
+
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <div class="head">
+        <h2>קבצים להמרה<span class="count" id="ccount"></span></h2>
+        <div class="tools">
+          <select class="allsel" id="allTarget" aria-label="המרת כל הקבצים לאותו פורמט">
+            <option value="">הכול ל…</option>
+            <option value="pdf">PDF</option><option value="jpg">JPG</option><option value="png">PNG</option>
+            <option value="webp">WEBP</option><option value="txt">טקסט (TXT)</option><option value="csv">CSV</option>
+          </select>
+          <button id="cclear" type="button">ניקוי הכול</button>
+        </div>
+      </div>
+      <ol class="rows" id="clist"></ol>
+
+      <div class="matrix">
+        <h3>מה אפשר להמיר</h3>
+        <div class="mtable"><table>
+          <thead><tr><th>מקור</th><th>אפשר להמיר ל־</th></tr></thead>
+          <tbody>
+            <tr><td>תמונה · JPG, PNG, WEBP, GIF, BMP</td><td><span class="pill">PDF</span><span class="pill">JPG</span><span class="pill">PNG</span><span class="pill">WEBP</span></td></tr>
+            <tr><td>PDF</td><td><span class="pill">JPG</span><span class="pill">PNG</span> תמונה לכל עמוד</td></tr>
+            <tr><td>Word · DOCX</td><td><span class="pill">PDF</span><span class="pill">TXT</span></td></tr>
+            <tr><td>Excel · XLSX, XLS, CSV, ODS</td><td><span class="pill">PDF</span><span class="pill">CSV</span></td></tr>
+            <tr><td>טקסט · TXT</td><td><span class="pill">PDF</span></td></tr>
+          </tbody>
+        </table></div>
+        <p>ההמרה מ־Word ו־Excel ל־PDF שומרת על טקסט, טבלאות ותמונות, אבל עיצוב מורכב עלול להשתנות. קובצי DOC ישנים, PowerPoint ו־HEIC לא נתמכים. כמה קבצים מומרים יחד יורדים כקובץ ZIP אחד.</p>
+      </div>
+    </section>
+
+    <div class="bar">
+      <div class="bar-in">
+        <div class="sum"><b id="csumMain">0 קבצים</b><small id="csumSub">עוד לא נוספו קבצים</small></div>
+        <button class="go" id="convert" type="button" disabled>
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 6h12l-3-3M16 12H4l3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          המרה
+        </button>
+        <div class="progress" aria-hidden="true"><i id="cbar"></i></div>
+        <div class="status" id="cstatus" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel" id="p-edit" role="tabpanel" aria-labelledby="t-edit" hidden>
+    <div class="tray" id="edrop" tabindex="0" role="button" aria-label="בחירת קובץ PDF לעריכה">
+      <span class="cm" aria-hidden="true"></span>
+      <div class="plus" aria-hidden="true">✂</div>
+      <strong>גררו קובץ PDF לכאן או לחצו לבחירה</strong>
+      <span>קובץ אחד בכל פעם · אחרי הפתיחה מסמנים עמודים בלחיצה</span>
+      <input type="file" id="epicker" accept=".pdf,application/pdf" hidden>
+    </div>
+
+    <section id="ework" hidden style="display:flex;flex-direction:column;gap:14px">
+      <div class="head">
+        <h2><span id="ename" style="unicode-bidi:plaintext"></span><span class="count" id="ecount"></span></h2>
+        <div class="tools">
+          <button id="eall" type="button">סימון הכול</button>
+          <button id="enone" type="button">ניקוי סימון</button>
+          <button id="eother" type="button">קובץ אחר</button>
+        </div>
+      </div>
+      <p class="hint">כל שורה היא עמוד. מהדק מזהה בכל עמוד את שם העובד או את הספק, וזה יהיה שם הקובץ בפיצול. אפשר לתקן שם בלחיצה עליו. כדי למחוק או לשמור עמודים, מסמנים אותם בתיבה, ו־Shift מסמן רצף.</p>
+      <div class="ftable-wrap"><table class="ftable etable">
+        <colgroup><col class="c-chk"><col class="c-n"><col class="c-th"><col><col class="c-v"></colgroup>
+        <thead><tr><th scope="col"><span class="sr">סימון</span></th><th scope="col">עמוד</th><th scope="col">תצוגה</th><th scope="col">שם הקובץ בפיצול</th><th scope="col"><span class="sr">פעולות</span></th></tr></thead>
+        <tbody id="epages"></tbody>
+      </table></div>
+
+      <div class="matrix" id="esplit">
+        <h3>פיצול לכמה קבצים</h3>
+        <div class="splitopts">
+          <label for="emode-each"><input type="radio" name="emode" id="emode-each" value="each" checked> כל עמוד לקובץ נפרד, בשם שמופיע בשורה</label>
+          <label for="ejoin" style="padding-inline-start:26px;font-size:.9rem;color:var(--muted)"><input type="checkbox" id="ejoin" checked style="accent-color:var(--cobalt);width:16px;height:16px;margin:0"> עמודים רצופים עם אותו שם יוצאים בקובץ אחד (למשל תלוש של שני עמודים)</label>
+          <label for="emode-ranges"><input type="radio" name="emode" id="emode-ranges" value="ranges"> לפי טווחים:
+            <input type="text" id="eranges" placeholder="1-3, 4-6, 7" disabled aria-label="טווחי עמודים"></label>
+        </div>
+        <div class="splitrow">
+          <p class="hint" id="esplithint">כל הקבצים יורדים יחד בקובץ ZIP אחד.</p>
+          <button class="go" id="esplitgo" type="button">פיצול</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="bar">
+      <div class="bar-in">
+        <div class="sum"><b id="esumMain">אין קובץ פתוח</b><small id="esumSub">גררו קובץ PDF כדי להתחיל</small></div>
+        <button class="go alt" id="edel" type="button" disabled>מחיקת המסומנים</button>
+        <button class="go" id="eext" type="button" disabled>שמירת המסומנים כקובץ חדש</button>
+        <div class="progress" aria-hidden="true"><i id="ebar"></i></div>
+        <div class="status" id="estatus" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="vmodal" hidden role="dialog" aria-modal="true" aria-labelledby="vTitle">
+    <div class="modal-in">
+      <div class="vhead">
+        <h2 id="vTitle">עיון במסמך</h2>
+        <button id="vClose" type="button">סגירה</button>
+      </div>
+      <p class="hint" id="vMeta"></p>
+      <div class="vpages" id="vPages"></div>
+    </div>
+  </div>
+  <div class="modal" id="pmodal" hidden role="dialog" aria-modal="true" aria-labelledby="pmTitle">
+    <div class="modal-in" id="pmBox">
+      <div class="head">
+        <h2 id="pmTitle">בחירת עמודים</h2>
+        <span class="count" id="pmCount"></span>
+      </div>
+      <p class="hint">סמנו את העמודים שייכנסו להידוק. עמוד שלא מסומן לא ייכנס. כדי לסמן רצף, לוחצים על הראשון ואז על האחרון עם Shift.</p>
+      <div class="tools">
+        <button id="pmFirst" type="button">רק העמוד הראשון</button>
+        <button id="pmAll" type="button">כל העמודים</button>
+        <button id="pmNone" type="button">ניקוי סימון</button>
+      </div>
+      <ol class="grid pages" id="pmGrid"></ol>
+      <div class="pm-actions">
+        <button class="go" id="pmSave" type="button">שמירה</button>
+        <button id="pmCancel" type="button">ביטול</button>
+      </div>
+    </div>
+  </div>
+  <footer class="ver">מהדק · גרסה 2.3 · עודכן 17.11.2026</footer>
+</div>
+
+<script>
+/* Files from email often arrive with garbled names (=?UTF-8?Q?...?=) or no extension.
+   Decode the name and check the real type from the file's first bytes. */
+function decodeMime(name){
+  if(!/=[_?]UTF-8[_?][QB][_?]/i.test(name)) return name;
+  let out=name.replace(/=[_?]UTF-8[_?]([QB])[_?]([\s\S]*?)[_?]=(?=\s|$|\.|=[_?]UTF|[_?])/gi,(m,enc,txt)=>{
+    try{
+      let bytes=[];
+      if(enc.toUpperCase()==='B'){ const bin=atob(txt.replace(/[^A-Za-z0-9+/=]/g,'')); bytes=[...bin].map(c=>c.charCodeAt(0)); }
+      else for(let i=0;i<txt.length;i++){
+        const c=txt[i];
+        if(c==='='&&/^[0-9A-F]{2}$/i.test(txt.substr(i+1,2))){ bytes.push(parseInt(txt.substr(i+1,2),16)); i+=2; }
+        else if(c==='=') continue;
+        else if(c==='_') bytes.push(32);
+        else bytes.push(c.charCodeAt(0));
+      }
+      return new TextDecoder('utf-8').decode(new Uint8Array(bytes));
+    }catch(_){ return m; }
+  });
+  return out.replace(/[_=]{2,}/g,' ').replace(/(^|\s)[_=]+(?=\s|$)/g,' ').replace(/\s+\./g,'.').replace(/\s+/g,' ').replace(/[\s_=]+$/,'').trim();
+}
+async function sniffType(f){
+  try{
+    const b=new Uint8Array(await f.slice(0,1024).arrayBuffer());
+    const head=String.fromCharCode.apply(null,b);
+    if(head.indexOf('%PDF')>-1) return 'pdf';
+    if(b[0]===0xFF&&b[1]===0xD8) return 'jpg';
+    if(b[0]===0x89&&b[1]===0x50&&b[2]===0x4E&&b[3]===0x47) return 'png';
+    if(b[0]===0x47&&b[1]===0x49&&b[2]===0x46) return 'gif';
+    if(head.slice(0,4)==='RIFF'&&head.slice(8,12)==='WEBP') return 'webp';
+    if(b[0]===0x42&&b[1]===0x4D) return 'bmp';
+  }catch(_){}
+  return '';
+}
+async function normalizeFile(f){
+  let name=decodeMime(f.name||'קובץ');
+  const kind=await sniffType(f);
+  const EXT={pdf:'.pdf',jpg:'.jpg',png:'.png',gif:'.gif',webp:'.webp',bmp:'.bmp'};
+  const MIME={pdf:'application/pdf',jpg:'image/jpeg',png:'image/png',gif:'image/gif',webp:'image/webp',bmp:'image/bmp'};
+  if(kind){
+    const low=name.toLowerCase();
+    if(!(low.endsWith(EXT[kind])||(kind==='jpg'&&low.endsWith('.jpeg')))) name=name.replace(/[._=\s]+$/,'')+EXT[kind];
+  }
+  if(name===f.name&&(!kind||f.type===MIME[kind])) return f;
+  return new File([f],name,{type:kind?MIME[kind]:f.type,lastModified:f.lastModified});
+}
+window.__nf=normalizeFile;
+</script>
+<script>
+(function(){
+  const A4P=[595.28,841.89], A4L=[841.89,595.28], M=28;
+  let items=[], seq=0, dragId=null;
+  const $=id=>document.getElementById(id);
+  const list=$('list'), picker=$('picker'), drop=$('drop');
+
+  function kindOf(f){
+    const n=f.name.toLowerCase();
+    if(f.type==='application/pdf'||n.endsWith('.pdf')) return 'pdf';
+    if(/\.(heic|heif)$/.test(n)) return 'other';
+    if(/^image\/(jpeg|png|webp|gif|bmp)$/.test(f.type)||/\.(jpe?g|png|webp|gif|bmp)$/.test(n)) return 'image';
+    return 'other';
+  }
+  const size=b=>b<1048576?Math.max(1,Math.round(b/1024))+' KB':(b/1048576).toFixed(1)+' MB';
+
+  async function add(files){
+    files=await Promise.all([...files].map(f=>window.__nf(f)));
+    for(const f of files){
+      const it={id:++seq,file:f,kind:kindOf(f),pages:null,land:false,url:null,label:f.name.replace(/\.[^.]+$/,''),detecting:false,found:false};
+      if(it.kind==='image'){
+        it.url=URL.createObjectURL(f); it.pages=1;
+        const im=new Image(); im.onload=()=>{it.land=im.naturalWidth>1.15*im.naturalHeight;render();}; im.src=it.url;
+      }
+      if(it.kind==='pdf'){
+        f.arrayBuffer().then(b=>window.PDFLib.PDFDocument.load(b,{ignoreEncryption:true}))
+          .then(d=>{it.pages=d.getPageCount();render();}).catch(()=>{it.pages=0;render();});
+      }
+      if((it.kind==='pdf'||it.kind==='image')&&window.__mh2){
+        it.detecting=true;
+        window.__mh2.detect(f,it.kind).then(r=>{it.detecting=false; if(r&&!it.edited){it.label=r;it.found=true;} else if(!r) it.nf=true; render();})
+          .catch(()=>{it.detecting=false; it.nf=true; render();});
+      }
+      items.push(it);
+    }
+    render(); setStatus('');
+  }
+  function move(i,j){ if(j<0||j>=items.length) return; const [x]=items.splice(i,1); items.splice(j,0,x); render(); }
+  function removeAt(i){ const [x]=items.splice(i,1); if(x.url) URL.revokeObjectURL(x.url); render(); }
+
+  function render(){
+    list.textContent='';
+    if(!items.length){
+      const tr=document.createElement('tr'); tr.className='empty';
+      const td=document.createElement('td'); td.colSpan=6; td.textContent='הקבצים יופיעו כאן, שורה לכל קובץ, לפי סדר ההדפסה';
+      tr.appendChild(td); list.appendChild(tr);
+    }
+    items.forEach((it,i)=>{
+      const tr=document.createElement('tr'); tr.draggable=true;
+      const td=()=>document.createElement('td');
+      const c1=td(); c1.className='nc'; c1.title='גררו כדי לשנות סדר';
+      const grip=document.createElement('span'); grip.className='grip'; grip.textContent='⋮⋮'; grip.setAttribute('aria-hidden','true');
+      c1.append(grip,document.createTextNode(it.kind==='other'?'–':String(i+1)));
+      const c2=td(); const tg=document.createElement('span'); tg.className='ftype '+it.kind;
+      tg.textContent=it.kind==='pdf'?'PDF':it.kind==='image'?'תמונה':'לא נתמך'; c2.appendChild(tg);
+      const c3=td(); c3.className='namec';
+      const nmIn=document.createElement('input'); nmIn.type='text'; nmIn.className='dname'; nmIn.id='dn-'+it.id; nmIn.value=it.label; nmIn.title=it.file.name;
+      nmIn.setAttribute('aria-label','שם המסמך עבור '+it.file.name); nmIn.draggable=false;
+      nmIn.addEventListener('input',()=>{it.label=nmIn.value; it.edited=true;});
+      nmIn.addEventListener('mousedown',e=>e.stopPropagation());
+      const fn=document.createElement('div'); fn.className='fname orig'; fn.title=it.file.name;
+      fn.textContent=it.file.name+(it.detecting?' · מזהה…':'')+(it.nf&&!it.edited?' · לא זוהה':'')+(it.kind==='other'?' · לא ייכלל בקובץ':'');
+      c3.append(nmIn,fn);
+      const c4=td(); c4.className='pgc'+(it.keep?' cut':'');
+      if(it.kind==='pdf'){
+        if(it.pages==null) c4.textContent='…';
+        else if(it.pages===0) c4.textContent='לא נפתח';
+        else if(it.keep){ c4.textContent='✂ '+it.keep.length; const sm=document.createElement('small'); sm.textContent='מתוך '+it.pages; c4.appendChild(sm); }
+        else c4.textContent=String(it.pages);
+      }else if(it.kind==='image'){
+        c4.textContent='1'; const sm=document.createElement('small'); sm.textContent=it.land?'לרוחב':'לאורך'; c4.appendChild(sm);
+      }else c4.textContent='–';
+      const c5=td(); c5.className='szc'; c5.textContent=size(it.file.size);
+      const c6=td(); const acts=document.createElement('div'); acts.className='racts';
+      if((it.kind==='pdf'||it.kind==='image')&&window.__mh2){
+        acts.appendChild(btn('עיון','פתיחת '+it.file.name+' לעיון',()=>window.__mh2.view(it.file,it.label||it.file.name,it.kind,it.url,it.keep)));
+      }
+      if(it.kind==='pdf'&&it.pages>0&&window.__mh2){
+        const pick=btn(it.keep?'✂ עמודים':'עמודים','בחירת עמודים מתוך '+it.file.name,async()=>{
+          const r=await window.__mh2.pickPages(it.file,it.keep,it.label||it.file.name,it.pages);
+          if(r){ it.keep=r.length===it.pages?null:r; render(); }
+        });
+        pick.classList.add('pick'); acts.appendChild(pick);
+      }
+      const up=btn('↑','הזזה למעלה בסדר',()=>move(i,i-1)); up.disabled=i===0;
+      const dn=btn('↓','הזזה למטה בסדר',()=>move(i,i+1)); dn.disabled=i===items.length-1;
+      const rm=btn('הסרה','הסרת '+it.file.name,()=>removeAt(i)); rm.className='rm';
+      acts.append(up,dn,rm); c6.appendChild(acts);
+      tr.append(c1,c2,c3,c4,c5,c6);
+      tr.addEventListener('dragstart',e=>{dragId=it.id;tr.classList.add('dragging');e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain','x')}catch(_){}});
+      tr.addEventListener('dragend',()=>{dragId=null;render();});
+      tr.addEventListener('dragover',e=>{if(dragId==null)return;e.preventDefault();tr.classList.add('target');});
+      tr.addEventListener('dragleave',()=>tr.classList.remove('target'));
+      tr.addEventListener('drop',e=>{if(dragId==null)return;e.preventDefault();e.stopPropagation();
+        const from=items.findIndex(x=>x.id===dragId), to=items.findIndex(x=>x.id===it.id);
+        if(from>-1&&to>-1&&from!==to){const [x]=items.splice(from,1);items.splice(to,0,x);} dragId=null; render();});
+      list.appendChild(tr);
+    });
+    const p=items.filter(x=>x.kind==='pdf').length, im=items.filter(x=>x.kind==='image').length, o=items.length-p-im;
+    const known=items.filter(x=>x.kind!=='other').reduce((s,x)=>s+(x.keep?x.keep.length:(x.pages||0)),0);
+    const pending=items.some(x=>x.kind==='pdf'&&x.pages==null);
+    $('count').textContent=items.length?`· ${items.length} קבצים`:'';
+    $('sumMain').textContent=(pending?'~':'')+known+' עמודים';
+    const tot=items.reduce((t,x)=>t+x.file.size,0);
+    const nfound=items.filter(x=>x.found).length;
+    $('sumSub').textContent=items.length?`${p} PDF · ${im} תמונות · ${size(tot)} בסך הכול`+(o?` · ${o} לא נתמכים`:'')+(nfound?` · ${nfound} זוהו`:''):'עוד לא נוספו קבצים';
+    $('saveNamed').disabled=!items.length;
+    $('merge').disabled=!(p+im);
+    const sk=$('skipped');
+    if(o){sk.hidden=false;sk.textContent=`${o} קבצים לא נתמכים ולא ייכנסו לקובץ: `+items.filter(x=>x.kind==='other').map(x=>x.file.name).join(', ');}
+    else sk.hidden=true;
+  }
+  function btn(t,label,fn){const b=document.createElement('button');b.type='button';b.textContent=t;b.setAttribute('aria-label',label);b.title=label;b.addEventListener('click',fn);return b;}
+  function setStatus(t,cls){const s=$('status');s.textContent=t;s.className='status'+(cls?' '+cls:'');}
+  function setBar(f){$('bar').style.width=Math.round(f*100)+'%';}
+
+  drop.addEventListener('click',()=>picker.click());
+  drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();picker.click();}});
+  picker.addEventListener('change',()=>{add(picker.files);picker.value='';});
+  ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{if(dragId!=null)return;e.preventDefault();drop.classList.add('over');}));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,()=>drop.classList.remove('over')));
+  drop.addEventListener('drop',e=>{if(dragId!=null)return;e.preventDefault();e.stopPropagation();if(e.dataTransfer.files.length)add(e.dataTransfer.files);});
+  document.addEventListener('dragover',e=>{if(dragId==null)e.preventDefault();});
+  document.addEventListener('drop',e=>{if(dragId==null){e.preventDefault();if($('p-merge').hidden)return;if(e.dataTransfer.files.length)add(e.dataTransfer.files);}});
+  $('sortName').addEventListener('click',()=>{items.sort((a,b)=>a.file.name.localeCompare(b.file.name,'he',{numeric:true}));render();});
+  $('clearAll').addEventListener('click',()=>{items.forEach(x=>x.url&&URL.revokeObjectURL(x.url));items=[];render();setStatus('');setBar(0);});
+
+  function jpegOrientation(buf){
+    try{
+      const v=new DataView(buf); if(v.getUint16(0)!==0xFFD8) return 1;
+      let off=2;
+      while(off<v.byteLength-4){
+        const mk=v.getUint16(off); off+=2;
+        if(mk===0xFFE1){
+          if(v.getUint32(off+2)!==0x45786966) return 1;
+          const t=off+8, le=v.getUint16(t)===0x4949, ifd=t+v.getUint32(t+4,le), n=v.getUint16(ifd,le);
+          for(let k=0;k<n;k++){const e=ifd+2+k*12; if(v.getUint16(e,le)===0x0112) return v.getUint16(e+8,le);}
+          return 1;
+        }
+        if((mk&0xFF00)!==0xFF00) break;
+        off+=v.getUint16(off);
+      }
+    }catch(_){}
+    return 1;
+  }
+  async function toJpeg(file){
+    const bmp=await createImageBitmap(file,{imageOrientation:'from-image'});
+    const s=Math.min(1,6000/Math.max(bmp.width,bmp.height));
+    const c=document.createElement('canvas'); c.width=Math.round(bmp.width*s); c.height=Math.round(bmp.height*s);
+    const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(bmp,0,0,c.width,c.height);
+    const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',0.95));
+    return new Uint8Array(await blob.arrayBuffer());
+  }
+  async function embedImage(doc,it){
+    const buf=await it.file.arrayBuffer(); const n=it.file.name.toLowerCase();
+    const isJpg=it.file.type==='image/jpeg'||/\.jpe?g$/.test(n), isPng=it.file.type==='image/png'||n.endsWith('.png');
+    if(isJpg && jpegOrientation(buf)===1){ try{return await doc.embedJpg(buf);}catch(_){} }
+    if(isPng){ try{return await doc.embedPng(buf);}catch(_){} }
+    return await doc.embedJpg(await toJpeg(it.file));
+  }
+
+  $('merge').addEventListener('click',async()=>{
+    const mb=$('merge'); mb.disabled=true; setBar(0);
+    const work=items.filter(x=>x.kind!=='other'), failed=[];
+    let pdfs=0, imgs=0;
+    try{
+      const {PDFDocument}=window.PDFLib;
+      const out=await PDFDocument.create(); const marks=[];
+      for(let i=0;i<work.length;i++){
+        const it=work[i]; setStatus(`מהדק ${i+1} מתוך ${work.length}: ${it.file.name}`);
+        const start=out.getPageCount();
+        try{
+          if(it.kind==='pdf'){
+            const src=await PDFDocument.load(await it.file.arrayBuffer(),{ignoreEncryption:true});
+            const idx=(it.keep||src.getPageIndices()).filter(k=>k<src.getPageCount()); const pages=await out.copyPages(src,idx); pages.forEach(p=>out.addPage(p)); pdfs++;
+          }else{
+            const img=await embedImage(out,it); const w=img.width,h=img.height;
+            const [W,H]=w>1.15*h?A4L:A4P; const sc=Math.min((W-2*M)/w,(H-2*M)/h);
+            const dw=w*sc, dh=h*sc; const pg=out.addPage([W,H]);
+            pg.drawImage(img,{x:(W-dw)/2,y:(H-dh)/2,width:dw,height:dh}); imgs++;
+          }
+        }catch(err){ failed.push(it.file.name); }
+        if(out.getPageCount()>start) marks.push({title:(it.label||it.file.name).trim()||it.file.name,page:start});
+        setBar((i+1)/work.length);
+        await new Promise(r=>setTimeout(r,0));
+      }
+      if(!out.getPageCount()) throw new Error('none');
+      try{ addOutline(out,marks); }catch(_){}
+      setStatus('שומר את הקובץ…');
+      const bytes=await out.save();
+      const base=($('fname').value||'מאוחד להדפסה').trim().replace(/\.pdf$/i,'').replace(/[\\/:*?"<>|]/g,'-')||'מאוחד להדפסה';
+      const fname=base+'.pdf';
+      const summary=`${pdfs} PDF ו־${imgs} תמונות · ${out.getPageCount()} עמודים`+(failed.length?` · לא נפתחו: ${failed.join(', ')}`:'');
+      const dl=window.claude?await window.claude.use('downloads').catch(()=>null):null;
+      if(!dl){ setStatus(`הקובץ מוכן (${summary}), אבל כאן אי אפשר לשמור אותו. נסו לרענן את הדף.`,'err'); return; }
+      try{
+        await dl.save({filename:fname,data:new Blob([bytes],{type:'application/pdf'})});
+        setStatus(`נשמר בתיקיית ההורדות: ${fname} · ${summary}`,'ok');
+      }catch(e){
+        const c=e&&e.code;
+        if(c==='declined') setStatus(`השמירה בוטלה. אפשר ללחוץ שוב. (${summary})`);
+        else if(c==='rate_limited') setStatus('כבר פתוח חלון שמירה. סיימו אותו ונסו שוב.','err');
+        else setStatus(`לא הצלחתי לשמור את הקובץ בתצוגה הזו. (${summary})`,'err');
+      }
+    }catch(err){
+      setStatus(err&&err.message==='none'?'אף קובץ לא נפתח. בדקו שהקבצים תקינים.':'משהו השתבש. רעננו את הדף והוסיפו את הקבצים שוב.','err');
+    }finally{ mb.disabled=!items.some(x=>x.kind!=='other'); }
+  });
+  render();
+  function addOutline(doc,entries){
+    if(!entries.length) return;
+    const {PDFName,PDFHexString}=window.PDFLib, ctx=doc.context, pages=doc.getPages();
+    const root=ctx.nextRef(), refs=entries.map(()=>ctx.nextRef());
+    entries.forEach((e,i)=>{
+      const d=ctx.obj({Title:PDFHexString.fromText(e.title),Parent:root,Dest:[pages[e.page].ref,'XYZ',null,null,null]});
+      if(i>0) d.set(PDFName.of('Prev'),refs[i-1]);
+      if(i<refs.length-1) d.set(PDFName.of('Next'),refs[i+1]);
+      ctx.assign(refs[i],d);
+    });
+    ctx.assign(root,ctx.obj({Type:'Outlines',First:refs[0],Last:refs[refs.length-1],Count:refs.length}));
+    doc.catalog.set(PDFName.of('Outlines'),root);
+    doc.catalog.set(PDFName.of('PageMode'),PDFName.of('UseOutlines'));
+  }
+  $('saveNamed').addEventListener('click',async()=>{
+    if(!items.length||!window.__mh2) return;
+    const b=$('saveNamed'); b.disabled=true;
+    try{
+      setStatus('אורז את הקבצים בשמות החדשים…');
+      const used={}, outs=items.map(it=>{
+        const ext=(it.file.name.match(/\.[^.]+$/)||[''])[0];
+        let n=(it.label||it.file.name.replace(/\.[^.]+$/,'')).replace(/[\\/:*?"<>|]/g,'-').trim()||'קובץ';
+        if(used[n]){used[n]++; n+=` (${used[n]})`;} else used[n]=1;
+        return {name:n+ext,blob:it.file};
+      });
+      const r=await window.__mh2.deliver(outs,'קבצים בשמות מזוהים.zip');
+      setStatus(r.msg,r.cls);
+    }catch(_){ setStatus('לא הצלחתי לארוז את הקבצים.','err'); }
+    finally{ b.disabled=!items.length; }
+  });
+  window.__mh={embedImage};
+})();
+</script>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+
+  /* Tabs */
+  function show(t){
+    const key=t==='files'||t==='convert'?'convert':t==='pages'?'edit':'merge';
+    ['merge','convert','edit'].forEach(k=>{$('p-'+k).hidden=k!==key;$('t-'+k).setAttribute('aria-selected',String(k===key));});
+  }
+  $('t-merge').addEventListener('click',()=>{location.hash='join';show('join');});
+  $('t-convert').addEventListener('click',()=>{location.hash='files';show('files');});
+  $('t-edit').addEventListener('click',()=>{location.hash='pages';show('pages');});
+  window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+  show(location.hash.slice(1));
+
+  /* Libraries load only when a conversion needs them */
+  const CDN='https://cdnjs.cloudflare.com/ajax/libs/';
+  const LIB={
+    pdfjs:[CDN+'pdf.js/3.11.174/pdf.worker.min.js',CDN+'pdf.js/3.11.174/pdf.min.js'],
+    mammoth:[CDN+'mammoth/1.6.0/mammoth.browser.min.js'],
+    xlsx:[CDN+'xlsx/0.18.5/xlsx.full.min.js'],
+    h2p:[CDN+'html2pdf.js/0.10.1/html2pdf.bundle.min.js'],
+    zip:[CDN+'jszip/3.10.1/jszip.min.js'],
+    tess:['https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js']
+  };
+  const loaded={};
+  function need(...names){
+    return Promise.all(names.map(n=>{
+      if(!loaded[n]) loaded[n]=LIB[n].reduce((p,src)=>p.then(()=>new Promise((res,rej)=>{
+        const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>rej(new Error('lib')); document.head.appendChild(s);
+      })),Promise.resolve()).catch(e=>{delete loaded[n];throw e;});
+      return loaded[n];
+    }));
+  }
+
+  /* Formats */
+  const LABEL={pdf:'PDF',jpg:'JPG',png:'PNG',webp:'WEBP',txt:'טקסט (TXT)',csv:'CSV'};
+  const TAG={image:'תמונה',pdf:'PDF',docx:'Word',sheet:'Excel',txt:'TXT',other:'לא נתמך'};
+  function kindOf(f){
+    const n=f.name.toLowerCase();
+    if(f.type==='application/pdf'||n.endsWith('.pdf')) return 'pdf';
+    if(/\.(heic|heif)$/.test(n)) return 'other';
+    if(/^image\/(jpeg|png|webp|gif|bmp)$/.test(f.type)||/\.(jpe?g|png|webp|gif|bmp)$/.test(n)) return 'image';
+    if(n.endsWith('.docx')) return 'docx';
+    if(/\.(xlsx|xls|csv|ods)$/.test(n)) return 'sheet';
+    if(n.endsWith('.txt')) return 'txt';
+    return 'other';
+  }
+  function targetsFor(it){
+    const n=it.file.name.toLowerCase();
+    switch(it.kind){
+      case 'image':{const own=/\.jpe?g$/.test(n)?'jpg':/\.png$/.test(n)?'png':/\.webp$/.test(n)?'webp':'';return ['pdf','jpg','png','webp'].filter(x=>x!==own);}
+      case 'pdf': return ['jpg','png'];
+      case 'docx': return ['pdf','txt'];
+      case 'sheet': return n.endsWith('.csv')?['pdf']:['pdf','csv'];
+      case 'txt': return ['pdf'];
+      default: return [];
+    }
+  }
+  const base=f=>f.name.replace(/\.[^.]+$/,'')||'קובץ';
+  const size=b=>b<1048576?Math.max(1,Math.round(b/1024))+' KB':(b/1048576).toFixed(1)+' MB';
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const isRtl=t=>(t.match(/[֐-׿؀-ۿ]/g)||[]).length>(t.match(/[A-Za-z]/g)||[]).length*0.3;
+
+  /* Converters: each returns [{name, blob}] */
+  async function imageBitmap(file){ return createImageBitmap(file,{imageOrientation:'from-image'}); }
+  async function canvasBlob(c,fmt){
+    const mime={jpg:'image/jpeg',png:'image/png',webp:'image/webp'}[fmt];
+    return new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error('encode')),mime,0.92));
+  }
+  async function imgToImg(file,fmt){
+    const bmp=await imageBitmap(file);
+    const c=document.createElement('canvas'); c.width=bmp.width; c.height=bmp.height;
+    const g=c.getContext('2d'); if(fmt==='jpg'){g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);} g.drawImage(bmp,0,0);
+    return [{name:base(file)+'.'+fmt,blob:await canvasBlob(c,fmt)}];
+  }
+  async function imgToPdf(file){
+    const {PDFDocument}=window.PDFLib; const doc=await PDFDocument.create();
+    const img=await window.__mh.embedImage(doc,{file}); const w=img.width,h=img.height;
+    const [W,H]=w>1.15*h?[841.89,595.28]:[595.28,841.89]; const sc=Math.min((W-56)/w,(H-56)/h);
+    doc.addPage([W,H]).drawImage(img,{x:(W-w*sc)/2,y:(H-h*sc)/2,width:w*sc,height:h*sc});
+    return [{name:base(file)+'.pdf',blob:new Blob([await doc.save()],{type:'application/pdf'})}];
+  }
+  async function pdfToImgs(file,fmt){
+    await need('pdfjs');
+    const pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+    const out=[], n=pdf.numPages, pad=String(n).length;
+    for(let i=1;i<=n;i++){
+      const page=await pdf.getPage(i); const vp=page.getViewport({scale:2});
+      const c=document.createElement('canvas'); c.width=Math.round(vp.width); c.height=Math.round(vp.height);
+      const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height);
+      await page.render({canvasContext:g,viewport:vp}).promise;
+      out.push({name:n===1?base(file)+'.'+fmt:`${base(file)}-עמוד-${String(i).padStart(pad,'0')}.${fmt}`,blob:await canvasBlob(c,fmt)});
+      page.cleanup();
+    }
+    return out;
+  }
+  async function htmlToPdf(html,text,landscape){
+    await need('h2p');
+    const el=document.createElement('div'); el.className='render-doc'; el.dir=isRtl(text)?'rtl':'ltr'; el.innerHTML=html;
+    const ab=await window.html2pdf().set({
+      margin:[12,12,12,12], image:{type:'jpeg',quality:0.95},
+      html2canvas:{scale:2,backgroundColor:'#ffffff'},
+      jsPDF:{unit:'mm',format:'a4',orientation:landscape?'landscape':'portrait'},
+      pagebreak:{mode:['css','legacy'],before:'.pb',avoid:['tr','img']}
+    }).from(el).outputPdf('arraybuffer');
+    return new Blob([ab],{type:'application/pdf'});
+  }
+  async function docxTo(file,fmt){
+    await need('mammoth');
+    const buf=await file.arrayBuffer();
+    if(fmt==='txt'){ const r=await window.mammoth.extractRawText({arrayBuffer:buf}); return [{name:base(file)+'.txt',blob:new Blob(['﻿'+r.value],{type:'text/plain'})}]; }
+    const r=await window.mammoth.convertToHtml({arrayBuffer:buf});
+    const tmp=document.createElement('div'); tmp.innerHTML=r.value;
+    return [{name:base(file)+'.pdf',blob:await htmlToPdf(r.value,tmp.textContent||'',false)}];
+  }
+  async function sheetTo(file,fmt){
+    await need('xlsx');
+    const XLSX=window.XLSX; const wb=XLSX.read(new Uint8Array(await file.arrayBuffer()),{type:'array'});
+    if(fmt==='csv'){
+      const one=wb.SheetNames.length===1;
+      return wb.SheetNames.map(s=>({name:one?base(file)+'.csv':`${base(file)}-${s.replace(/[\\/:*?"<>|]/g,'-')}.csv`,blob:new Blob(['﻿'+XLSX.utils.sheet_to_csv(wb.Sheets[s])],{type:'text/csv'})}));
+    }
+    let text=''; const parts=wb.SheetNames.map((s,i)=>{
+      text+=XLSX.utils.sheet_to_csv(wb.Sheets[s]);
+      const t=XLSX.utils.sheet_to_html(wb.Sheets[s],{header:'',footer:''});
+      return `<section${i?' class="pb"':''}>${wb.SheetNames.length>1?`<h3 class="sheetname">${esc(s)}</h3>`:''}${t}</section>`;
+    });
+    return [{name:base(file)+'.pdf',blob:await htmlToPdf(parts.join(''),text,true)}];
+  }
+  async function txtToPdf(file){
+    const t=await file.text();
+    return [{name:base(file)+'.pdf',blob:await htmlToPdf(`<pre>${esc(t)}</pre>`,t,false)}];
+  }
+  function convertOne(it){
+    const f=it.file, t=it.target;
+    if(it.kind==='image') return t==='pdf'?imgToPdf(f):imgToImg(f,t);
+    if(it.kind==='pdf') return pdfToImgs(f,t);
+    if(it.kind==='docx') return docxTo(f,t);
+    if(it.kind==='sheet') return sheetTo(f,t);
+    if(it.kind==='txt') return txtToPdf(f);
+    return Promise.reject(new Error('unsupported'));
+  }
+
+  /* State + rendering */
+  let items=[], seq=0;
+  const list=$('clist'), picker=$('cpicker'), drop=$('cdrop');
+  async function add(files){
+    files=await Promise.all([...files].map(f=>window.__nf(f)));
+    for(const f of files){ const it={id:++seq,file:f,kind:kindOf(f),state:''}; it.target=targetsFor(it)[0]||''; items.push(it); }
+    render(); setStatus('');
+  }
+  function render(){
+    list.textContent='';
+    if(!items.length){ const li=document.createElement('li'); li.className='empty'; li.textContent='הקבצים שתוסיפו יופיעו כאן, ולכל אחד תבחרו לאיזה פורמט להמיר'; list.appendChild(li); }
+    items.forEach((it,i)=>{
+      const li=document.createElement('li');
+      const tag=document.createElement('span'); tag.className='ftag '+it.kind; tag.textContent=TAG[it.kind];
+      const nm=document.createElement('div'); nm.style.minWidth='0';
+      const fn=document.createElement('div'); fn.className='fname'; fn.title=it.file.name; fn.textContent=it.file.name;
+      const meta=document.createElement('div'); meta.className='state'+(it.state==='done'?' ok':it.state==='err'?' err':'');
+      meta.textContent=it.kind==='other'?'הפורמט הזה לא נתמך':it.state==='done'?'הומר':it.state==='err'?'ההמרה נכשלה':it.state==='work'?'ממיר…':size(it.file.size);
+      nm.append(fn,meta);
+      const arrow=document.createElement('span'); arrow.className='arrow'; arrow.textContent='←'; arrow.setAttribute('aria-hidden','true');
+      const opts=targetsFor(it);
+      let sel;
+      if(opts.length){
+        sel=document.createElement('select'); sel.id='ct-'+it.id; sel.setAttribute('aria-label','פורמט יעד עבור '+it.file.name);
+        opts.forEach(o=>{const op=document.createElement('option');op.value=o;op.textContent=LABEL[o];sel.appendChild(op);});
+        sel.value=it.target; sel.addEventListener('change',()=>{it.target=sel.value;it.state='';render();});
+      }else{ sel=document.createElement('span'); }
+      const rm=document.createElement('button'); rm.type='button'; rm.className='rm'; rm.textContent='הסרה'; rm.setAttribute('aria-label','הסרת '+it.file.name);
+      rm.addEventListener('click',()=>{items.splice(i,1);render();});
+      li.append(tag,nm,arrow,sel,rm); list.appendChild(li);
+    });
+    const ok=items.filter(x=>x.kind!=='other');
+    $('ccount').textContent=items.length?`· ${items.length} קבצים`:'';
+    $('csumMain').textContent=ok.length+(ok.length===1?' קובץ להמרה':' קבצים להמרה');
+    const tally={}; ok.forEach(x=>{tally[x.target]=(tally[x.target]||0)+1;});
+    $('csumSub').textContent=ok.length?Object.entries(tally).map(([k,v])=>`${v} ל־${LABEL[k]}`).join(' · '):'עוד לא נוספו קבצים';
+    $('convert').disabled=!ok.length;
+  }
+  function setStatus(t,cls){const s=$('cstatus');s.textContent=t;s.className='status'+(cls?' '+cls:'');}
+  const setBar=f=>{$('cbar').style.width=Math.round(f*100)+'%';};
+
+  drop.addEventListener('click',()=>picker.click());
+  drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();picker.click();}});
+  picker.addEventListener('change',()=>{add(picker.files);picker.value='';});
+  ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,()=>drop.classList.remove('over')));
+  drop.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();if(e.dataTransfer.files.length)add(e.dataTransfer.files);});
+  document.addEventListener('drop',e=>{if($('p-convert').hidden)return;e.preventDefault();if(e.dataTransfer&&e.dataTransfer.files.length)add(e.dataTransfer.files);});
+  $('cclear').addEventListener('click',()=>{items=[];render();setStatus('');setBar(0);});
+  $('allTarget').addEventListener('change',e=>{
+    const v=e.target.value; if(!v) return; let hit=0;
+    items.forEach(it=>{if(targetsFor(it).includes(v)){it.target=v;it.state='';hit++;}});
+    const miss=items.filter(x=>x.kind!=='other').length-hit;
+    setStatus(miss>0?`${miss} קבצים לא יכולים להפוך ל־${LABEL[v]} ונשארו עם הבחירה הקודמת.`:'');
+    e.target.value=''; render();
+  });
+
+  $('convert').addEventListener('click',async()=>{
+    const btn=$('convert'); btn.disabled=true; setBar(0);
+    const work=items.filter(x=>x.kind!=='other'), outs=[], failed=[];
+    for(let i=0;i<work.length;i++){
+      const it=work[i]; it.state='work'; render(); setStatus(`ממיר ${i+1} מתוך ${work.length}: ${it.file.name}`);
+      try{ outs.push(...await convertOne(it)); it.state='done'; }
+      catch(err){ it.state='err'; failed.push(it.file.name+(err&&err.message==='lib'?' (לא הצלחתי לטעון את כלי ההמרה, בדקו חיבור לאינטרנט)':'')); }
+      setBar((i+1)/work.length); render();
+      await new Promise(r=>setTimeout(r,0));
+    }
+    try{
+      if(!outs.length){ setStatus('אף קובץ לא הומר. '+(failed.length?'נכשלו: '+failed.join(', '):''),'err'); return; }
+      let file;
+      if(outs.length===1) file={filename:outs[0].name,data:outs[0].blob};
+      else{
+        setStatus('אורז הכול לקובץ ZIP…');
+        await need('zip'); const zip=new window.JSZip(), used={};
+        outs.forEach(o=>{let n=o.name; if(used[n]){const k=++used[n]; n=n.replace(/(\.[^.]+)$/,`-${k}$1`);} else used[n]=1; zip.file(n,o.blob);});
+        file={filename:'קבצים מומרים.zip',data:await zip.generateAsync({type:'blob'})};
+      }
+      const sum=`${outs.length} קבצים`+(failed.length?` · נכשלו: ${failed.join(', ')}`:'');
+      const dl=window.claude?await window.claude.use('downloads').catch(()=>null):null;
+      if(!dl){ setStatus(`ההמרה הסתיימה (${sum}), אבל כאן אי אפשר לשמור אותה. נסו לרענן את הדף.`,'err'); return; }
+      try{ await dl.save(file); setStatus(`נשמר בתיקיית ההורדות: ${file.filename} · ${sum}`,failed.length?'err':'ok'); }
+      catch(e){
+        const c=e&&e.code;
+        if(c==='declined') setStatus('השמירה בוטלה. אפשר ללחוץ שוב על המרה.');
+        else if(c==='rate_limited') setStatus('כבר פתוח חלון שמירה. סיימו אותו ונסו שוב.','err');
+        else setStatus('לא הצלחתי לשמור את הקובץ בתצוגה הזו.','err');
+      }
+    }catch(err){ setStatus('משהו השתבש בשמירה. נסו שוב.','err'); }
+    finally{ btn.disabled=!items.some(x=>x.kind!=='other'); }
+  });
+
+
+  /* ---------- Identify a document from its own text ---------- */
+  const revStr=t=>[...t].reverse().join('');
+  const DOC_HINTS=['חשבונית','קבלה','תאריך','לתשלום','מע"מ','סה"כ','סכום','ספק','לקוח'];
+  const DOC_TYPES=[
+    [/חשבונית\s*[\-–]?\s*מס\s*[\/\\|\-–,]?\s*קבלה/,'חשבונית מס קבלה'],[/חשבונית\s*זיכוי|זיכוי\s*מס/,'חשבונית זיכוי'],[/ריכוז\s*(?:חשבוניות|תנועות|חיובים|קבלות)?/,'ריכוז'],
+    [/חשבונית\s*מס/,'חשבונית מס'],[/חשבון\s*עסקה/,'חשבון עסקה'],[/תלוש\s*(?:שכר|משכורת)/,'תלוש שכר'],
+    [/הצעת\s*מחיר/,'הצעת מחיר'],[/תעודת\s*משלוח/,'תעודת משלוח'],[/דף\s*חשבון|תדפיס\s*חשבון/,'דף חשבון'],
+    [/tax\s*invoice\s*[\/&]?\s*receipt/i,'חשבונית מס קבלה'],[/tax\s*invoice/i,'חשבונית מס'],[/חשבונית/,'חשבונית'],[/קבלה|receipt/i,'קבלה']
+  ];
+  const KNOWN=['סונול','דור אלון','פז','בזק','חברת החשמל','פרטנר','סלקום','הוט','גולן טלקום','פלאפון','מקורות','שופרסל','רמי לוי','ויקטורי','אושר עד','יינות ביתן','קרפור','איקאה','הום סנטר','אופיס דיפו','KSP','ישראכרט','כאל','מקס','בנק לאומי','בנק הפועלים','בנק דיסקונט','מזרחי טפחות','הבינלאומי','ביטוח לאומי','רשות המסים','מגדל','הראל','הפניקס','כלל ביטוח','מנורה','סופר פארם','גוד פארם','ארומה','קופיקס'];
+  const HEB=/[א-ת]/;
+  const normQ=t=>t.replace(/[״”“]/g,'"').replace(/[׳’‘]/g,"'");
+  function hasWord(line,w){
+    const i=line.indexOf(w); if(i<0) return false;
+    const pre=line[i-1]||' ', post=line[i+w.length]||' ';
+    return !/[א-תa-zA-Z]/.test(pre)&&!/[א-תa-zA-Z]/.test(post);
+  }
+  async function docLines(file){
+    await need('pdfjs');
+    const pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+    try{
+      const page=await pdf.getPage(1); const tc=await page.getTextContent();
+      const raw=tc.items.map(t=>t.str).join(' ');
+      const fwd=DOC_HINTS.filter(h=>normQ(raw).includes(h)).length, bwd=DOC_HINTS.filter(h=>normQ(raw).includes(revStr(h))).length;
+      const reverse=bwd>fwd;
+      const items=tc.items.filter(it=>it.str&&it.str.trim()).map(it=>({s:normQ(reverse?revStr(it.str):it.str),x:it.transform[4],y:it.transform[5]}));
+      items.sort((a,b)=>b.y-a.y||b.x-a.x);
+      const lines=[];
+      for(const it of items){const L=lines[lines.length-1]; if(L&&Math.abs(L.y-it.y)<3) L.items.push(it); else lines.push({y:it.y,items:[it]});}
+      return lines.map(L=>L.items.sort((a,b)=>b.x-a.x).map(t=>t.s.trim()).join(' ').replace(/\s+/g,' '));
+    }finally{ pdf.destroy(); }
+  }
+  function docType(lines){
+    const top=lines.slice(0,14).join(' '), all=lines.join(' ');
+    for(const src of [top,all]) for(const [re,name] of DOC_TYPES) if(re.test(src)) return name;
+    return '';
+  }
+  function docNumber(lines){
+    const t=lines.slice(0,25).join(' ');
+    let m=t.match(/(?:חשבונית|קבלה|ריכוז|חשבון\s*עסקה|תעודת\s*משלוח)[^\d]{0,25}?(?:מס'|מספר|#)\s*[:.]?\s*(\d{3,10})(?![\d\/.])/);
+    if(!m) m=t.match(/(?:חשבונית|קבלה)[^\d]{0,30}?(\d{4,10})(?![\d\/.])/);
+    return m?m[1]:'';
+  }
+  const LABEL_WORDS=/^(?:חשבונית|מס|קבלה|עוסק|מורשה|ע\.?מ\.?|ח\.?פ\.?|מספר|מס'|טלפון|טל'?|פקס|כתובת|רחוב|ת\.?ד\.?|דוא"ל|אתר|ספק|מקור|העתק|נאמן|למקור|תאריך)$/;
+  const BAD_WORDS=/סה"?כ|תאריך|כתובת|רחוב|טלפון|פקס|לתשלום|סכום|מע"?מ|כמות|מחיר|תיאור|פריט|שעה|קופה|עמוד|הנחה|יתרה|אשראי|מזומן|ויזה|לקוח|העתק|מקור|נאמן|חשבונית|קבלה|ריכוז|תודה|מספר|אסמכתא|הזמנה|ש"ח|שקל/;
+  function goodName(n){
+    if(!n) return false;
+    const w=n.split(' ').filter(Boolean);
+    if(!w.length||w.length>5||BAD_WORDS.test(n)) return false;
+    if(w.filter(x=>x.replace(/[^\u05D0-\u05EA]/g,'').length>=2).length===0) return false;
+    return n.replace(/[^\u05D0-\u05EAa-zA-Z]/g,'').length>=3;
+  }
+  function cleanCompany(t){
+    return t.replace(/[0-9|:;,()\[\]\/\\_@#*+]+/g,' ').replace(/(^|\s)\.+|\.+(\s|$)/g,' ').split(/\s+/).filter(w=>(HEB.test(w)||/^[A-Za-z]{2,}$/.test(w))&&!LABEL_WORDS.test(w)&&(/^[A-Za-z]+$/.test(w)||(w.replace(/[^\u05D0-\u05EA]/g,'').length>=2||/\./.test(w)))).slice(-4).join(' ').trim();
+  }
+  function docSupplier(lines){
+    const top=lines.slice(0,18);
+    for(const name of [...KNOWN].sort((a,b)=>b.length-a.length)) if(top.some(l=>hasWord(l,name))) return name;
+    const skip=new Set();
+    lines.forEach((l,i)=>{ if(/לכבוד|שם\s*הלקוח|לקוח\s*:|נמען|עבור\s*:/.test(l)){ skip.add(i); skip.add(i+1); } });
+    const scan=lines.slice(0,25);
+    for(let i=0;i<scan.length;i++){
+      if(skip.has(i)) continue;
+      const m=scan[i].match(/(.{2,60}?)\s*בע"?'?מ/);
+      if(m){ const n=cleanCompany(m[1]); if(goodName(n)) return n; }
+    }
+    for(let i=0;i<scan.length;i++){
+      if(skip.has(i)) continue;
+      if(/עוסק\s*מורשה|ע\.מ\.?|ח\.פ\.?/.test(scan[i])){
+        let n=cleanCompany(scan[i]); if(!goodName(n)&&i>0&&!skip.has(i-1)) n=cleanCompany(scan[i-1]); if(!goodName(n)&&i+1<scan.length&&!skip.has(i+1)) n=cleanCompany(scan[i+1]); if(goodName(n)) return n;
+      }
+    }
+    for(const name of KNOWN) if(lines.some(l=>hasWord(l,name))) return name;
+    return '';
+  }
+  /* Text from a photo or scan, read on this computer */
+  let ocrWorker=null;
+  async function getOcr(){
+    if(ocrWorker) return ocrWorker;
+    await need('tess');
+    ocrWorker=await window.Tesseract.createWorker(['heb','eng'],1);
+    return ocrWorker;
+  }
+  async function toCanvas(src,w,h,max){
+    const s=Math.min(1,max/Math.max(w,h));
+    const c=document.createElement('canvas'); c.width=Math.round(w*s); c.height=Math.round(h*s);
+    const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(src,0,0,c.width,c.height);
+    return c;
+  }
+  async function imageCanvas(file){ const b=await createImageBitmap(file,{imageOrientation:'from-image'}); return toCanvas(b,b.width,b.height,2200); }
+  async function pdfCanvas(file){
+    await need('pdfjs');
+    const pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+    try{
+      const page=await pdf.getPage(1); const v1=page.getViewport({scale:1});
+      const vp=page.getViewport({scale:2000/Math.max(v1.width,v1.height)});
+      const c=document.createElement('canvas'); c.width=Math.round(vp.width); c.height=Math.round(vp.height);
+      const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height);
+      await page.render({canvasContext:g,viewport:vp}).promise; return c;
+    }finally{ pdf.destroy(); }
+  }
+  async function ocrLines(canvas){
+    const w=await getOcr(); const r=await w.recognize(canvas);
+    return (r.data.text||'').split('\n').map(l=>normQ(l).replace(/\s+/g,' ').trim()).filter(l=>l.replace(/[^א-תa-zA-Z0-9]/g,'').length>=2);
+  }
+  async function detectDocNow(file,kind){
+    let lines=[];
+    if(kind!=='image'){ try{ lines=await docLines(file); }catch(_){ lines=[]; } }
+    if(lines.join('').replace(/\s/g,'').length<20){
+      const canvas=kind==='image'?await imageCanvas(file):await pdfCanvas(file);
+      lines=await ocrLines(canvas);
+    }
+    if(!lines.length) return null;
+    const sup=docSupplier(lines), type=docType(lines), num=docNumber(lines);
+    if(!sup&&!type) return null;
+    return [sup,[type,num].filter(Boolean).join(' ')].filter(Boolean).join(' - ').replace(/[\\/:*?"<>|]/g,'-');
+  }
+  let detectQueue=Promise.resolve();
+  function detectDoc(file,kind){
+    const job=detectQueue.then(()=>detectDocNow(file,kind||'pdf'));
+    detectQueue=job.catch(()=>{});
+    return job;
+  }
+
+  /* Read-only viewer for one file */
+  const VW={token:0,ret:null};
+  function vClose(){ $('vmodal').hidden=true; VW.token++; $('vPages').textContent=''; if(VW.ret&&VW.ret.focus) VW.ret.focus(); }
+  async function viewDoc(file,title,kind,url,keep,only){
+    const tok=++VW.token; VW.ret=document.activeElement;
+    const box=$('vPages'); box.textContent='';
+    $('vTitle').textContent=title; $('vMeta').textContent=file.name+' · '+size(file.size);
+    $('vmodal').hidden=false; $('vClose').focus();
+    if(kind==='image'){ const im=document.createElement('img'); im.src=url||URL.createObjectURL(file); im.alt=title; box.appendChild(im); return; }
+    const wait=document.createElement('p'); wait.className='hint'; wait.textContent='טוען את המסמך…'; box.appendChild(wait);
+    try{
+      await need('pdfjs');
+      const pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+      try{
+        const n=pdf.numPages;
+        $('vMeta').textContent=`${file.name} · ${n} עמודים · ${size(file.size)}`+(keep?` · ייכנסו להידוק: עמ׳ ${keep.map(k=>k+1).join(', ')}`:'');
+        const W=Math.min(Math.max(box.clientWidth,320),900)*Math.min(window.devicePixelRatio||1,2);
+        wait.remove();
+        for(let i=1;i<=n;i++){
+          if(tok!==VW.token) return;
+          if(only&&!only.includes(i-1)) continue;
+          const page=await pdf.getPage(i); const v1=page.getViewport({scale:1});
+          const vp=page.getViewport({scale:W/v1.width});
+          const c=document.createElement('canvas'); c.width=Math.round(vp.width); c.height=Math.round(vp.height);
+          const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height);
+          await page.render({canvasContext:g,viewport:vp}).promise; page.cleanup();
+          if(tok!==VW.token) return;
+          const off=keep&&!keep.includes(i-1);
+          const wrap=document.createElement('div'); wrap.className='vp'+(off?' off':'');
+          const lb=document.createElement('small'); lb.textContent='עמוד '+i+(off?' · לא ייכנס להידוק':'');
+          wrap.append(c,lb); box.appendChild(wrap);
+        }
+      }finally{ pdf.destroy(); }
+    }catch(_){ if(tok===VW.token){ box.textContent=''; const e=document.createElement('p'); e.className='hint'; e.textContent='לא הצלחתי להציג את הקובץ.'; box.appendChild(e); } }
+  }
+  $('vClose').addEventListener('click',vClose);
+  $('vmodal').addEventListener('click',e=>{if(e.target===$('vmodal')) vClose();});
+  $('vmodal').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();vClose();}});
+  async function deliverFiles(outs,zipName){
+    let file;
+    if(outs.length===1) file={filename:outs[0].name,data:outs[0].blob};
+    else{ await need('zip'); const z=new window.JSZip(); outs.forEach(o=>z.file(o.name,o.blob)); file={filename:zipName,data:await z.generateAsync({type:'blob'})}; }
+    const dl=window.claude?await window.claude.use('downloads').catch(()=>null):null;
+    if(!dl) return {msg:'הקובץ מוכן, אבל כאן אי אפשר לשמור אותו. נסו לרענן את הדף.',cls:'err'};
+    try{ await dl.save(file); return {msg:'נשמר בתיקיית ההורדות: '+file.filename+(outs.length>1?` · ${outs.length} קבצים`:''),cls:'ok'}; }
+    catch(e){ const c=e&&e.code; return {msg:c==='declined'?'השמירה בוטלה. אפשר ללחוץ שוב.':c==='rate_limited'?'כבר פתוח חלון שמירה. סיימו אותו ונסו שוב.':'לא הצלחתי לשמור את הקובץ.',cls:c==='declined'?'':'err'}; }
+  }
+
+  /* ---------- Page picker for one file in the merge list ---------- */
+  const PM={resolve:null,keep:null,n:0,cards:[],last:null,token:0,ret:null};
+  function pmUpdate(){
+    PM.cards.forEach((c,i)=>{const on=PM.keep.has(i);c.classList.toggle('sel',on);c.setAttribute('aria-checked',String(on));});
+    $('pmCount').textContent=`· ${PM.keep.size} מתוך ${PM.n} עמודים`;
+    $('pmSave').disabled=!PM.keep.size;
+  }
+  function pmToggle(i,shift){
+    if(shift&&PM.last!=null){const a=Math.min(PM.last,i),b=Math.max(PM.last,i),on=!PM.keep.has(i);for(let k=a;k<=b;k++){on?PM.keep.add(k):PM.keep.delete(k);}}
+    else{PM.keep.has(i)?PM.keep.delete(i):PM.keep.add(i);}
+    PM.last=i; pmUpdate();
+  }
+  function pmClose(val){
+    $('pmodal').hidden=true; PM.token++;
+    const r=PM.resolve; PM.resolve=null;
+    if(PM.ret&&PM.ret.focus) PM.ret.focus();
+    if(r) r(val);
+  }
+  function pickPages(file,keep,title,n){
+    if(PM.resolve) pmClose(null);
+    return new Promise(resolve=>{
+      PM.resolve=resolve; PM.n=n; PM.keep=new Set(keep||[...Array(n).keys()]); PM.last=null; PM.ret=document.activeElement;
+      const tok=++PM.token, grid=$('pmGrid');
+      $('pmTitle').textContent='בחירת עמודים · '+title;
+      grid.textContent=''; PM.cards=[];
+      for(let i=0;i<n;i++){
+        const li=document.createElement('li'); li.className='card page'; li.tabIndex=0;
+        li.setAttribute('role','checkbox'); li.setAttribute('aria-label','עמוד '+(i+1));
+        const frame=document.createElement('div'); frame.className='frame';
+        const sheet=document.createElement('div'); sheet.className='sheet p raw';
+        const ph=document.createElement('span'); ph.className='ph'; ph.textContent=i+1; sheet.appendChild(ph);
+        const num=document.createElement('span'); num.className='num'; num.textContent=i+1;
+        const tick=document.createElement('span'); tick.className='tick'; tick.textContent='✓'; tick.setAttribute('aria-hidden','true');
+        frame.append(sheet,num,tick);
+        const lab=document.createElement('div'); lab.className='meta'; lab.textContent='עמוד '+(i+1);
+        li.append(frame,lab);
+        li.addEventListener('click',e=>pmToggle(i,e.shiftKey));
+        li.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();pmToggle(i,e.shiftKey);}});
+        grid.appendChild(li); PM.cards.push(li);
+      }
+      pmUpdate();
+      $('pmodal').hidden=false; $('pmFirst').focus();
+      (async()=>{
+        try{
+          await need('pdfjs');
+          const pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+          try{
+            for(let i=1;i<=Math.min(pdf.numPages,n);i++){
+              if(tok!==PM.token) return;
+              const page=await pdf.getPage(i); const v1=page.getViewport({scale:1});
+              const vp=page.getViewport({scale:300/Math.max(v1.width,v1.height)});
+              const c=document.createElement('canvas'); c.width=Math.round(vp.width); c.height=Math.round(vp.height);
+              const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height);
+              await page.render({canvasContext:g,viewport:vp}).promise; page.cleanup();
+              if(tok!==PM.token) return;
+              const sh=PM.cards[i-1].querySelector('.sheet'); sh.className='sheet raw '+(vp.width>vp.height?'l':'p'); sh.textContent=''; sh.appendChild(c);
+            }
+          }finally{ pdf.destroy(); }
+        }catch(_){}
+      })();
+    });
+  }
+  $('pmFirst').addEventListener('click',()=>{PM.keep=new Set([0]);PM.last=0;pmUpdate();});
+  $('pmAll').addEventListener('click',()=>{PM.keep=new Set([...Array(PM.n).keys()]);pmUpdate();});
+  $('pmNone').addEventListener('click',()=>{PM.keep=new Set();pmUpdate();});
+  $('pmCancel').addEventListener('click',()=>pmClose(null));
+  $('pmSave').addEventListener('click',()=>pmClose([...PM.keep].sort((a,b)=>a-b)));
+  $('pmodal').addEventListener('click',e=>{if(e.target===$('pmodal')) pmClose(null);});
+  $('pmodal').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();pmClose(null);}});
+  window.__mh2={detect:detectDoc,deliver:deliverFiles,pickPages,view:viewDoc};
+
+  /* ---------- Page editor: one row per page, split and delete ---------- */
+  {
+    const E={file:null,bytes:null,src:null,n:0,sel:new Set(),last:null,token:0,rows:[],pdf:null,names:[]};
+    const tbody=$('epages'), work=$('ework'), epicker=$('epicker'), edrop=$('edrop');
+    const est=(t,cls)=>{const s=$('estatus');s.textContent=t;s.className='status'+(cls?' '+cls:'');};
+    const ebar=f=>{$('ebar').style.width=Math.round(f*100)+'%';};
+    const ebase=()=>E.file?base(E.file):'קובץ';
+    const sorted=()=>[...E.sel].sort((a,b)=>a-b);
+    const safe=t=>t.replace(/[\\/:*?"<>|]/g,'-').replace(/\s+/g,' ').trim();
+
+    async function getPdfjs(tok){
+      if(E.pdf) return E.pdf;
+      await need('pdfjs');
+      const pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(E.bytes.slice(0))}).promise;
+      if(tok!==E.token){ pdf.destroy(); return null; }
+      E.pdf=pdf; return pdf;
+    }
+
+    function updateSel(){
+      E.rows.forEach((r,i)=>{const on=E.sel.has(i); r.tr.classList.toggle('sel',on); r.chk.checked=on;});
+      const k=E.sel.size;
+      if(E.n){
+        $('esumMain').textContent=`${k} מסומנים מתוך ${E.n}`;
+        $('esumSub').textContent=k===E.n?'כל העמודים מסומנים, אז אי אפשר למחוק את כולם':k?'אפשר למחוק אותם או לשמור רק אותם':'מסמנים עמודים בתיבה כדי למחוק או לשמור אותם';
+      }
+      $('edel').disabled=!k||k===E.n; $('eext').disabled=!k;
+    }
+    function toggle(i,shift,on){
+      if(shift&&E.last!=null){const a=Math.min(E.last,i),b=Math.max(E.last,i),v=on!==undefined?on:!E.sel.has(i);for(let k=a;k<=b;k++){v?E.sel.add(k):E.sel.delete(k);}}
+      else{ const v=on!==undefined?on:!E.sel.has(i); v?E.sel.add(i):E.sel.delete(i); }
+      E.last=i; updateSel();
+    }
+    function showName(i){
+      const r=E.rows[i], nm=E.names[i];
+      if(document.activeElement!==r.inp) r.inp.value=nm.name||'';
+      r.inp.placeholder='עמוד '+(i+1);
+      r.st.className='nstate'+(nm.state==='none'?' miss':'');
+      r.st.textContent=nm.state==='pending'?'מזהה…':nm.state==='edited'?'נערך ידנית':nm.state==='cont'?'המשך של העמוד הקודם':nm.state==='none'?'לא זוהה, הקובץ ייקרא "עמוד '+(i+1)+'"':nm.how||'';
+    }
+    function buildRows(){
+      tbody.textContent=''; E.rows=[];
+      for(let i=0;i<E.n;i++){
+        const tr=document.createElement('tr');
+        const td=()=>document.createElement('td');
+        const c1=td(); const chk=document.createElement('input'); chk.type='checkbox'; chk.className='chk'; chk.id='pg-'+i; chk.setAttribute('aria-label','סימון עמוד '+(i+1));
+        chk.addEventListener('click',e=>{toggle(i,e.shiftKey,chk.checked);});
+        c1.appendChild(chk);
+        const c2=td(); c2.className='pnum'; c2.textContent=i+1;
+        const c3=td(); const th=document.createElement('div'); th.className='thumb'; th.textContent=i+1; c3.appendChild(th);
+        const c4=td(); c4.className='namec';
+        const inp=document.createElement('input'); inp.type='text'; inp.className='dname'; inp.id='pn-'+i; inp.setAttribute('aria-label','שם הקובץ עבור עמוד '+(i+1));
+        inp.addEventListener('input',()=>{E.names[i]={name:inp.value.trim(),state:'edited'}; showName(i);});
+        const st=document.createElement('div'); st.className='nstate';
+        c4.append(inp,st);
+        const c5=td(); const v=document.createElement('button'); v.type='button'; v.textContent='עיון'; v.setAttribute('aria-label','עיון בעמוד '+(i+1));
+        v.addEventListener('click',()=>window.__mh2.view(E.file,(E.names[i].name||('עמוד '+(i+1))),'pdf',null,null,[i]));
+        c5.appendChild(v);
+        tr.append(c1,c2,c3,c4,c5);
+        tbody.appendChild(tr); E.rows.push({tr,chk,th,inp,st});
+        showName(i);
+      }
+      updateSel();
+    }
+
+    /* Read each page: employee name on a payslip, otherwise supplier and document type */
+    const rev=t=>[...t].reverse().join('');
+    const HINTS=['תלוש','שכר','עובד','ברוטו','נטו','ניכויים','תשלומים','חשבונית','קבלה','תאריך','לתשלום'];
+    async function pageLines(pdf,i,reverse){
+      const page=await pdf.getPage(i); const tc=await page.getTextContent(); page.cleanup();
+      const items=tc.items.filter(it=>it.str&&it.str.trim()).map(it=>({s:normQ(reverse?rev(it.str):it.str),x:it.transform[4],y:it.transform[5]}));
+      items.sort((a,b)=>b.y-a.y||b.x-a.x);
+      const lines=[];
+      for(const it of items){const L=lines[lines.length-1]; if(L&&Math.abs(L.y-it.y)<3) L.items.push(it); else lines.push({y:it.y,items:[it]});}
+      return lines.map(L=>L.items.sort((a,b)=>b.x-a.x).map(t=>t.s.trim()).join(' ').replace(/\s+/g,' '));
+    }
+    async function pageCanvas(pdf,i){
+      const page=await pdf.getPage(i); const v1=page.getViewport({scale:1});
+      const vp=page.getViewport({scale:2000/Math.max(v1.width,v1.height)});
+      const c=document.createElement('canvas'); c.width=Math.round(vp.width); c.height=Math.round(vp.height);
+      const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height);
+      await page.render({canvasContext:g,viewport:vp}).promise; page.cleanup(); return c;
+    }
+    const STOP=/\s(?:ת\.?\s?ז|תעודת\s?זהות|מס['׳]?\s?עובד|מספר|כתובת|תאריך|מחלקה|דרגה|תפקיד|ותק|בנק|סניף|חשבון|מצב\s?משפחתי|תחילת\s?עבודה|שם\s?משפחה|שם\s?פרטי).*$/;
+    function cleanName(v){
+      v=(' '+v).replace(STOP,'').replace(/[0-9|:;,()\[\]\/\\_]+/g,' ').replace(/\s+/g,' ').trim();
+      return v.split(' ').filter(w=>/[א-ת]/.test(w)).slice(0,4).join(' ');
+    }
+    function findName(lines){
+      for(let k=0;k<lines.length;k++){
+        const m=lines[k].match(/שם\s*(?:ה)?עובד(?:\/ת|ת)?\s*[:\-–]?\s*(.*)$/);
+        if(m){ let v=cleanName(m[1]); if(!v&&lines[k+1]) v=cleanName(lines[k+1]); if(v) return v; }
+      }
+      let first='',last='';
+      for(const l of lines){
+        let m=l.match(/שם\s*פרטי\s*[:\-–]?\s*([א-ת'"׳״\-]+)/); if(m&&!first) first=m[1];
+        m=l.match(/שם\s*משפחה\s*[:\-–]?\s*([א-ת'"׳״\-]+)/); if(m&&!last) last=m[1];
+      }
+      if(first||last) return (first+' '+last).trim();
+      for(let k=0;k<lines.length;k++){
+        const m=lines[k].match(/לכבוד\s*[:\-–]?\s*(.*)$/);
+        if(m){ let v=cleanName(m[1]); if(!v&&lines[k+1]) v=cleanName(lines[k+1]); if(v) return v; }
+      }
+      return '';
+    }
+    function findMonth(lines){
+      const t=lines.join(' ');
+      let m=t.match(/(?:לחודש|חודש|תקופה)\s*[:\-–]?\s*(\d{1,2})\s*[\/.\-]\s*(\d{4}|\d{2})/);
+      if(m) return m[1].padStart(2,'0')+'-'+m[2];
+      m=t.match(/(ינואר|פברואר|מרץ|מרס|אפריל|מאי|יוני|יולי|אוגוסט|ספטמבר|אוקטובר|נובמבר|דצמבר)\s*(\d{4})/);
+      return m?m[1]+' '+m[2]:'';
+    }
+    function pageLabel(lines){
+      const t=lines.join(' ');
+      const slip=/תלוש|משכורת|ברוטו|ניכויי?ם\s*ממשכורת|שכר\s*נטו/.test(t);
+      if(slip){
+        const name=findName(lines);
+        if(name){ const m=findMonth(lines); return {name:safe(name+' - תלוש'+(m?' '+m:'')),how:'שם העובד מתוך התלוש',slip:true}; }
+        return {name:'',slip:true};
+      }
+      const sup=docSupplier(lines), type=docType(lines), num=docNumber(lines);
+      if(sup||type) return {name:safe([sup,[type,num].filter(Boolean).join(' ')].filter(Boolean).join(' - ')),how:'זוהה מתוך המסמך'};
+      const name=findName(lines);
+      if(name) return {name:safe(name),how:'זוהה מתוך המסמך'};
+      return {name:''};
+    }
+    async function detectPages(tok){
+      try{
+        const pdf=await getPdfjs(tok); if(!pdf) return;
+        let sample='';
+        for(let i=1;i<=Math.min(2,E.n);i++){const tc=await (await pdf.getPage(i)).getTextContent(); sample+=normQ(tc.items.map(t=>t.str).join(' '));}
+        const reverse=HINTS.filter(h=>sample.includes(rev(h))).length>HINTS.filter(h=>sample.includes(h)).length;
+        let found=0, prevSlip=false;
+        for(let i=1;i<=E.n;i++){
+          if(tok!==E.token) return;
+          if(E.names[i-1].state==='edited') continue;
+          let lines=await pageLines(pdf,i,reverse), how='';
+          if(lines.join('').replace(/\s/g,'').length<20){
+            try{ lines=await ocrLines(await pageCanvas(pdf,i)); how=' (מתוך סריקה)'; }catch(_){ lines=[]; }
+          }
+          if(tok!==E.token) return;
+          if(E.names[i-1].state==='edited') continue;
+          const r=lines.length?pageLabel(lines):{name:''};
+          const prev=E.names[i-2];
+          if(!r.name&&r.slip&&prevSlip&&prev&&prev.name){ E.names[i-1]={name:prev.name,state:'cont'}; }
+          else if(r.name){ E.names[i-1]={name:r.name,state:'done',how:r.how+how}; found++; }
+          else E.names[i-1]={name:'',state:'none'};
+          prevSlip=!!r.slip;
+          showName(i-1);
+        }
+        if(tok===E.token){
+          est(found?`זוהו שמות ב־${found} עמודים. אפשר לתקן כל שם לפני הפיצול.`:'לא זוהו שמות בקובץ הזה. אפשר להקליד אותם ידנית בשורות.',found?'ok':'');
+        }
+      }catch(_){
+        if(tok===E.token){ E.names.forEach((nm,i)=>{ if(nm.state==='pending'){ E.names[i]={name:'',state:'none'}; showName(i);} }); }
+      }
+    }
+    async function thumbs(tok){
+      try{
+        const pdf=await getPdfjs(tok); if(!pdf) return;
+        for(let i=1;i<=Math.min(pdf.numPages,E.n);i++){
+          if(tok!==E.token) return;
+          const page=await pdf.getPage(i); const v1=page.getViewport({scale:1});
+          const vp=page.getViewport({scale:140/Math.max(v1.width,v1.height)});
+          const c=document.createElement('canvas'); c.width=Math.round(vp.width); c.height=Math.round(vp.height);
+          const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height);
+          await page.render({canvasContext:g,viewport:vp}).promise; page.cleanup();
+          if(tok!==E.token) return;
+          const th=E.rows[i-1].th; th.textContent=''; th.appendChild(c);
+        }
+      }catch(_){}
+    }
+    async function openPdf(f){
+      const tok=++E.token; ebar(0); est('טוען את העמודים…');
+      try{
+        const buf=await f.arrayBuffer();
+        const src=await window.PDFLib.PDFDocument.load(buf.slice(0),{ignoreEncryption:true});
+        if(tok!==E.token) return;
+        if(E.pdf){ try{E.pdf.destroy();}catch(_){} }
+        const n=src.getPageCount();
+        Object.assign(E,{file:f,bytes:buf,src,n,sel:new Set(),last:null,pdf:null,names:Array.from({length:n},()=>({name:'',state:'pending'}))});
+        $('ename').textContent=f.name; $('ecount').textContent=`· ${n} עמודים`;
+        work.hidden=false; edrop.hidden=true;
+        buildRows(); est('מזהה את השמות בעמודים…');
+        await thumbs(tok); await detectPages(tok);
+      }catch(_){ if(tok===E.token) est('לא הצלחתי לפתוח את הקובץ. ודאו שזה קובץ PDF תקין.','err'); }
+    }
+    async function pickFile(files){
+      files=await Promise.all([...files].map(x=>window.__nf(x)));
+      const f=files.find(x=>x.type==='application/pdf'||/\.pdf$/i.test(x.name));
+      if(!f){ est('כאן עובדים עם קובץ PDF. בחרו קובץ PDF.','err'); return; }
+      openPdf(f);
+    }
+    function closeFile(){
+      E.token++; if(E.pdf){ try{E.pdf.destroy();}catch(_){} }
+      Object.assign(E,{file:null,bytes:null,src:null,n:0,sel:new Set(),last:null,rows:[],pdf:null,names:[]});
+      tbody.textContent=''; work.hidden=true; edrop.hidden=false; est(''); ebar(0);
+      $('esumMain').textContent='אין קובץ פתוח'; $('esumSub').textContent='גררו קובץ PDF כדי להתחיל'; updateSel();
+    }
+    async function build(idx){
+      const {PDFDocument}=window.PDFLib; const out=await PDFDocument.create();
+      (await out.copyPages(E.src,idx)).forEach(pg=>out.addPage(pg));
+      return new Blob([await out.save()],{type:'application/pdf'});
+    }
+    async function deliver(outs,zipName){
+      const r=await deliverFiles(outs,zipName); est(r.msg,r.cls);
+    }
+    async function run(fn){
+      [$('edel'),$('eext'),$('esplitgo')].forEach(b=>b.disabled=true);
+      try{ await fn(); }
+      catch(e){ est((e&&e.userMsg)||'משהו השתבש. נסו שוב.','err'); }
+      finally{ $('esplitgo').disabled=false; updateSel(); }
+    }
+    function parseRanges(txt){
+      const parts=txt.replace(/\s*[-–]\s*/g,'-').split(/[,;\s]+/).filter(Boolean);
+      if(!parts.length) throw {userMsg:'כתבו טווחי עמודים, למשל 1-3, 4-6, 7'};
+      return parts.map(p=>{
+        const m=p.match(/^(\d+)(?:-(\d+))?$/);
+        if(!m) throw {userMsg:`לא הבנתי את "${p}". כתבו למשל 1-3, 4-6, 7`};
+        let a=+m[1], b=m[2]?+m[2]:a; if(a>b)[a,b]=[b,a];
+        if(a<1||b>E.n) throw {userMsg:`בקובץ יש ${E.n} עמודים, והטווח ${p} יוצא ממנו.`};
+        return [a,b];
+      });
+    }
+
+    $('edel').addEventListener('click',()=>run(async()=>{
+      const keep=[]; for(let i=0;i<E.n;i++) if(!E.sel.has(i)) keep.push(i);
+      est('בונה את הקובץ…');
+      await deliver([{name:ebase()+' - ערוך.pdf',blob:await build(keep)}]);
+    }));
+    $('eext').addEventListener('click',()=>run(async()=>{
+      est('בונה את הקובץ…');
+      await deliver([{name:ebase()+' - עמודים נבחרים.pdf',blob:await build(sorted())}]);
+    }));
+    $('esplitgo').addEventListener('click',()=>run(async()=>{
+      const mode=document.querySelector('input[name="emode"]:checked').value;
+      let groups;
+      if(mode==='each'){
+        const join=$('ejoin').checked; groups=[];
+        for(let i=0;i<E.n;i++){
+          const nm=(E.names[i]&&E.names[i].name)||'';
+          const prev=groups[groups.length-1];
+          if(join&&nm&&prev&&prev.name===nm) prev.idx.push(i);
+          else groups.push({name:nm||('עמוד '+(i+1)),idx:[i]});
+        }
+      }else{
+        groups=parseRanges($('eranges').value).map(([a,b])=>({name:a===b?`${ebase()} - עמוד ${a}`:`${ebase()} - עמודים ${a}-${b}`,idx:Array.from({length:b-a+1},(_,k)=>a-1+k)}));
+      }
+      const outs=[], used={};
+      for(let k=0;k<groups.length;k++){
+        const g=groups[k]; est(`בונה קובץ ${k+1} מתוך ${groups.length}…`); ebar((k+1)/groups.length);
+        let n=safe(g.name).replace(/\.pdf$/i,'')||('עמוד '+(g.idx[0]+1));
+        if(used[n]){used[n]++; n+=` (${used[n]})`;} else used[n]=1;
+        outs.push({name:n+'.pdf',blob:await build(g.idx)});
+        await new Promise(r=>setTimeout(r,0));
+      }
+      await deliver(outs,ebase()+' - מפוצל.zip');
+    }));
+    document.querySelectorAll('input[name="emode"]').forEach(r=>r.addEventListener('change',()=>{
+      const on=document.querySelector('input[name="emode"]:checked').value==='ranges';
+      $('eranges').disabled=!on; $('ejoin').disabled=on; if(on) $('eranges').focus();
+    }));
+    $('eall').addEventListener('click',()=>{for(let i=0;i<E.n;i++)E.sel.add(i);updateSel();});
+    $('enone').addEventListener('click',()=>{E.sel.clear();updateSel();});
+    $('eother').addEventListener('click',closeFile);
+    edrop.addEventListener('click',()=>epicker.click());
+    edrop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();epicker.click();}});
+    epicker.addEventListener('change',()=>{if(epicker.files.length)pickFile(epicker.files);epicker.value='';});
+    ['dragenter','dragover'].forEach(ev=>edrop.addEventListener(ev,e=>{e.preventDefault();edrop.classList.add('over');}));
+    ['dragleave','drop'].forEach(ev=>edrop.addEventListener(ev,()=>edrop.classList.remove('over')));
+    edrop.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();if(e.dataTransfer.files.length)pickFile(e.dataTransfer.files);});
+    document.addEventListener('drop',e=>{if($('p-edit').hidden)return;e.preventDefault();if(e.dataTransfer&&e.dataTransfer.files.length)pickFile(e.dataTransfer.files);});
+  }
+  render();
+})();
+</script>
+
+</body>
+</html>
