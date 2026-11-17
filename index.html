@@ -3,8 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="מהדק: איחוד קבצים ל־PDF להדפסה, המרת קבצים, ופיצול ומחיקת עמודים. הכול נעשה בדפדפן, והקבצים לא נשלחים לשום מקום.">
-<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="description" content="מהדק הוא כלי חינמי בעברית לאיחוד קבצי PDF ותמונות לקובץ אחד להדפסה, פיצול תלושי שכר לקובץ לכל עובד, זיהוי ספק וסוג חשבונית, והמרת Word, Excel ותמונות ל־PDF. הקבצים לא עולים לשום שרת.">
+<link rel="canonical" href="https://fouadrhail.github.io/mahdek/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="מהדק">
+<meta property="og:title" content="מהדק – איחוד PDF, פיצול תלושים והמרת קבצים בחינם">
+<meta property="og:description" content="מהדק הוא כלי חינמי בעברית לאיחוד קבצי PDF ותמונות לקובץ אחד להדפסה, פיצול תלושי שכר לקובץ לכל עובד, זיהוי ספק וסוג חשבונית, והמרת Word, Excel ותמונות ל־PDF. הקבצים לא עולים לשום שרת.">
+<meta property="og:url" content="https://fouadrhail.github.io/mahdek/">
+<meta property="og:image" content="https://fouadrhail.github.io/mahdek/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "מהדק", "url": "https://fouadrhail.github.io/mahdek/", "applicationCategory": "BusinessApplication", "operatingSystem": "Windows, macOS, Android, iOS", "inLanguage": "he", "description": "מהדק הוא כלי חינמי בעברית לאיחוד קבצי PDF ותמונות לקובץ אחד להדפסה, פיצול תלושי שכר לקובץ לכל עובד, זיהוי ספק וסוג חשבונית, והמרת Word, Excel ותמונות ל־PDF. הקבצים לא עולים לשום שרת.", "image": "https://fouadrhail.github.io/mahdek/og-image.png", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "ILS"}, "featureList": ["איחוד קבצי PDF ותמונות לקובץ אחד להדפסה", "פיצול PDF לקובץ לכל עמוד", "פיצול תלושי שכר לפי שם העובד", "זיהוי ספק וסוג חשבונית", "המרת Word ו־Excel ל־PDF", "המרת PDF לתמונות"]}</script>
 <meta name="theme-color" content="#2340c4">
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
@@ -31,7 +42,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load',function(){
   });
 }); }
 </script>
-<title>מהדק</title>
+<title>מהדק – איחוד PDF, פיצול תלושים והמרת קבצים בחינם</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Secular+One&display=swap">
@@ -286,6 +297,12 @@ button:disabled{opacity:.4;cursor:not-allowed}
 @media (max-width:520px){.etable col.c-th{width:0;visibility:collapse}.etable th:nth-child(3),.etable td:nth-child(3){display:none}}
 .updbar{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:60;background:var(--cobalt);color:var(--cobalt-ink);border-radius:12px;padding:10px 12px 10px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 12px 30px -10px rgba(0,0,0,.45);max-width:calc(100% - 32px);flex-wrap:wrap}
 .updbar button{background:var(--cobalt-ink);color:var(--cobalt);border:0;font-weight:700}
+.about{margin-top:28px;display:flex;flex-direction:column;gap:14px}
+.about h2{font-family:var(--font-display);font-weight:400;font-size:1.35rem;margin:0}
+.about-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.about-grid>div{background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:12px;box-shadow:0 0 0 1px var(--rule);padding:14px 16px}
+.about h3{font-size:1rem;margin:0 0 4px}
+.about p{margin:0;color:var(--muted);font-size:.9rem;max-width:65ch}
 .go.alt{background:var(--paper);color:var(--bad);border-color:var(--bad)}
 .hint{color:var(--muted);font-size:.85rem;margin:0}
 @media (max-width:760px){
@@ -501,11 +518,22 @@ button:disabled{opacity:.4;cursor:not-allowed}
       </div>
     </div>
   </div>
+  <section class="about" aria-labelledby="aboutTitle">
+    <h2 id="aboutTitle">מה אפשר לעשות במהדק</h2>
+    <div class="about-grid">
+      <div><h3>איחוד קבצים ל־PDF אחד להדפסה</h3><p>גוררים חשבוניות, קבלות, צילומים מהטלפון וקבצי PDF, מסדרים, ומקבלים קובץ PDF אחד בגודל A4. תמונות נכנסות לעמוד שלם בלי חיתוך ובלי עיוות. אין הגבלה על מספר הקבצים.</p></div>
+      <div><h3>פיצול תלושי שכר לפי שם העובד</h3><p>קובץ אחד עם תלושים של כל העובדים מתפצל לקובץ PDF לכל עובד, בשם העובד והחודש. תלוש של שני עמודים נשאר בקובץ אחד.</p></div>
+      <div><h3>זיהוי ספק וסוג מסמך</h3><p>מהדק קורא כל מסמך ונותן לו שם לפי הספק וסוג המסמך: חשבונית מס, חשבונית מס קבלה, קבלה, ריכוז או חשבונית זיכוי. גם בצילומים ובסריקות.</p></div>
+      <div><h3>המרת קבצים</h3><p>Word ו־Excel ל־PDF, תמונות ל־PDF, PDF לתמונות JPG או PNG, והמרה בין פורמטים של תמונות.</p></div>
+      <div><h3>פיצול ומחיקת עמודים</h3><p>מוחקים עמודים מיותרים מ־PDF, שומרים רק את העמודים שצריך, או מפצלים קובץ לפי טווחי עמודים.</p></div>
+      <div><h3>פרטי ובטוח</h3><p>כל העבודה נעשית בדפדפן, על המחשב שלכם. הקבצים לא עולים לשום שרת, ואף אחד אחר לא רואה אותם. אחרי ההתקנה מהדק עובד גם בלי אינטרנט.</p></div>
+    </div>
+  </section>
   <div class="updbar" id="updbar" hidden role="status">
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver">מהדק · גרסה 2.6 · עודכן 17.11.2026</footer>
+  <footer class="ver">מהדק · גרסה 2.7 · עודכן 17.11.2026</footer>
 </div>
 
 <script>
