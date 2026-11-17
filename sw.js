@@ -1,5 +1,5 @@
 /* מהדק: app shell is network-first so updates arrive at once; libraries are cached so the app also works offline. */
-const APP='mahdek-app-v2', LIBS='mahdek-libs-v1';
+const APP='mahdek-app-v3', LIBS='mahdek-libs-v1';
 const SHELL=['./','./index.html','./manifest.webmanifest','./favicon.svg','./icon-192.png','./icon-512.png'];
 const CDN='https://cdnjs.cloudflare.com/ajax/libs/';
 const LIB_URLS=[CDN+'pdf-lib/1.17.1/pdf-lib.min.js',CDN+'pdf.js/3.11.174/pdf.worker.min.js',CDN+'pdf.js/3.11.174/pdf.min.js',
@@ -18,7 +18,7 @@ self.addEventListener('fetch',e=>{
   const r=e.request; if(r.method!=='GET') return;
   const u=new URL(r.url);
   if(u.origin===self.location.origin){
-    e.respondWith(fetch(r).then(res=>{ const cp=res.clone(); caches.open(APP).then(c=>c.put(r,cp)); return res; })
+    e.respondWith(fetch(r,{cache:'no-cache'}).then(res=>{ const cp=res.clone(); caches.open(APP).then(c=>c.put(r,cp)); return res; })
       .catch(()=>caches.match(r).then(m=>m||caches.match('./index.html'))));
     return;
   }
