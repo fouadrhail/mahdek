@@ -781,28 +781,6 @@ body[data-tab="convert"]{--sec:var(--sage)} body[data-tab="edit"]{--sec:var(--bl
 #s-home[hidden]{display:none}
 .hm-top h2{margin:0;font-weight:500;font-size:1.45rem;color:var(--ink)}
 .hm-date{margin:2px 0 0;color:var(--muted);font-size:.92rem}
-.hm-agent{background:var(--paper);border:1px solid var(--rule);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
-.hm-agent::before{content:"";position:absolute;inset-block:0;inset-inline-start:0;width:4px;background:var(--navy,var(--ink))}
-.hm-ag-head{display:flex;align-items:center;gap:11px}
-.hm-ag-av{width:40px;height:40px;border-radius:50%;background:var(--navy,var(--ink));color:var(--paper);display:grid;place-items:center;font-weight:600;font-size:1.05rem;flex:none}
-.hm-ag-head b{display:block;font-size:1rem;color:var(--ink)}
-.hm-ag-head span{font-size:.8rem;color:var(--muted)}
-.hm-ag-at{margin-inline-start:auto;font-size:.78rem!important;white-space:nowrap}
-.hm-ag-msg{margin:0;font-size:1rem;line-height:1.6;color:var(--ink)}
-.hm-today{margin:0;padding:0;list-style:none;counter-reset:t;display:flex;flex-direction:column;gap:2px}
-.hm-today li{counter-increment:t;display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--rule);font-size:.93rem;line-height:1.5}
-.hm-today li::before{content:counter(t);width:22px;height:22px;border-radius:50%;background:var(--soft);color:var(--muted);display:grid;place-items:center;font-size:.75rem;font-weight:600;margin-top:1px}
-.hm-today li span{overflow-wrap:anywhere;color:var(--ink)}
-.hm-link{font:inherit;font-size:.8rem;color:var(--muted);background:none;border:1px solid var(--rule);border-radius:8px;padding:3px 9px;cursor:pointer;white-space:nowrap}
-.hm-link:hover{color:var(--ink);border-color:var(--ink)}
-.hm-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.hm-tile{background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:11px 14px;display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--ink);min-width:0}
-a.hm-tile:hover{border-color:var(--ink)}
-.hm-tile .k{font-size:.78rem;color:var(--muted)}
-.hm-tile b{font-size:1.45rem;font-weight:500;line-height:1.2;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hm-tile .s{font-size:.78rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hm-tile.bad b{color:var(--ml-flag)}
-.hm-tile.ok b{color:var(--ml-ok)}
 .hm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;align-items:start}
 .hm-card{background:var(--paper);border:1px solid var(--rule);border-radius:16px;padding:14px 16px;min-width:0}
 .hm-card h3{margin:0 0 8px;font-size:.98rem;font-weight:600;color:var(--ink)}
@@ -825,7 +803,58 @@ a.hm-tile:hover{border-color:var(--ink)}
 .hm-health li.ok i{color:var(--ml-ok)}.hm-health li.bad i{color:var(--ml-flag)}.hm-health li.na i{color:var(--muted)}
 .hm-health small{display:block;color:var(--muted);font-size:.76rem}
 .hm-empty{font-size:.86rem;color:var(--muted);padding:6px 0;margin:0}
-@media (max-width:720px){.hm-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.hm-agent{padding:14px}}
+
+.hm-link{font:inherit;font-size:.8rem;color:var(--muted);background:none;border:1px solid var(--rule);border-radius:8px;padding:3px 9px;cursor:pointer;white-space:nowrap}
+.hm-link:hover{color:var(--ink);border-color:var(--ink)}
+/* office plan */
+.of{display:flex;flex-direction:column;gap:12px}
+.of-plan{--line:#b9c3d6;--grid:rgba(44,58,87,.05);position:relative;border:2px solid var(--navy,var(--ink));border-radius:14px;padding:26px 18px 18px;
+  background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px;display:flex;flex-direction:column;gap:30px}
+.of-label{position:absolute;top:-10px;inset-inline-start:14px;background:var(--paper);padding:0 8px;font-size:.72rem;letter-spacing:.06em;color:var(--muted)}
+.of-room-mgr{position:relative;align-self:center;width:min(560px,100%);border:1.5px solid var(--line);border-radius:12px;padding:16px 14px 14px;background:rgba(255,255,255,.55)}
+.of-room-mgr::after{content:"";position:absolute;bottom:-32px;left:50%;height:30px;border-inline-start:2px dashed var(--line)}
+.of-open{position:relative;border-top:2px dashed var(--line);padding-top:24px}
+.of-open>.of-label{top:-11px}
+.of-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.of-row .of-desk{position:relative}
+.of-row .of-desk::before{content:"";position:absolute;top:-26px;left:50%;height:24px;border-inline-start:2px dashed var(--line)}
+.of-door{position:absolute;bottom:-2px;inset-inline-end:26px;width:30px;height:30px;color:var(--navy,var(--ink));background:var(--paper)}
+.of-desk{font:inherit;text-align:start;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:12px;padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:8px;min-width:0;transition:border-color .15s,box-shadow .15s}
+.of-desk:hover{border-color:var(--ink);box-shadow:0 8px 20px -16px rgba(0,0,0,.4)}
+.of-desk.on{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink) inset}
+.of-desk.soon{opacity:.6;border-style:dashed}
+.of-who{display:flex;align-items:center;gap:10px;min-width:0}
+.of-seat{position:relative;width:46px;height:40px;flex:none}
+.of-seat svg{position:absolute;inset:0;width:46px;height:40px;color:var(--line)}
+.of-av{position:absolute;left:11px;top:13px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:.78rem;font-weight:600}
+.of-dot{position:absolute;right:2px;bottom:2px;width:9px;height:9px;border-radius:50%;border:2px solid var(--paper);background:#9aa3ad}
+.of-dot.ok{background:#3a9266}.of-dot.run{background:#d39b2a}.of-dot.err{background:#d0574a}
+.of-nm{min-width:0}
+.of-nm b{display:block;font-size:.95rem;line-height:1.25}
+.of-nm span{display:block;font-size:.76rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.of-sum{font-size:.84rem;line-height:1.45;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.9em}
+.of-st{display:flex;gap:6px;flex-wrap:wrap}
+.of-st span{font-size:.74rem;background:var(--soft);border-radius:7px;padding:2px 8px;color:var(--muted);white-space:nowrap}
+.of-st b{color:var(--ink);font-weight:600}
+.of-st .bad b{color:var(--ml-flag)}
+.of-when{font-size:.72rem;color:var(--muted)}
+.of-mgr{cursor:default;border:0;background:transparent;padding:0;box-shadow:none!important}
+.of-mgr .of-sum{-webkit-line-clamp:3;min-height:0;font-size:.95rem}
+.of-mgr .of-nm b{font-size:1.05rem}
+.of-today{margin:2px 0 0;padding:0;list-style:none;counter-reset:t;display:flex;flex-direction:column}
+.of-today li{counter-increment:t;display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:start;padding:6px 0;border-top:1px solid var(--rule);font-size:.88rem;line-height:1.45}
+.of-today li::before{content:counter(t);width:20px;height:20px;border-radius:50%;background:var(--soft);color:var(--muted);display:grid;place-items:center;font-size:.72rem;font-weight:600}
+.of-detail{background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.of-detail h3{margin:0;font-size:1rem;font-weight:600}
+.of-detail p{margin:0;font-size:.9rem;line-height:1.55}
+.of-detail ul{margin:0;padding:0;list-style:none}
+.of-detail li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:7px 0;border-top:1px solid var(--rule);font-size:.88rem;line-height:1.45}
+.of-detail li:first-child{border-top:0}
+.of-detail .of-acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-start}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .of-plan{--line:#4a5470;--grid:rgba(255,255,255,.04)}:root:not([data-theme="light"]) .of-room-mgr{background:rgba(255,255,255,.03)}}
+:root[data-theme="dark"] .of-plan{--line:#4a5470;--grid:rgba(255,255,255,.04)}:root[data-theme="dark"] .of-room-mgr{background:rgba(255,255,255,.03)}
+@media (max-width:860px){.of-row{grid-template-columns:repeat(2,minmax(0,1fr))}.of-row .of-desk::before,.of-room-mgr::after{display:none}.of-open{border-top-style:solid}}
+@media (max-width:460px){.of-row{grid-template-columns:minmax(0,1fr)}.of-plan{padding:24px 12px 14px}}
 /* email analysis */
 :root{--ml-flag:#b4373a;--ml-flag-bg:#fbeaea;--ml-ok:#2f7a52;--ml-ok-bg:#e8f3ec;--ml-tab:#e8dcc4;--ml-folder:#f6efe1}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ml-flag:#ff9496;--ml-flag-bg:#3a1d1f;--ml-ok:#86d3a6;--ml-ok-bg:#183126;--ml-tab:#4a4232;--ml-folder:#2a261e}}
@@ -1208,24 +1237,23 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <div class="hm-top">
       <div><h2 id="hmHello">שלום פואד</h2><p class="hm-date" id="hmDate"></p></div>
     </div>
-    <article class="hm-agent" id="hmAgent">
-      <div class="hm-ag-head">
-        <span class="hm-ag-av" aria-hidden="true">נ</span>
-        <div><b>נועם</b><span>מנהל המשרד</span></div>
-        <span class="hm-ag-at" id="hmAgAt"></span>
+    <section class="of" aria-label="המשרד">
+      <div class="of-plan" id="ofPlan">
+        <div class="of-room-mgr">
+          <span class="of-label">חדר המנהל</span>
+          <div class="of-desk of-mgr" data-ag="manager" id="ofMgr"></div>
+        </div>
+        <div class="of-open">
+          <span class="of-label">המשרד</span>
+          <div class="of-row" id="ofRow"></div>
+        </div>
+        <svg class="of-door" viewBox="0 0 40 40" aria-hidden="true"><path d="M2 38V2" stroke="currentColor" stroke-width="2"/><path d="M2 2a36 36 0 0 1 36 36" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/></svg>
       </div>
-      <p class="hm-ag-msg" id="hmAgMsg">טוען את דוח הבוקר…</p>
-      <ol class="hm-today" id="hmToday"></ol>
-    </article>
-    <div class="hm-tiles">
-      <a class="hm-tile" href="#tasks" id="hmTTasks"><span class="k">משימות להיום</span><b id="hmTasksN">–</b><span class="s" id="hmTasksS"></span></a>
-      <a class="hm-tile" href="#mail" id="hmTMail"><span class="k">תיבת דואר</span><b id="hmMailN">–</b><span class="s" id="hmMailS"></span></a>
-      <div class="hm-tile" id="hmTDl"><span class="k">המועד הקרוב</span><b id="hmDlN">–</b><span class="s" id="hmDlS"></span></div>
-      <div class="hm-tile" id="hmTHealth"><span class="k">מצב המערכת</span><b id="hmHealthN">–</b><span class="s" id="hmHealthS"></span></div>
-    </div>
+      <div class="of-detail" id="ofDetail" hidden></div>
+    </section>
     <div class="hm-grid">
-      <section class="hm-card" id="hmSugBox"><h3>נועם מציע משימות</h3><ul class="hm-sug" id="hmSug"></ul></section>
-      <section class="hm-card" id="hmDrBox"><h3>טיוטות תשובה</h3><p class="hm-hint">נועם לא שולח כלום. מעתיקים, עוברים על הנוסח ושולחים מהמייל.</p><div id="hmDrafts"></div></section>
+      <section class="hm-card" id="hmSugBox"><h3>משימות שהצוות מציע</h3><ul class="hm-sug" id="hmSug"></ul></section>
+      <section class="hm-card" id="hmDrBox"><h3>טיוטות תשובה</h3><p class="hm-hint">הצוות לא שולח כלום. מעתיקים, עוברים על הנוסח ושולחים מהמייל.</p><div id="hmDrafts"></div></section>
       <section class="hm-card" id="hmHeBox"><h3>בדיקות מערכת</h3><ul class="hm-health" id="hmHealth"></ul></section>
     </div>
   </section>
@@ -1314,7 +1342,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 6.2 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 6.3 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -3509,84 +3537,147 @@ window.__nf=normalizeFile;
 </script>
 <script>
 (function(){
-  /* Dashboard: Noam's morning brief (agent/brief.json in the private repo) + live numbers from the other screens. */
+  /* Dashboard: the office team. Each worker writes agents/<id>.json to the private repo; the manager also writes agent/brief.json.
+     Until a worker has run, its desk shows live numbers from the other Mahdek screens. */
   const $=id=>document.getElementById(id);
   const el=(t,c,x)=>{ const e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; };
-  const BK='mahdek.agent.brief.v1', TZ='Asia/Jerusalem';
+  const TZ='Asia/Jerusalem', BK='mahdek.agent.brief.v1', AK='mahdek.agents.v1';
   const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date());
   const dmy=iso=>{ const [y,m,d]=String(iso).slice(0,10).split('-'); return `${+d}.${+m}`+(y!==today().slice(0,4)?'.'+y:''); };
   const days=iso=>Math.round((Date.parse(iso+'T12:00:00Z')-Date.parse(today()+'T12:00:00Z'))/864e5);
-  let brief=null; try{ brief=JSON.parse(localStorage.getItem(BK)||'null'); }catch(_){}
-  let loading=false, lastLoad=0;
+  const fmt=(d,o)=>new Intl.DateTimeFormat('he-IL',{timeZone:TZ,...o}).format(d);
+
+  const TEAM=[
+    {id:'manager',name:'נועם',role:'מנהל המשרד',color:'#2c3a57',run:'07:48',go:null},
+    {id:'mail',name:'מאיה',role:'אחראית מיילים',color:'#3f6fb5',run:'07:06',go:'mail'},
+    {id:'files',name:'איתי',role:'אחראי קבצים',color:'#c0576a',run:'07:20',go:'join'},
+    {id:'reports',name:'דנה',role:'אחראית דיווחים',color:'#3a9266',run:'07:34',go:null},
+    {id:'payroll',name:'עומר',role:'אחראי משכורות',color:'#c58b1f',run:null,go:null,soon:true}];
+  const SEAT='<svg viewBox="0 0 46 40" aria-hidden="true"><rect x="3" y="2" width="40" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="15" y="4" width="16" height="3" rx="1" fill="currentColor"/><path d="M12 38a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
+
+  let brief=null, agents={};
+  try{ brief=JSON.parse(localStorage.getItem(BK)||'null'); }catch(_){}
+  try{ agents=JSON.parse(localStorage.getItem(AK)||'{}')||{}; }catch(_){ agents={}; }
+  window.__mhBrief=brief;
+  let loading=false, lastLoad=0, openAg=null;
 
   function hello(){
-    const h=+new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'numeric',hour12:false}).format(new Date());
+    const h=+fmt(new Date(),{hour:'numeric',hour12:false});
     $('hmHello').textContent=(h<12?'בוקר טוב':h<17?'צהריים טובים':h<21?'ערב טוב':'לילה טוב')+' פואד';
-    $('hmDate').textContent=new Intl.DateTimeFormat('he-IL',{timeZone:TZ,weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());
+    $('hmDate').textContent=fmt(new Date(),{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   }
 
-  async function loadBrief(force){
+  async function load(force){
     const M=window.__mhMail; if(!M||!M.hasToken()||loading) return; if(!force&&Date.now()-lastLoad<120000) return;
     loading=true;
-    try{ const b=await M.get('agent/brief.json',true); lastLoad=Date.now();
-      if(b&&b.kind==='agent-brief'){ brief=b; try{ localStorage.setItem(BK,JSON.stringify(b)); }catch(_){} } }
-    catch(_){ }
+    try{
+      const [b,...rest]=await Promise.all([M.get('agent/brief.json',true).catch(()=>null),...TEAM.map(t=>M.get(`agents/${t.id}.json`,true).catch(()=>null))]);
+      lastLoad=Date.now();
+      if(b&&b.kind==='agent-brief'){ brief=b; window.__mhBrief=b; try{ localStorage.setItem(BK,JSON.stringify(b)); }catch(_){} }
+      TEAM.forEach((t,i)=>{ const a=rest[i]; if(a&&a.kind==='agent-status') agents[t.id]=a; });
+      try{ localStorage.setItem(AK,JSON.stringify(agents)); }catch(_){}
+    }catch(_){}
     loading=false; render();
   }
 
-  function agent(){
-    const msg=$('hmAgMsg'), ol=$('hmToday'); ol.textContent='';
-    const M=window.__mhMail;
-    if(!M||!M.hasToken()){ msg.textContent='כדי שנועם יוכל לדבר איתך כאן, צריך לחבר פעם אחת את תיבת הדואר הפרטית.'; const li=el('li'); li.appendChild(el('span',null,'נכנסים לתיבת דואר ומדביקים את מפתח הגישה.')); const b=el('button','hm-link','לתיבת הדואר'); b.type='button'; b.onclick=()=>{ location.hash='mail'; }; li.appendChild(b); ol.appendChild(li); $('hmAgAt').textContent=''; return; }
-    if(!brief){ msg.textContent='עוד אין דוח בוקר. נועם כותב אותו בימים ראשון–חמישי ב־07:06.'; $('hmAgAt').textContent=''; return; }
-    const at=brief.at?new Date(brief.at):null;
-    $('hmAgAt').textContent=at&&!isNaN(at)?('דוח מ־'+new Intl.DateTimeFormat('he-IL',{timeZone:TZ,day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'}).format(at)):'';
-    msg.textContent=brief.message||'';
-    (brief.today||[]).slice(0,6).forEach(x=>{ const li=el('li'); li.appendChild(el('span',null,x.text||''));
-      if(x.mail&&M.mails().some(m=>m.id===x.mail)){ const b=el('button','hm-link','למייל'); b.type='button'; b.onclick=()=>M.open(x.mail); li.appendChild(b); } else li.appendChild(el('i'));
-      ol.appendChild(li); });
+  /* live numbers from Mahdek itself */
+  function live(id){
+    const M=window.__mhMail, T=window.__mhTasks, conn=!!(M&&M.hasToken());
+    if(id==='mail'){ if(!conn) return {sum:'תיבת הדואר עוד לא מחוברת במחשב הזה.',st:[]};
+      const all=M.mails(), open=all.filter(m=>!M.isDone(m)), fl=open.filter(m=>M.flags(m)>0).length, t=all.filter(m=>m.date===today()).length;
+      return {sum:`${all.length} מיילים בתיבה, ${open.length} עוד לא טופלו.`,st:[['לא טופלו',open.length],['לבדיקה',fl,fl>0],['היום',t]]}; }
+    if(id==='files'){ if(!conn) return {sum:'מחכה לקבצים מתיבת הדואר.',st:[]};
+      const all=M.mails(); let n=0,bad=0,mails=0; all.forEach(m=>{ const f=(m.files||[]).filter(x=>x.path); if(f.length) mails++; n+=f.length; bad+=f.filter(x=>x.flag).length; });
+      return {sum:`${n} קבצים מצורפים ב־${mails} מיילים, מוכנים להידוק.`,st:[['קבצים',n],['עם הערה',bad,bad>0]]}; }
+    if(id==='reports'){ const up=(window.__mhUpcoming||[]).filter(x=>x.date>=today());
+      if(!up.length) return {sum:'אין מועדים קרובים ברשימה.',st:[]};
+      const d=up[0].date, n=days(d), same=up.filter(x=>x.date===d).map(x=>String(x.what).split(' · ')[0]);
+      const in30=up.filter(x=>days(x.date)<=30).length;
+      return {sum:`המועד הקרוב: ${same.join(', ')} ב־${dmy(d)}.`,st:[['בעוד',n===0?'היום':n===1?'מחר':n+' ימים',n<=3],['ב־30 יום',in30]]}; }
+    if(id==='manager'){ const st=[]; if(T){ const c=T.counts().day, tot=c.open+c.done; st.push(['משימות היום',tot?`${c.done}/${tot}`:'0']); if(c.post) st.push(['נדחו',c.post,true]); }
+      const H=window.__mhHealth; if(H&&H.total) st.push(['מערכת',H.bad?`${H.bad} תקלות`:'תקינה',H.bad>0]);
+      return {sum:brief&&brief.message?brief.message:'עוד אין דוח בוקר. הצוות מתחיל לעבוד בימים ראשון–חמישי ב־07:06.',st}; }
+    return {sum:'',st:[]};
   }
 
-  function tiles(){
-    const Tk=window.__mhTasks, M=window.__mhMail;
-    if(Tk){ const c=Tk.counts(); const tot=c.day.open+c.day.done; $('hmTasksN').textContent=tot?`${c.day.done}/${tot}`:'0';
-      $('hmTasksS').textContent=c.day.post?`${c.day.post} נדחו מימים קודמים`:(tot?(c.day.open?`${c.day.open} פתוחות`:'הכול הושלם'):'אין משימות להיום'); }
-    if(M&&M.hasToken()){ const all=M.mails(), open=all.filter(m=>!M.isDone(m)), fl=open.filter(m=>M.flags(m)>0).length, t=all.filter(m=>m.date===today()).length;
-      $('hmMailN').textContent=String(open.length); $('hmMailS').textContent=`לא טופלו · ${fl} עם נקודות לבדיקה`+(t?` · ${t} היום`:''); }
-    else { $('hmMailN').textContent='–'; $('hmMailS').textContent='לא מחובר'; }
-    const up=(window.__mhUpcoming||[]).filter(x=>x.date>=today());
-    if(up.length){ const d=up[0].date, same=up.filter(x=>x.date===d), n=days(d);
-      $('hmDlN').textContent=n===0?'היום':n===1?'מחר':`בעוד ${n} ימים`;
-      $('hmDlS').textContent=`${dmy(d)} · `+same.map(x=>String(x.what).split(' · ')[0]).join(', '); }
+  function statusOf(t){
+    if(t.soon) return {cls:'',txt:'מצטרף בקרוב'};
+    const a=t.id==='manager'?(agents.manager||(brief&&{at:brief.at,status:'ok'})):agents[t.id];
+    if(!a||!a.at) return {cls:'',txt:`עוד לא עבד · מתחיל ב־${t.run}`};
+    const at=new Date(a.at), same=fmt(at,{year:'numeric',month:'2-digit',day:'2-digit'})===fmt(new Date(),{year:'numeric',month:'2-digit',day:'2-digit'});
+    if(a.status==='error') return {cls:'err',txt:'נתקל בבעיה · '+fmt(at,{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})};
+    return {cls:same?'ok':'',txt:(same?'סיים היום ב־':'עבד לאחרונה ')+fmt(at,same?{hour:'2-digit',minute:'2-digit'}:{weekday:'short',hour:'2-digit',minute:'2-digit'})};
+  }
+
+  function desk(t,btn){
+    btn.textContent=''; btn.className='of-desk'+(t.id==='manager'?' of-mgr':'')+(t.soon?' soon':'')+(openAg===t.id?' on':''); btn.dataset.ag=t.id;
+    const a=agents[t.id], L=live(t.id), S=statusOf(t);
+    const who=el('div','of-who'), seat=el('span','of-seat'); seat.innerHTML=SEAT; const av=el('span','of-av',t.name[0]); av.style.background=t.color; seat.appendChild(av); seat.appendChild(el('span','of-dot '+S.cls)); who.appendChild(seat);
+    const nm=el('div','of-nm'); nm.appendChild(el('b',null,t.name)); nm.appendChild(el('span',null,t.role)); who.appendChild(nm); btn.appendChild(who);
+    btn.appendChild(el('div','of-sum',t.soon?'יטפל בקבצי השכר, שעות נוספות ושידור לקופות.':(a&&a.summary&&t.id!=='manager'?a.summary:L.sum)));
+    const st=(a&&Array.isArray(a.stats)&&a.stats.length?a.stats.map(x=>[x.label,x.value,!!x.bad]):L.st);
+    if(st.length){ const box=el('div','of-st'); st.slice(0,3).forEach(([k,v,bad])=>{ const s=el('span',bad?'bad':''); s.appendChild(document.createTextNode(k+' ')); s.appendChild(el('b',null,String(v))); box.appendChild(s); }); btn.appendChild(box); }
+    btn.appendChild(el('div','of-when',S.txt));
+    if(t.id==='manager'&&brief&&brief.today&&brief.today.length){
+      const ol=el('ol','of-today'), M=window.__mhMail;
+      brief.today.slice(0,5).forEach(x=>{ const li=el('li'); li.appendChild(el('span',null,x.text||''));
+        if(x.mail&&M&&M.mails().some(m=>m.id===x.mail)){ const b=el('button','hm-link','למייל'); b.type='button'; b.onclick=()=>M.open(x.mail); li.appendChild(b); } else li.appendChild(el('i'));
+        ol.appendChild(li); });
+      btn.appendChild(ol);
+    }
+  }
+
+  function plan(){
+    desk(TEAM[0],$('ofMgr'));
+    const row=$('ofRow');
+    if(row.children.length!==TEAM.length-1){ row.textContent=''; TEAM.slice(1).forEach(t=>{ const b=el('button','of-desk'); b.type='button'; b.addEventListener('click',()=>{ openAg=openAg===t.id?null:t.id; render(); }); row.appendChild(b); }); }
+    TEAM.slice(1).forEach((t,i)=>desk(t,row.children[i]));
+    detail();
+  }
+
+  function detail(){
+    const box=$('ofDetail'), t=TEAM.find(x=>x.id===openAg); box.hidden=!t; box.textContent=''; if(!t) return;
+    const a=agents[t.id], L=live(t.id);
+    box.appendChild(el('h3',null,`${t.name} · ${t.role}`));
+    if(t.soon){ box.appendChild(el('p',null,'עומר יצטרף כשנבנה את מסך השכר: בדיקת שעות רגילות ונוספות, תלושים ותזכורות לשידור קבצי XML לקופות.')); return; }
+    box.appendChild(el('p',null,(a&&a.summary)||L.sum));
+    const items=(a&&a.items)||[];
+    if(items.length){ const ul=el('ul'), M=window.__mhMail; items.slice(0,8).forEach(x=>{ const li=el('li'); li.appendChild(el('span',null,x.text||''));
+      if(x.mail&&M&&M.mails().some(m=>m.id===x.mail)){ const b=el('button','hm-link','למייל'); b.type='button'; b.onclick=()=>M.open(x.mail); li.appendChild(b); } else li.appendChild(el('i'));
+      ul.appendChild(li); }); box.appendChild(ul); }
+    else box.appendChild(el('p','hm-hint',`עוד אין דוח מ${t.name}. הריצה הקבועה: ראשון–חמישי ב־${t.run}.`));
+    const acts=el('div','of-acts');
+    if(t.go){ const b=el('button','hm-link',t.id==='mail'?'לתיבת הדואר':'למסך ההידוק'); b.type='button'; b.onclick=()=>{ location.hash=t.go; }; acts.appendChild(b); }
+    if(t.id==='reports'){ const b=el('button','hm-link','ליומן המועדים'); b.type='button'; b.onclick=()=>{ const c=$('calBtn'); if(c) c.click(); }; acts.appendChild(b); }
+    if(acts.childNodes.length) box.appendChild(acts);
   }
 
   function health(){
-    const ul=$('hmHealth'); ul.textContent=''; const items=[];
-    const M=window.__mhMail;
+    const ul=$('hmHealth'); ul.textContent=''; const items=[]; const M=window.__mhMail;
     const ra=window.__mhRatesAt?new Date(window.__mhRatesAt):null;
-    if(ra&&!isNaN(ra)){ const h=(Date.now()-ra)/36e5; items.push({ok:h<30?1:0,name:'ריבית ושערים',detail:'עודכנו '+new Intl.DateTimeFormat('he-IL',{timeZone:TZ,day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'}).format(ra)}); }
-    if(M&&M.hasToken()){ const ls=M.lastSync(); items.push({ok:ls?1:-1,name:'תיבת הדואר',detail:ls?'סונכרנה '+new Intl.DateTimeFormat('he-IL',{timeZone:TZ,hour:'2-digit',minute:'2-digit'}).format(new Date(ls)):'עוד לא סונכרנה בפתיחה הזו'}); }
+    if(ra&&!isNaN(ra)){ const h=(Date.now()-ra)/36e5; items.push({ok:h<30?1:0,name:'ריבית ושערים',detail:'עודכנו '+fmt(ra,{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})}); }
+    if(M&&M.hasToken()){ const ls=M.lastSync(); items.push({ok:ls?1:-1,name:'תיבת הדואר',detail:ls?'סונכרנה '+fmt(new Date(ls),{hour:'2-digit',minute:'2-digit'}):'עוד לא סונכרנה בפתיחה הזו'}); }
     else items.push({ok:-1,name:'תיבת הדואר',detail:'לא מחוברת במחשב הזה'});
-    if(brief&&brief.at){ const h=(Date.now()-Date.parse(brief.at))/36e5, wd=new Date().getDay(); items.push({ok:h<26||wd===5||wd===6||(wd===0&&h<74)?1:0,name:'הריצה של נועם',detail:'אחרונה '+new Intl.DateTimeFormat('he-IL',{timeZone:TZ,weekday:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(brief.at))}); }
+    TEAM.filter(t=>!t.soon).forEach(t=>{ const a=t.id==='manager'?(agents.manager||(brief&&{at:brief.at})):agents[t.id]; if(!a||!a.at) return;
+      const h=(Date.now()-Date.parse(a.at))/36e5, wd=new Date().getDay(), fresh=h<26||wd===5||wd===6||(wd===0&&h<74);
+      items.push({ok:a.status==='error'?0:fresh?1:0,name:`הריצה של ${t.name}`,detail:'אחרונה '+fmt(new Date(a.at),{weekday:'short',hour:'2-digit',minute:'2-digit'})}); });
     (brief&&brief.health||[]).forEach(x=>items.push({ok:x.ok?1:0,name:x.name,detail:x.detail}));
-    const bad=items.filter(x=>x.ok===0).length;
+    const bad=items.filter(x=>x.ok===0).length; window.__mhHealth={bad,total:items.length};
     items.forEach(x=>{ const li=el('li',x.ok===1?'ok':x.ok===0?'bad':'na'); li.appendChild(el('i',null,x.ok===1?'✓':x.ok===0?'!':'–')); const d=el('div',null,x.name); if(x.detail) d.appendChild(el('small',null,x.detail)); li.appendChild(d); ul.appendChild(li); });
-    const t=$('hmTHealth'); t.classList.toggle('bad',bad>0); t.classList.toggle('ok',!bad&&items.length>0);
-    $('hmHealthN').textContent=bad?`${bad} לבדיקה`:'תקין'; $('hmHealthS').textContent=`${items.length} בדיקות`;
   }
 
   function sugs(){
-    const ul=$('hmSug'); ul.textContent=''; const Tk=window.__mhTasks, list=(brief&&brief.tasks)||[];
+    const ul=$('hmSug'); ul.textContent=''; const Tk=window.__mhTasks;
+    const list=[...((brief&&brief.tasks)||[])]; TEAM.slice(1).forEach(t=>{ const a=agents[t.id]; if(a&&Array.isArray(a.tasks)) a.tasks.forEach(x=>{ if(!list.some(y=>y.title===x.title)) list.push({...x,by:t.name}); }); });
     $('hmSugBox').hidden=!list.length;
-    list.forEach(x=>{ const li=el('li'), t=el('div','t',x.title||''); if(x.client) t.appendChild(el('span','c',x.client)); li.appendChild(t);
-      const has=Tk&&Tk.has(x.title);
-      const b=el('button','hm-add',has?'נוסף ✓':'הוספה'); b.type='button'; b.disabled=!!has||!Tk;
-      b.onclick=()=>{ if(!Tk) return; Tk.add({title:x.title,client:x.client||'',scope:x.scope||'day',due:x.due||today(),prio:x.prio||0,note:x.note||''}); b.textContent='נוסף ✓'; b.disabled=true; tiles(); };
+    list.slice(0,10).forEach(x=>{ const li=el('li'), t=el('div','t',x.title||''); const meta=[x.client,x.by&&('מ'+x.by)].filter(Boolean).join(' · '); if(meta) t.appendChild(el('span','c',meta)); li.appendChild(t);
+      const has=Tk&&Tk.has(x.title); const b=el('button','hm-add',has?'נוסף ✓':'הוספה'); b.type='button'; b.disabled=!!has||!Tk;
+      b.onclick=()=>{ if(!Tk) return; Tk.add({title:x.title,client:x.client||'',scope:x.scope||'day',due:x.due||today(),prio:x.prio||0,note:x.note||''}); b.textContent='נוסף ✓'; b.disabled=true; plan(); };
       li.appendChild(b); ul.appendChild(li); });
   }
 
   function drafts(){
-    const box=$('hmDrafts'); box.textContent=''; const list=(brief&&brief.drafts)||[];
+    const box=$('hmDrafts'); box.textContent=''; const list=[...((brief&&brief.drafts)||[])]; const ag=agents.mail; if(ag&&Array.isArray(ag.drafts)) ag.drafts.forEach(x=>{ if(!list.some(y=>y.subject===x.subject&&y.to===x.to)) list.push(x); });
     $('hmDrBox').hidden=!list.length;
     list.forEach(x=>{ const d=el('details','hm-dr'), s=el('summary',null,x.subject||'טיוטה'); s.appendChild(el('small',null,x.to||'')); d.appendChild(s);
       const pre=el('pre',null,x.body||''); d.appendChild(pre);
@@ -3595,12 +3686,12 @@ window.__nf=normalizeFile;
       d.appendChild(b); box.appendChild(d); });
   }
 
-  function render(){ hello(); agent(); tiles(); sugs(); drafts(); health(); }
-  window.addEventListener('mh:mail',()=>{ render(); loadBrief(false); });
-  window.addEventListener('mh:tasks',tiles);
-  window.addEventListener('hashchange',()=>{ if(!location.hash||location.hash==='#home'){ render(); loadBrief(false); } });
-  render(); setTimeout(()=>{ render(); loadBrief(true); },1200);
-  setInterval(()=>{ if(!document.hidden&&!$('s-home').hidden){ render(); loadBrief(false); } },60000);
+  function render(){ hello(); health(); plan(); sugs(); drafts(); }
+  window.addEventListener('mh:mail',()=>{ render(); load(false); });
+  window.addEventListener('mh:tasks',()=>plan());
+  window.addEventListener('hashchange',()=>{ if(!location.hash||location.hash==='#home'){ render(); load(false); } });
+  render(); setTimeout(()=>{ render(); load(true); },1200);
+  setInterval(()=>{ if(!document.hidden&&!$('s-home').hidden){ render(); load(false); } },60000);
 })();
 </script>
 </body>
