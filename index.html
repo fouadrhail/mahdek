@@ -535,7 +535,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver">מהדק · גרסה 3.1 · עודכן 18.11.2026</footer>
+  <footer class="ver">מהדק · גרסה 3.2 · עודכן 18.11.2026</footer>
 </div>
 
 <script>
@@ -1122,11 +1122,53 @@ window.__nf=normalizeFile;
     for(const src of [top,all]) for(const [re,name] of DOC_TYPES) if(re.test(src)) return name;
     return '';
   }
-  function docNumber(lines){
-    const t=lines.slice(0,25).join(' ');
-    let m=t.match(/(?:חשבונית|קבלה|ריכוז|חשבון\s*עסקה|תעודת\s*משלוח)[^\d]{0,25}?(?:מס'|מספר|#)\s*[:.]?\s*(\d{3,10})(?![\d\/.])/);
-    if(!m) m=t.match(/(?:חשבונית|קבלה)[^\d]{0,30}?(\d{4,10})(?![\d\/.])/);
-    return m?m[1]:'';
+  /* Document number: the number printed next to the document title ("חשבונית מס 11444", "מספר: 02/000327").
+     Customer, phone, date, amount, allocation and business numbers around it are skipped. */
+  const NUM_DOC=/חשבונית|חשבון|חשב[רנו]|קבלה|כבלה|ריכוז|מרכזת|זמנית|עסקה|invoice|receipt/gi;
+  const NUM_BAD=/לקוח|מנוי|עוסק|מורשה|ע\.?\s?מ(?![א-ת])|ח\.?\s?פ(?![א-ת])|ת\.?\s?ז|תיק|הקצאה|מספרכם|כרטיס|רישיון|רכב|הזמנה|אסמכתא|טל|פקס|נייד|מיקוד|ת\.?\s?ד(?![א-ת])|דף|עמוד|סניף|שובר|מסוף|זהות|תאגיד|סוכן|שעה|תאריך|יתרה|סה"?כ|פריט|הפקה|תקופ|מחזור|קופה|ref|order|customer|account|vat|tel|fax/i;
+  const NUM_LABEL=/^(?:מס|מספר|no|#|on|he|sa|[a-z]{1,2})$/i;
+  function last4(n){ return String(n||'').replace(/\D/g,'').slice(-4); }
+  function numberFrom(src){
+    const ev=Array.isArray(src)?{lines:src}:(src||{});
+    const L=[...new Set([...(ev.top||[]),...(ev.lines||[]).slice(0,60)].map(l=>String(l||'').replace(/[\u200e\u200f\u202a-\u202e]/g,'').replace(/[‘’“”]/g,"'")))];
+    const mask=l=>l.replace(/\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4}|\d{1,2}:\d{2}(?::\d{2})?|\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+\.\d+|0[2-489]-\d{7}|05\d-?\d{7}|\*\d{4}|1-?[78]00-?\d{3}-?\d{3}/g,m=>' '.repeat(m.length));
+    const TOK=/[A-Za-z]*\d[A-Za-z\d]*(?:\s*[\/\-]\s*[A-Za-z]*\d[A-Za-z\d]*)*/g;
+    const core=t=>t.split(/\s*[\/\-]\s*/).map(p=>(p.match(/\d+/g)||[]).sort((a,b)=>b.length-a.length)[0]||'').reduce((a,b)=>b.length>=a.length?b:a,'');
+    const found=[];
+    function scan(line,i,forceAdj){
+      const m=mask(line); let prevEnd=0, any=false;
+      for(const t of m.matchAll(TOK)){
+        const start=t.index, end=start+t[0].length, num=core(t[0]);
+        let cut=Math.max(prevEnd,start-25), byDoc=false;
+        for(const d of m.matchAll(NUM_DOC)) if(d.index+d[0].length<=start&&d.index+d[0].length>=cut){ cut=d.index+d[0].length; byDoc=true; }
+        const afterTok=!byDoc&&cut===prevEnd&&prevEnd>0; prevEnd=end;
+        if(num.length<3||num.length>13) continue;
+        const pre=m.slice(cut,start), suf=m.slice(end,end+12).match(/^\s*:\s*([^\s\d:]+)/);
+        if(NUM_BAD.test(pre)||(suf&&NUM_BAD.test(suf[1]))) continue;
+        any=true;
+        const words=pre.replace(/[\s:.\-\/|=()'"׳״!,_]+/g,' ').trim().split(' ').filter(Boolean);
+        const adj=forceAdj||(words.length?words.every(w=>NUM_LABEL.test(w)):!afterTok)||(suf&&/^(?:מס|מספר)/.test(suf[1]));
+        let score=1+(adj?3:0)+(num.length>=4?1:0)+(i<15?1:0);
+        if(num.length===9&&!adj&&typeof validId==='function'&&validId(num)) score-=5;
+        found.push({num,score,i});
+      }
+      return any;
+    }
+    L.forEach((line,i)=>{
+      if(!new RegExp(NUM_DOC.source,'i').test(line)) return;
+      if(!scan(line,i,false)&&line.replace(/[^א-תA-Za-z]/g,'').length<20&&L[i+1]&&!new RegExp(NUM_DOC.source,'i').test(L[i+1])&&L[i+1].replace(/[^א-ת]/g,'').length<12) scan(L[i+1],i,true);
+    });
+    if(!found.length) return null;
+    const seen={}; found.forEach(f=>seen[last4(f.num)]=(seen[last4(f.num)]||0)+1);
+    found.forEach(f=>{ if(seen[last4(f.num)]>1) f.score+=1; });
+    found.sort((a,b)=>b.score-a.score||a.i-b.i);
+    return found[0].score>=2?found[0]:null;
+  }
+  /* band: a second, sharper reading of just the title line of a scan (see numPass) */
+  function docNumber(src,band){
+    const a=numberFrom(src), b=band?numberFrom(['חשבונית '+band]):null;
+    if(b&&(!a||(b.num.length>=a.num.length&&b.score>=a.score))) return b.num;
+    return a?a.num:'';
   }
   const LABEL_WORDS=/^(?:חשבונית|מס|קבלה|עוסק|מורשה|ע\.?מ\.?|ח\.?פ\.?|מספר|מס'|טלפון|טל'?|פקס|כתובת|רחוב|ת\.?ד\.?|דוא"ל|אתר|ספק|מקור|העתק|נאמן|למקור|תאריך)$/;
   const BAD_WORDS=/סה"?כ|תאריך|כתובת|רחוב|טלפון|פקס|לתשלום|סכום|מע"?מ|כמות|מחיר|תיאור|פריט|שעה|קופה|עמוד|הנחה|יתרה|אשראי|מזומן|ויזה|לקוח|העתק|מקור|נאמן|חשבונית|קבלה|ריכוז|תודה|מספר|אסמכתא|הזמנה|ש"ח|שקל/;
@@ -1401,6 +1443,8 @@ window.__nf=normalizeFile;
       const H=canvas.height;
       const items=L.filter(l=>l.bbox&&l.text&&(l.confidence==null||l.confidence>40)).map(l=>({s:normQ(l.text).replace(/\s+/g,' ').trim(),x:l.bbox.x1,y:H-l.bbox.y0,h:l.bbox.y1-l.bbox.y0}));
       out.header=headerFrom(items,H); out.topHeader=headerFrom(items,0); out.topCount=L.filter(l=>l.bbox&&l.bbox.y1<=H/3).length;
+      const tl=L.find(l=>l.bbox&&l.text&&/חשבונ|קבלה|כבלה|חשבר/.test(l.text)&&l.bbox.y0<H*0.6);
+      if(tl) out.titleBox={y0:tl.bbox.y0,y1:tl.bbox.y1};
     }
     return out;
   }
@@ -1423,9 +1467,28 @@ window.__nf=normalizeFile;
     try{ return await ocrLines(c); }
     finally{ try{ await w.setParameters({tessedit_pageseg_mode:'3'}); }catch(_){} }
   }
+  /* Read the title line of a scan again to catch its number: the band around it, twice the size,
+     coloured ink made dark (receipt books print the number in red), sparse-text mode. */
+  async function numPass(full,box){
+    const h=Math.max(12,box.y1-box.y0), y0=Math.max(0,Math.round(box.y0-h*1.2)), y1=Math.min(full.height,Math.round(box.y1+h*1.2));
+    const c=document.createElement('canvas'); c.width=full.width*2; c.height=(y1-y0)*2;
+    const g=c.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(full,0,y0,full.width,y1-y0,0,0,c.width,c.height);
+    try{
+      const img=g.getImageData(0,0,c.width,c.height), d=img.data, hist=new Array(256).fill(0), n=c.width*c.height;
+      for(let i=0;i<d.length;i+=4){ const v=Math.min(d[i],d[i+1],d[i+2]); d[i]=v; hist[v]++; }
+      let lo=0,hi=255,acc=0; while(lo<255&&(acc+=hist[lo])<n*0.02) lo++; acc=0; while(hi>0&&(acc+=hist[hi])<n*0.02) hi--;
+      const span=Math.max(1,hi-lo);
+      for(let i=0;i<d.length;i+=4){ const v=Math.max(0,Math.min(255,(d[i]-lo)*255/span)); d[i]=d[i+1]=d[i+2]=v; }
+      g.putImageData(img,0,0);
+    }catch(_){}
+    const w=await getOcr();
+    try{ await w.setParameters({tessedit_pageseg_mode:'11'}); }catch(_){}
+    try{ const r=await w.recognize(c); return normQ(r.data.text||'').replace(/\s+/g,' ').trim(); }
+    finally{ try{ await w.setParameters({tessedit_pageseg_mode:'3'}); }catch(_){} }
+  }
   /* Read one document and collect what identifies its supplier */
   async function detectDocNow(file,kind){
-    let lines=[], ocr=false, full=null;
+    let lines=[], ocr=false, full=null, topRes=null;
     if(kind!=='image'){ try{ lines=await docLines(file); }catch(_){ lines=[]; } }
     if(lines.join('').replace(/\s/g,'').length<20||isGarbled(lines)){
       full=kind==='image'?await imageCanvas(file):await pdfCanvas(file);
@@ -1437,11 +1500,17 @@ window.__nf=normalizeFile;
     if(ocr||!resolveSupplier(ev,{}).name){
       try{
         if(!full) full=kind==='image'?await imageCanvas(file):await pdfCanvas(file);
-        const top=await topPass(full);
+        const top=await topPass(full); topRes=top;
         ev=buildEvidence(lines,{...opts,topLines:top,topHeader:top.topHeader||''});
       }catch(_){}
     }
-    return {ev,type:docType(ev.lines),num:docNumber(ev.lines)};
+    let band='';
+    if(ocr&&full){
+      let box=lines.titleBox;
+      if(!box&&topRes&&topRes.titleBox) box={y0:topRes.titleBox.y0/2,y1:topRes.titleBox.y1/2};
+      if(box){ try{ band=await numPass(full,box); }catch(_){} }
+    }
+    return {ev,type:docType(ev.lines),num:docNumber(ev,band)};
   }
   /* Learned suppliers: when you correct a name, Mahdek remembers the supplier's
      business number and website on this computer. */
@@ -1449,7 +1518,7 @@ window.__nf=normalizeFile;
   let learned={ids:{},domains:{}};
   try{ const v=JSON.parse(localStorage.getItem(LEARN_KEY)||'null'); if(v&&v.ids&&v.domains) learned=v; }catch(_){}
   function saveLearned(){ try{ localStorage.setItem(LEARN_KEY,JSON.stringify(learned)); }catch(_){} }
-  function labelOf(sup,type,num){ return [sup,[type,num].filter(Boolean).join(' ')].filter(Boolean).join(' - ').replace(/[\\/:*?"<>|]/g,'-'); }
+  function labelOf(sup,type,num){ return [sup,[type,last4(num)].filter(Boolean).join(' ')].filter(Boolean).join(' - ').replace(/[\\/:*?"<>|]/g,'-'); }
   /* Resolve every document of one upload together, so the recipient (who repeats) is never taken for the supplier */
   /* Companies Registrar (data.gov.il, open government data). Only a corporation's number is sent
      (companies 51-54/56, partnerships 55, non-profits 58) — never a document, and never a private person's ID. */
@@ -1755,8 +1824,8 @@ window.__nf=normalizeFile;
         return {name:'',slip:true};
       }
       const ev=buildEvidence(lines,{header:lines.header||'',topCount:lines.topCount||0});
-      const sup=resolveSupplier(ev,{learned,registry}).name, type=docType(ev.lines), num=docNumber(ev.lines);
-      if(sup||type) return {name:safe([sup,[type,num].filter(Boolean).join(' ')].filter(Boolean).join(' - ')),how:'זוהה מתוך המסמך',ev,type,num};
+      const sup=resolveSupplier(ev,{learned,registry}).name, type=docType(ev.lines), num=docNumber(ev);
+      if(sup||type) return {name:safe([sup,[type,last4(num)].filter(Boolean).join(' ')].filter(Boolean).join(' - ')),how:'זוהה מתוך המסמך',ev,type,num};
       const name=findName(lines);
       if(name) return {name:safe(name),how:'זוהה מתוך המסמך'};
       return {name:''};
