@@ -369,6 +369,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
       <li>מהדק מזהה בכל קובץ את הספק ואת סוג המסמך, גם בצילומים, ונותן לו שם. אפשר לתקן את השם בלחיצה עליו. השמות נכנסים כסימניות לקובץ המאוחד.</li>
       <li>"עיון" פותח את המסמך המלא לקריאה לפני ההידוק.</li>
       <li>תיקנתם שם של ספק? מהדק זוכר אותו לפי מספר העוסק והאתר שלו, ומזהה אותו לבד מעכשיו, גם בשאר הקבצים שכבר בטבלה.</li>
+      <li>כשמהדק לא בטוח בשם של חברה, הוא בודק את מספר החברה (ח.פ) במאגר הפתוח של רשם החברות (data.gov.il) ומקבל את השם הרשמי. נשלח רק מספר החברה של הספק, לא המסמך, ומספרים של אנשים פרטיים לא נשלחים.</li>
       <li>גוררים שורה כדי לשנות סדר, או משתמשים בחצים.</li>
       <li>בקובץ PDF ארוך לוחצים על "עמודים" ומשאירים רק את העמודים שצריך.</li>
       <li>קבצי Word, Excel ו־HEIC לא נתמכים. שמרו אותם קודם כ־PDF.</li>
@@ -534,7 +535,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver">מהדק · גרסה 2.9 · עודכן 18.11.2026</footer>
+  <footer class="ver">מהדק · גרסה 3.0 · עודכן 18.11.2026</footer>
 </div>
 
 <script>
@@ -627,6 +628,7 @@ window.__nf=normalizeFile;
     if(withDet.length&&window.__mh2){
       const out=window.__mh2.labelBatch(withDet.map(x=>x.det));
       withDet.forEach((x,k)=>{ x.res=out[k].res; if(x.edited) return; if(out[k].label){ x.label=out[k].label; x.found=true; x.nf=false; } else { x.found=false; x.nf=true; } });
+      window.__mh2.verifyOnline(out.filter((o,k)=>!withDet[k].edited),relabel);
     }
     render();
   }
@@ -658,7 +660,7 @@ window.__nf=normalizeFile;
       });
       nmIn.addEventListener('mousedown',e=>e.stopPropagation());
       const fn=document.createElement('div'); fn.className='fname orig'; fn.title=it.file.name;
-      fn.textContent=it.file.name+(it.detecting?' · מזהה…':'')+(it.nf&&!it.edited?' · לא זוהה':'')+(it.learnedNow?' · מהדק ילמד את הספק הזה':'')+(!it.edited&&it.res&&it.res.how==='learned'?' · זוהה לפי תיקון קודם':'')+(it.kind==='other'?' · לא ייכלל בקובץ':'');
+      fn.textContent=it.file.name+(it.detecting?' · מזהה…':'')+(it.nf&&!it.edited?' · לא זוהה':'')+(it.learnedNow?' · מהדק ילמד את הספק הזה':'')+(!it.edited&&it.res&&it.res.how==='learned'?' · זוהה לפי תיקון קודם':'')+(!it.edited&&it.res&&it.res.how==='registry'?' · אומת ברשם החברות':'')+(it.kind==='other'?' · לא ייכלל בקובץ':'');
       c3.append(nmIn,fn);
       const c4=td(); c4.className='pgc'+(it.keep?' cut':'');
       if(it.kind==='pdf'){
@@ -1107,7 +1109,7 @@ window.__nf=normalizeFile;
       const lines=[];
       for(const it of items){const L=lines[lines.length-1]; if(L&&Math.abs(L.y-it.y)<3) L.items.push(it); else lines.push({y:it.y,items:[it]});}
       const out=lines.map(L=>L.items.sort((a,b)=>b.x-a.x).map(t=>t.s.trim()).join(' ').replace(/\s+/g,' '));
-      out.header=headerFrom(items,pageH);
+      out.header=headerFrom(items,pageH); out.topCount=lines.filter(L=>L.y>=pageH*2/3).length;
       return out;
     }finally{ pdf.destroy(); }
   }
@@ -1209,7 +1211,7 @@ window.__nf=normalizeFile;
         if(PHONE_WORD.test(before+' '+after)) continue;
       }
       if(labelled&&PHONE_WORD.test(before.slice(-8))&&!/עוסק|ח\s*\.?\s*פ|ע\s*\.?\s*מ/.test(before)) continue;
-      out.push({id:digits,labelled,strong:/עוסק|ח\s*\.?\s*פ|ע\s*\.?\s*מ|תיק/.test(before+after)});
+      out.push({id:digits,labelled,strong:/עוסק|ח\s*\.?\s*פ|ע\s*\.?\s*מ|תיק/.test(before+after),vatFile:/תיק/.test(before.slice(-20))&&!/עוסק|ח\s*\.?\s*פ|ע\s*\.?\s*מ/.test(before.slice(-14))});
     }
     return out;
   }
@@ -1258,8 +1260,10 @@ window.__nf=normalizeFile;
     const top=(opts.topLines||[]).map(l=>collapseSpaced(fixOcr(l)));
     const recip=new Set();
     L.forEach((l,i)=>{ if(RECIP_CTX.test(l)) for(let k=i;k<=Math.min(L.length-1,i+5);k++) recip.add(k); });
-    const ids=[]; L.forEach((l,i)=>findIds(l).forEach(x=>ids.push({...x,line:i,recip:recip.has(i)})));
-    top.forEach((l,i)=>findIds(l).forEach(x=>{ if(!ids.some(y=>y.id===x.id)) ids.push({...x,line:-1-i,top:true,recip:false}); }));
+    /* the supplier's details are usually in the top third of the page */
+    const tc=opts.topCount>0?opts.topCount:Math.min(12,Math.ceil(L.length/3));
+    const ids=[]; L.forEach((l,i)=>findIds(l).forEach(x=>ids.push({...x,line:i,recip:recip.has(i),upper:i<tc})));
+    top.forEach((l,i)=>findIds(l).forEach(x=>{ const y=ids.find(y=>y.id===x.id); if(y) y.upper=true; else ids.push({...x,line:-1-i,top:true,recip:false,upper:true}); }));
     const all=L.concat(top).join(' \n ');
     const fileId=((opts.fileName||'').match(/^(\d{9})[_\-\s]/)||[])[1]||'';
     const recipNames=new Set();
@@ -1301,15 +1305,21 @@ window.__nf=normalizeFile;
   }
   /* Pick the supplier for one document. ctx: {recipIds:Set, recipNames:Set, learned:{ids,domains}} */
   function resolveSupplier(ev,ctx){
+    const r=resolveSupplierCore(ev,ctx); const x=r.id&&ev.ids.find(y=>y.id===r.id); if(x&&x.vatFile) r.vatFile=true; return r;
+  }
+  function resolveSupplierCore(ev,ctx){
     ctx=ctx||{}; const rIds=ctx.recipIds||new Set(), rNames=ctx.recipNames||new Set(), learned=ctx.learned||{ids:{},domains:{}};
     const isRecipName=n=>{ const k=nk(n); if(!k) return true; if(ev.recipNames.includes(k)) return true; for(const r of rNames){ if(r&&(k===r||(r.length>=5&&(k.includes(r)||r.includes(k))))) return true; } return false; };
-    const issuerIds=ev.ids.filter(x=>!rIds.has(x.id)&&!(x.recip&&x.id!==ev.fileId));
+    const issuerIds=ev.ids.filter(x=>!rIds.has(x.id)&&!(x.recip&&x.id!==ev.fileId)).sort((a,b)=>(a.vatFile?1:0)-(b.vatFile?1:0));
     // 1. learned from your corrections
     for(const x of issuerIds) if(learned.ids[x.id]) return {name:learned.ids[x.id],how:'learned',id:x.id};
     for(const d of ev.domains) if(learned.domains[d]) return {name:learned.domains[d],how:'learned',id:''};
     const pickId=()=>{ const f=issuerIds.find(x=>x.id===ev.fileId); if(f) return f;
-      return issuerIds.find(x=>x.strong)||issuerIds.find(x=>x.labelled)||issuerIds[0]||null; };
+      return issuerIds.find(x=>x.strong&&x.upper)||issuerIds.find(x=>x.strong)||issuerIds.find(x=>x.labelled&&x.upper)||issuerIds.find(x=>x.labelled)||issuerIds[0]||null; };
     const idx=pickId();
+    // 1b. the official name from the Companies Registrar, when we looked the number up
+    const reg=idx&&ctx.registry&&ctx.registry[idx.id];
+    if(reg&&reg.n&&!isRecipName(reg.n)&&!ev.domains.some(d=>DOMAIN_NAMES[d])) return {name:reg.n,how:'registry',id:idx.id};
     // 2. known supplier website / email
     for(const d of ev.domains) if(DOMAIN_NAMES[d]) return {name:DOMAIN_NAMES[d],how:'site',id:idx?idx.id:''};
     // 3. name written next to the supplier's business number
@@ -1384,7 +1394,7 @@ window.__nf=normalizeFile;
     if(L&&L.length){
       const H=canvas.height;
       const items=L.filter(l=>l.bbox&&l.text&&(l.confidence==null||l.confidence>40)).map(l=>({s:normQ(l.text).replace(/\s+/g,' ').trim(),x:l.bbox.x1,y:H-l.bbox.y0,h:l.bbox.y1-l.bbox.y0}));
-      out.header=headerFrom(items,H); out.topHeader=headerFrom(items,0);
+      out.header=headerFrom(items,H); out.topHeader=headerFrom(items,0); out.topCount=L.filter(l=>l.bbox&&l.bbox.y1<=H/3).length;
     }
     return out;
   }
@@ -1416,7 +1426,7 @@ window.__nf=normalizeFile;
       lines=await ocrLines(full); ocr=true;
     }
     if(!lines.length) return null;
-    const opts={fileName:file.name,header:lines.header||'',ocr};
+    const opts={fileName:file.name,header:lines.header||'',ocr,topCount:lines.topCount||0};
     let ev=buildEvidence(lines,opts);
     if(ocr||!resolveSupplier(ev,{}).name){
       try{
@@ -1435,10 +1445,52 @@ window.__nf=normalizeFile;
   function saveLearned(){ try{ localStorage.setItem(LEARN_KEY,JSON.stringify(learned)); }catch(_){} }
   function labelOf(sup,type,num){ return [sup,[type,num].filter(Boolean).join(' ')].filter(Boolean).join(' - ').replace(/[\\/:*?"<>|]/g,'-'); }
   /* Resolve every document of one upload together, so the recipient (who repeats) is never taken for the supplier */
+  /* Companies Registrar (data.gov.il, open government data). Only a corporation's number is sent
+     (companies 51-54/56, partnerships 55, non-profits 58) — never a document, and never a private person's ID. */
+  const REG_KEY='mahdek.registry.v1', REG_API='https://data.gov.il/api/3/action/datastore_search';
+  const REG_SETS={company:['f004176c-b85f-4542-8901-7b3176f9a054','מספר חברה'],partner:['139aa193-fabb-4f6b-a71b-0bb40fd73eb2','מספר שותפות'],npo:['be5b7935-3922-45d4-9638-08871b17ec95','מספר עמותה']};
+  let registry={}; try{ registry=JSON.parse(localStorage.getItem(REG_KEY)||'{}')||{}; }catch(_){}
+  const regBusy=new Set(), regFailed=new Set();
+  function regSet(id){ if(!validId(id)) return null; const p=id.slice(0,2); return p==='55'?REG_SETS.partner:p==='58'?REG_SETS.npo:/^5[12346]$/.test(p)?REG_SETS.company:null; }
+  function regName(rec){
+    if(!rec) return '';
+    let n=rec['שם חברה']||''; if(!n){ const k=Object.keys(rec).find(k=>/^שם/.test(k)&&!/אנגלית|לועזי|English/i.test(k)&&/[א-ת]/.test(String(rec[k]||''))); n=k?rec[k]:''; }
+    return String(n).replace(/\s*\(?בע["״']?מ\)?\s*$/,'').replace(/[\\/:*?"<>|]/g,'-').replace(/\s+/g,' ').trim();
+  }
+  async function regFetch(id){
+    const set=regSet(id); if(!set) return;
+    for(const val of [Number(id),id]){
+      const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),9000);
+      try{
+        const r=await fetch(REG_API+'?resource_id='+set[0]+'&limit=1&filters='+encodeURIComponent(JSON.stringify({[set[1]]:val})),{signal:ctl.signal});
+        if(!r.ok) throw new Error('http');
+        const j=await r.json(); const rec=j&&j.result&&j.result.records&&j.result.records[0];
+        if(rec){ registry[id]={n:regName(rec),t:Date.now()}; return; }
+      }finally{ clearTimeout(t); }
+    }
+    registry[id]={n:'',t:Date.now()};
+  }
+  const CONFIDENT=new Set(['learned','site','registry','id']);
+  /* Look up, in the background, the numbers of suppliers we are not sure about; call done() when names arrive */
+  function verifyOnline(results,done){
+    const todo=[...new Set(results.filter(r=>r&&r.res&&!CONFIDENT.has(r.res.how)&&r.res.id&&!r.res.vatFile&&regSet(r.res.id)).map(r=>r.res.id))]
+      .filter(id=>!regBusy.has(id)&&!regFailed.has(id)&&!(registry[id]&&(registry[id].n||Date.now()-registry[id].t<30*864e5)));
+    if(!todo.length) return;
+    todo.forEach(id=>regBusy.add(id));
+    (async()=>{
+      let got=false;
+      for(const id of todo){
+        try{ await regFetch(id); if(registry[id]&&registry[id].n) got=true; }catch(_){ regFailed.add(id); }
+        regBusy.delete(id);
+      }
+      try{ localStorage.setItem(REG_KEY,JSON.stringify(registry)); }catch(_){}
+      if(got&&done) done();
+    })();
+  }
   function labelBatch(list){
     const evs=list.map(x=>x.ev);
     const batch=batchRecipients(evs);
-    return list.map(x=>{ const res=resolveSupplier(x.ev,{recipIds:batch.ids,recipNames:batch.names,learned}); return {res,label:labelOf(res.name,x.type,x.num)}; });
+    return list.map(x=>{ const res=resolveSupplier(x.ev,{recipIds:batch.ids,recipNames:batch.names,learned,registry}); return {res,label:labelOf(res.name,x.type,x.num)}; });
   }
   function learnSupplier(ev,res,name,others){
     name=(name||'').split(' - ')[0].replace(/[\\/:*?"<>|]/g,'-').trim();
@@ -1573,7 +1625,7 @@ window.__nf=normalizeFile;
   $('pmSave').addEventListener('click',()=>pmClose([...PM.keep].sort((a,b)=>a-b)));
   $('pmodal').addEventListener('click',e=>{if(e.target===$('pmodal')) pmClose(null);});
   $('pmodal').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();pmClose(null);}});
-  window.__mh2={detect:detectDoc,deliver:deliverFiles,pickPages,view:viewDoc,labelBatch,learn:learnSupplier};
+  window.__mh2={detect:detectDoc,deliver:deliverFiles,pickPages,view:viewDoc,labelBatch,learn:learnSupplier,verifyOnline};
 
   /* ---------- Page editor: one row per page, split and delete ---------- */
   {
@@ -1649,7 +1701,7 @@ window.__nf=normalizeFile;
       const lines=[];
       for(const it of items){const L=lines[lines.length-1]; if(L&&Math.abs(L.y-it.y)<3) L.items.push(it); else lines.push({y:it.y,items:[it]});}
       const out=lines.map(L=>L.items.sort((a,b)=>b.x-a.x).map(t=>t.s.trim()).join(' ').replace(/\s+/g,' '));
-      out.header=headerFrom(items,pageH);
+      out.header=headerFrom(items,pageH); out.topCount=lines.filter(L=>L.y>=pageH*2/3).length;
       return out;
     }
     async function pageCanvas(pdf,i){
@@ -1696,8 +1748,8 @@ window.__nf=normalizeFile;
         if(name){ const m=findMonth(lines); return {name:safe(name+' - תלוש'+(m?' '+m:'')),how:'שם העובד מתוך התלוש',slip:true}; }
         return {name:'',slip:true};
       }
-      const ev=buildEvidence(lines,{header:lines.header||''});
-      const sup=resolveSupplier(ev,{learned}).name, type=docType(ev.lines), num=docNumber(ev.lines);
+      const ev=buildEvidence(lines,{header:lines.header||'',topCount:lines.topCount||0});
+      const sup=resolveSupplier(ev,{learned,registry}).name, type=docType(ev.lines), num=docNumber(ev.lines);
       if(sup||type) return {name:safe([sup,[type,num].filter(Boolean).join(' ')].filter(Boolean).join(' - ')),how:'זוהה מתוך המסמך',ev,type,num};
       const name=findName(lines);
       if(name) return {name:safe(name),how:'זוהה מתוך המסמך'};
@@ -1728,10 +1780,13 @@ window.__nf=normalizeFile;
           showName(i-1);
         }
         /* Second look over all invoice pages together: a name that repeats on pages from different suppliers is the recipient */
-        if(tok===E.token&&docs.length>1){
+        const relabelPages=()=>{
+          if(tok!==E.token) return;
           const out=labelBatch(docs);
-          docs.forEach((d,k)=>{ if(E.names[d.i].state!=='done'||!out[k].label) return; E.names[d.i]={name:safe(out[k].label),state:'done',how:E.names[d.i].how}; showName(d.i); });
-        }
+          docs.forEach((d,k)=>{ if(E.names[d.i].state!=='done'||!out[k].label) return; E.names[d.i]={name:safe(out[k].label),state:'done',how:out[k].res.how==='registry'?'אומת ברשם החברות':E.names[d.i].how}; showName(d.i); });
+          return out;
+        };
+        if(tok===E.token&&docs.length){ const out=relabelPages(); if(out) verifyOnline(out,relabelPages); }
         if(tok===E.token){
           est(found?`זוהו שמות ב־${found} עמודים. אפשר לתקן כל שם לפני הפיצול.`:'לא זוהו שמות בקובץ הזה. אפשר להקליד אותם ידנית בשורות.',found?'ok':'');
         }
