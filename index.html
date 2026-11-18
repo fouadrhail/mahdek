@@ -173,6 +173,9 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .field span{padding:0 12px;color:var(--muted);direction:ltr;font-size:.9rem}
 .go{background:var(--cobalt);color:var(--cobalt-ink);border-color:var(--cobalt);font-weight:700;padding:11px 22px;font-size:1rem;display:flex;align-items:center;gap:8px}
 .go:hover{filter:brightness(1.08)}
+.go2{background:transparent;color:var(--cobalt);border:1.5px solid var(--cobalt);font-weight:700;padding:10px 18px;font-size:1rem;display:flex;align-items:center;gap:8px}
+.go2:hover:not(:disabled){background:var(--desk)}
+button:disabled.go2{opacity:.45;cursor:default}
 .progress{flex-basis:100%;height:4px;background:var(--rule);border-radius:99px;overflow:hidden}
 .progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--magenta));transition:width .2s}
 .status{flex-basis:100%;font-size:.9rem;min-height:1.4em}
@@ -353,7 +356,6 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <div class="head">
       <h2>סדר ההדפסה<span class="count" id="count"></span></h2>
       <div class="tools">
-        <button id="saveNamed" type="button">הורדת הקבצים בשמות המזוהים</button>
         <button id="sortName" type="button">מיון לפי שם</button>
         <button id="clearAll" type="button">ניקוי הכול</button>
       </div>
@@ -368,6 +370,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
       <li>כל שורה היא קובץ אחד. תמונה רחבה מקבלת בהדפסה עמוד לרוחב.</li>
       <li>מהדק מזהה בכל קובץ את הספק ואת סוג המסמך, גם בצילומים, ונותן לו שם. אפשר לתקן את השם בלחיצה עליו. השמות נכנסים כסימניות לקובץ המאוחד.</li>
       <li>"עיון" פותח את המסמך המלא לקריאה לפני ההידוק.</li>
+      <li>לא צריך להדק? "הורדה בשמות המזוהים" מוריד כל קובץ בנפרד, בשם שמהדק נתן לו (ספק, סוג מסמך ו־4 ספרות אחרונות), בקובץ ZIP אחד.</li>
       <li>תיקנתם שם של ספק? מהדק זוכר אותו לפי מספר העוסק והאתר שלו, ומזהה אותו לבד מעכשיו, גם בשאר הקבצים שכבר בטבלה.</li>
       <li>כשמהדק לא בטוח בשם של חברה, הוא בודק את מספר החברה (ח.פ) במאגר הפתוח של רשם החברות (data.gov.il) ומקבל את השם הרשמי. נשלח רק מספר החברה של הספק, לא המסמך, ומספרים של אנשים פרטיים לא נשלחים.</li>
       <li>גוררים שורה כדי לשנות סדר, או משתמשים בחצים.</li>
@@ -383,6 +386,10 @@ button:disabled{opacity:.4;cursor:not-allowed}
       <button class="go" id="merge" type="button" disabled>
         <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 3V1.5h8V3M3 3h12v14H3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
         הידוק ל־PDF
+      </button>
+      <button class="go2" id="saveNamed" type="button" disabled title="כל קובץ בנפרד, בשם שמהדק זיהה, בתוך קובץ ZIP אחד">
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2v9M5 7.5 9 11.5l4-4M3 13.5V16h12v-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        הורדה בשמות המזוהים (ZIP)
       </button>
       <div class="progress" aria-hidden="true"><i id="bar"></i></div>
       <div class="status" id="status" role="status" aria-live="polite"></div>
@@ -535,7 +542,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver">מהדק · גרסה 3.3 · עודכן 18.11.2026</footer>
+  <footer class="ver">מהדק · גרסה 3.4 · עודכן 18.11.2026</footer>
 </div>
 
 <script>
@@ -796,7 +803,7 @@ window.__nf=normalizeFile;
       if(!dl){ setStatus(`הקובץ מוכן (${summary}), אבל כאן אי אפשר לשמור אותו. נסו לרענן את הדף.`,'err'); return; }
       try{
         await dl.save({filename:fname,data:new Blob([bytes],{type:'application/pdf'})});
-        setStatus(`נשמר בתיקיית ההורדות: ${fname} · ${summary}`,'ok');
+        setStatus(`נשמר בתיקיית ההורדות: \u2068${fname}\u2069 · ${summary}`,'ok');
       }catch(e){
         const c=e&&e.code;
         if(c==='declined') setStatus(`השמירה בוטלה. אפשר ללחוץ שוב. (${summary})`);
@@ -826,14 +833,29 @@ window.__nf=normalizeFile;
     if(!items.length||!window.__mh2) return;
     const b=$('saveNamed'); b.disabled=true;
     try{
-      setStatus('אורז את הקבצים בשמות החדשים…');
-      const used={}, outs=items.map(it=>{
-        const ext=(it.file.name.match(/\.[^.]+$/)||[''])[0];
-        let n=(it.label||it.file.name.replace(/\.[^.]+$/,'')).replace(/[\\/:*?"<>|]/g,'-').trim()||'קובץ';
-        if(used[n]){used[n]++; n+=` (${used[n]})`;} else used[n]=1;
-        return {name:n+ext,blob:it.file};
-      });
-      const r=await window.__mh2.deliver(outs,'קבצים בשמות מזוהים.zip');
+      for(let t=0;items.some(x=>x.detecting)&&t<600;t++){
+        setStatus(`מחכה שמהדק יסיים לזהות (${items.filter(x=>x.detecting).length} קבצים נשארו)…`);
+        await new Promise(r=>setTimeout(r,500));
+      }
+      setStatus('אורז את הקבצים בשמות המזוהים…');
+      const used={}, outs=[];
+      for(const it of items){
+        let ext=(it.file.name.match(/\.[^.]+$/)||[''])[0];
+        let n=(it.label||it.file.name.replace(/\.[^.]+$/,'')).replace(/\.pdf$/i,'').replace(/[\\/:*?"<>|]/g,'-').trim()||'קובץ';
+        const key=n.toLowerCase(); if(used[key]){used[key]++; n+=` (${used[key]})`;} else used[key]=1;
+        let blob=it.file;
+        if(it.kind==='pdf'&&it.keep&&it.pages&&it.keep.length<it.pages){   // pages removed under "עמודים" stay removed
+          try{
+            const {PDFDocument}=window.PDFLib; const src=await PDFDocument.load(await it.file.arrayBuffer(),{ignoreEncryption:true});
+            const out=await PDFDocument.create(); (await out.copyPages(src,it.keep.filter(k=>k<src.getPageCount()))).forEach(pg=>out.addPage(pg));
+            blob=new Blob([await out.save()],{type:'application/pdf'}); ext='.pdf';
+          }catch(_){}
+        }
+        outs.push({name:n+ext,blob});
+      }
+      const base=($('fname').value||'').trim().replace(/\.pdf$/i,'').replace(/[\\/:*?"<>|]/g,'-');
+      const zipName=(base&&base!=='מאוחד להדפסה'?base:'מסמכים בשמות מזוהים')+'.zip';
+      const r=await window.__mh2.deliver(outs,zipName,true);
       setStatus(r.msg,r.cls);
     }catch(_){ setStatus('לא הצלחתי לארוז את הקבצים.','err'); }
     finally{ b.disabled=!items.length; }
@@ -1630,13 +1652,13 @@ window.__nf=normalizeFile;
   $('vClose').addEventListener('click',vClose);
   $('vmodal').addEventListener('click',e=>{if(e.target===$('vmodal')) vClose();});
   $('vmodal').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();vClose();}});
-  async function deliverFiles(outs,zipName){
+  async function deliverFiles(outs,zipName,asZip){
     let file;
-    if(outs.length===1) file={filename:outs[0].name,data:outs[0].blob};
+    if(outs.length===1&&!asZip) file={filename:outs[0].name,data:outs[0].blob};
     else{ await need('zip'); const z=new window.JSZip(); outs.forEach(o=>z.file(o.name,o.blob)); file={filename:zipName,data:await z.generateAsync({type:'blob'})}; }
     const dl=window.claude?await window.claude.use('downloads').catch(()=>null):null;
     if(!dl) return {msg:'הקובץ מוכן, אבל כאן אי אפשר לשמור אותו. נסו לרענן את הדף.',cls:'err'};
-    try{ await dl.save(file); return {msg:'נשמר בתיקיית ההורדות: '+file.filename+(outs.length>1?` · ${outs.length} קבצים`:''),cls:'ok'}; }
+    try{ await dl.save(file); return {msg:'נשמר בתיקיית ההורדות: \u2068'+file.filename+'\u2069'+(outs.length>1||asZip?` · ${outs.length} קבצים`:''),cls:'ok'}; }
     catch(e){ const c=e&&e.code; return {msg:c==='declined'?'השמירה בוטלה. אפשר ללחוץ שוב.':c==='rate_limited'?'כבר פתוח חלון שמירה. סיימו אותו ונסו שוב.':'לא הצלחתי לשמור את הקובץ.',cls:c==='declined'?'':'err'}; }
   }
 
