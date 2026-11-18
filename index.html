@@ -368,6 +368,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
       <li>כל שורה היא קובץ אחד. תמונה רחבה מקבלת בהדפסה עמוד לרוחב.</li>
       <li>מהדק מזהה בכל קובץ את הספק ואת סוג המסמך, גם בצילומים, ונותן לו שם. אפשר לתקן את השם בלחיצה עליו. השמות נכנסים כסימניות לקובץ המאוחד.</li>
       <li>"עיון" פותח את המסמך המלא לקריאה לפני ההידוק.</li>
+      <li>תיקנתם שם של ספק? מהדק זוכר אותו לפי מספר העוסק והאתר שלו, ומזהה אותו לבד מעכשיו, גם בשאר הקבצים שכבר בטבלה.</li>
       <li>גוררים שורה כדי לשנות סדר, או משתמשים בחצים.</li>
       <li>בקובץ PDF ארוך לוחצים על "עמודים" ומשאירים רק את העמודים שצריך.</li>
       <li>קבצי Word, Excel ו־HEIC לא נתמכים. שמרו אותם קודם כ־PDF.</li>
@@ -533,7 +534,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver">מהדק · גרסה 2.7 · עודכן 17.11.2026</footer>
+  <footer class="ver">מהדק · גרסה 2.8 · עודכן 18.11.2026</footer>
 </div>
 
 <script>
@@ -614,12 +615,20 @@ window.__nf=normalizeFile;
       }
       if((it.kind==='pdf'||it.kind==='image')&&window.__mh2){
         it.detecting=true;
-        window.__mh2.detect(f,it.kind).then(r=>{it.detecting=false; if(r&&!it.edited){it.label=r;it.found=true;} else if(!r) it.nf=true; render();})
+        window.__mh2.detect(f,it.kind).then(r=>{it.detecting=false; if(r) it.det=r; else it.nf=true; relabel();})
           .catch(()=>{it.detecting=false; it.nf=true; render();});
       }
       items.push(it);
     }
     render(); setStatus('');
+  }
+  function relabel(){
+    const withDet=items.filter(x=>x.det);
+    if(withDet.length&&window.__mh2){
+      const out=window.__mh2.labelBatch(withDet.map(x=>x.det));
+      withDet.forEach((x,k)=>{ x.res=out[k].res; if(x.edited) return; if(out[k].label){ x.label=out[k].label; x.found=true; x.nf=false; } else { x.found=false; x.nf=true; } });
+    }
+    render();
   }
   function move(i,j){ if(j<0||j>=items.length) return; const [x]=items.splice(i,1); items.splice(j,0,x); render(); }
   function removeAt(i){ const [x]=items.splice(i,1); if(x.url) URL.revokeObjectURL(x.url); render(); }
@@ -643,9 +652,13 @@ window.__nf=normalizeFile;
       const nmIn=document.createElement('input'); nmIn.type='text'; nmIn.className='dname'; nmIn.id='dn-'+it.id; nmIn.value=it.label; nmIn.title=it.file.name;
       nmIn.setAttribute('aria-label','שם המסמך עבור '+it.file.name); nmIn.draggable=false;
       nmIn.addEventListener('input',()=>{it.label=nmIn.value; it.edited=true;});
+      nmIn.addEventListener('change',()=>{
+        if(!it.det||!window.__mh2) return;
+        if(window.__mh2.learn(it.det.ev,it.res,it.label,items.filter(x=>x.det&&x!==it).map(x=>x.det.ev))){ it.learnedNow=true; relabel(); }
+      });
       nmIn.addEventListener('mousedown',e=>e.stopPropagation());
       const fn=document.createElement('div'); fn.className='fname orig'; fn.title=it.file.name;
-      fn.textContent=it.file.name+(it.detecting?' · מזהה…':'')+(it.nf&&!it.edited?' · לא זוהה':'')+(it.kind==='other'?' · לא ייכלל בקובץ':'');
+      fn.textContent=it.file.name+(it.detecting?' · מזהה…':'')+(it.nf&&!it.edited?' · לא זוהה':'')+(it.learnedNow?' · מהדק ילמד את הספק הזה':'')+(!it.edited&&it.res&&it.res.how==='learned'?' · זוהה לפי תיקון קודם':'')+(it.kind==='other'?' · לא ייכלל בקובץ':'');
       c3.append(nmIn,fn);
       const c4=td(); c4.className='pgc'+(it.keep?' cut':'');
       if(it.kind==='pdf'){
@@ -1072,7 +1085,7 @@ window.__nf=normalizeFile;
     [/הצעת\s*מחיר/,'הצעת מחיר'],[/תעודת\s*משלוח/,'תעודת משלוח'],[/דף\s*חשבון|תדפיס\s*חשבון/,'דף חשבון'],
     [/tax\s*invoice\s*[\/&]?\s*receipt/i,'חשבונית מס קבלה'],[/tax\s*invoice/i,'חשבונית מס'],[/חשבונית/,'חשבונית'],[/קבלה|receipt/i,'קבלה']
   ];
-  const KNOWN=['סונול','דור אלון','פז','בזק','חברת החשמל','פרטנר','סלקום','הוט','גולן טלקום','פלאפון','מקורות','שופרסל','רמי לוי','ויקטורי','אושר עד','יינות ביתן','קרפור','איקאה','הום סנטר','אופיס דיפו','KSP','ישראכרט','כאל','מקס','בנק לאומי','בנק הפועלים','בנק דיסקונט','מזרחי טפחות','הבינלאומי','ביטוח לאומי','רשות המסים','מגדל','הראל','הפניקס','כלל ביטוח','מנורה','סופר פארם','גוד פארם','ארומה','קופיקס'];
+  const KNOWN=['סונול','דור אלון','פז','בזק','חברת החשמל','פרטנר','סלקום','הוט','גולן טלקום','פלאפון','מקורות','שופרסל','רמי לוי','ויקטורי','אושר עד','יינות ביתן','קרפור','איקאה','הום סנטר','אופיס דיפו','KSP','מגדל','הראל','הפניקס','כלל ביטוח','מנורה','סופר פארם','גוד פארם','ארומה','קופיקס'];
   const HEB=/[א-ת]/;
   const normQ=t=>t.replace(/[״”“]/g,'"').replace(/[׳’‘]/g,"'");
   function hasWord(line,w){
@@ -1100,6 +1113,8 @@ window.__nf=normalizeFile;
   }
   function docType(lines){
     const top=lines.slice(0,14).join(' '), all=lines.join(' ');
+    const generic=new Set(['חשבונית','קבלה']);
+    for(const src of [top,all]) for(const [re,name] of DOC_TYPES) if(!generic.has(name)&&re.test(src)) return name;
     for(const src of [top,all]) for(const [re,name] of DOC_TYPES) if(re.test(src)) return name;
     return '';
   }
@@ -1147,27 +1162,180 @@ window.__nf=normalizeFile;
     for(const c of cands.slice(0,6)){ if(c.h<maxH*0.55) break; const n=headerName(c.text); if(n) return n; }
     return '';
   }
-  function docSupplier(lines){
-    const top=lines.slice(0,18);
-    for(const name of [...KNOWN].sort((a,b)=>b.length-a.length)) if(top.some(l=>hasWord(l,name))) return name;
-    if(lines.header) return lines.header;
-    const skip=new Set();
-    lines.forEach((l,i)=>{ if(/לכבוד|שם\s*הלקוח|לקוח\s*:|נמען|עבור\s*:/.test(l)){ skip.add(i); skip.add(i+1); } });
-    const scan=lines.slice(0,25);
-    for(let i=0;i<scan.length;i++){
-      if(skip.has(i)) continue;
-      const m=scan[i].match(/(.{2,60}?)\s*בע"?'?מ/);
-      if(m){ const n=cleanCompany(m[1]); if(goodName(n)) return n; }
+  /* ---------- Supplier (issuer) identification ----------
+     Evidence is read once per document; the supplier is then resolved against
+     what we know: the recipient (who repeats across files), learned suppliers
+     (by business number and website), and the document's own signals. */
+  const GENERIC_DOMAINS=/^(gmail|walla|hotmail|yahoo|outlook|live|icloud|me|msn|aol|bezeqint|netvision|012|013|zahav|inter|smile|mail|google|facebook|instagram|wa|whatsapp|bit|t|goo|linkedin|youtube|gov|org)$/i;
+  const DOMAIN_NAMES={bezeq:'בזק',pelephone:'פלאפון',partner:'פרטנר',cellcom:'סלקום',hot:'הוט',hotmobile:'הוט מובייל',golantelecom:'גולן טלקום',iec:'חברת החשמל',mekorot:'מקורות',
+    '6cn':'כביש 6',kvish6:'כביש 6',pazomat:'פז',paz:'פז',yellow:'פז',sonol:'סונול',delek:'דלק',doralon:'דור אלון','dor-alon':'דור אלון',ten:'טן',
+    shufersal:'שופרסל',ramilevy:'רמי לוי',victory:'ויקטורי',osherad:'אושר עד',ikea:'איקאה',homecenter:'הום סנטר',ace:'אייס',ksp:'KSP',ivory:'Ivory',bug:'באג',
+    superpharm:'סופר פארם','super-pharm':'סופר פארם',aroma:'ארומה',yes:'yes',freetv:'freetv',xfone:'אקספון',wecom:'וי-קום'};
+  const RECIP_CTX=/לכבוד|עבור\s*:|^\s*שם\s*:|^\s*שם\s+\S|שם\s*ה?לקוח|לקוח\s*:|נמען|מרכז\s*עלות|לידי\s*:|ל\s*ק\s*ו\s*ח\s*:/;
+  const ID_LABEL=/(עוסק\s*מורשה|מס['׳]?\s*עוסק|מספר\s*עוסק|עוסק|ע\s*\.?\s*מ\s*\.?|ע-מ|ח\s*\.?\s*פ\s*\.?|ח-פ|ת\s*\.?\s*ז\s*\.?|ת-ז|תיק\s*(?:ב|ל)?מע"?מ|תיק)/;
+  const PHONE_WORD=/טל|פקס|נייד|טלפון|פלאפון|וואטסאפ|סלולרי|טלפקס|fax|tel|phone/i;
+  const nk=s=>(s||'').replace(/["'`׳״.\-\s_:,]/g,'').replace(/בעמ$/,'');
+  function fixOcr(t){
+    return normQ(t).replace(/[֑-ׇ‎‏]/g,'').replace(/בע\s*['"]?\s*[יו]?\s*[יו]?\s*['"]?\s*מ(?=[\s,.]|$)/g,'בע"מ').replace(/בע"\s+מ/g,'בע"מ').replace(/(^|\s)בעמ(?=[\s,.]|$)/g,'$1בע"מ');
+  }
+  function collapseSpaced(line){
+    const tk=line.split(' ').filter(Boolean);
+    if(tk.length<4) return line;
+    const short=tk.filter(t=>/^[א-ת"'״׳]{1,2}$/.test(t)).length;
+    return short>=tk.length*0.7?tk.join(''):line;
+  }
+  function isGarbled(lines){
+    const t=lines.join(' ');
+    const heb=(t.match(/[א-ת]/g)||[]).length, lat=(t.match(/[A-Za-z]/g)||[]).length;
+    const ctrl=(t.match(/[\x00-\x08\x0B-\x1F�]/g)||[]).length, all=(t.match(/\S/g)||[]).length;
+    return (heb<20&&lat<40)||(all>0&&ctrl/all>0.08)||(heb<20&&all>200);
+  }
+  function findIds(line){
+    const out=[]; const re=/(\d[\d\- ]{7,13}\d)/g; let m;
+    while((m=re.exec(line))){
+      const raw=m[1], digits=raw.replace(/\D/g,'');
+      if(digits.length!==9) continue;
+      const before=line.slice(Math.max(0,m.index-28),m.index), after=line.slice(m.index+raw.length,m.index+raw.length+18);
+      const labelled=ID_LABEL.test(before)||ID_LABEL.test(after);
+      if(!labelled){
+        if(/[\-\s]/.test(raw.trim())) continue;
+        if(PHONE_WORD.test(before+' '+after)) continue;
+      }
+      if(labelled&&PHONE_WORD.test(before.slice(-8))&&!/עוסק|ח\s*\.?\s*פ|ע\s*\.?\s*מ/.test(before)) continue;
+      out.push({id:digits,labelled,strong:/עוסק|ח\s*\.?\s*פ|ע\s*\.?\s*מ|תיק/.test(before+after)});
     }
-    for(let i=0;i<scan.length;i++){
-      if(skip.has(i)) continue;
-      if(/עוסק\s*מורשה|ע\.מ\.?|ח\.פ\.?/.test(scan[i])){
-        let n=cleanCompany(scan[i]); if(!goodName(n)&&i>0&&!skip.has(i-1)) n=cleanCompany(scan[i-1]); if(!goodName(n)&&i+1<scan.length&&!skip.has(i+1)) n=cleanCompany(scan[i+1]); if(goodName(n)) return n;
+    return out;
+  }
+  function domainsOf(text){
+    const out=new Set(); const re=/(?:www\.|@|https?:\/\/)([a-z0-9\-]+(?:\.[a-z0-9\-]+)*)\.(?:co\.il|org\.il|net\.il|gov\.il|com|net|org|co|io)\b/gi; let m;
+    while((m=re.exec(text))){ const parts=m[1].toLowerCase().split('.'); const root=parts[parts.length-1]; if(root&&!GENERIC_DOMAINS.test(root)) out.add(root); }
+    const re2=/\b([a-z0-9\-]{3,})\.(?:co\.il|org\.il)\b/gi;
+    while((m=re2.exec(text))){ const r=m[1].toLowerCase(); if(!GENERIC_DOMAINS.test(r)) out.add(r); }
+    return [...out];
+  }
+  const ADDR=/(?:^|\s)(?:כביש|רח'?|רחוב|שד'|שדרות|ת\.?\s?ד\.?|מיקוד|סיקוד|ס?יקוד|קיבוץ|מושב|טל'?|טלפון|פקס|נייד|כתובת|דוא"ל|מייל|www|http|ישוב|יישוב)(?=[\s:.,]|$)/i;
+  const LABEL_TAIL=/(?:^|\s)(?:מ\.?\s?ר\.?|ח\.?\s?פ\.?|ע\.?\s?מ\.?|עוסק|מורשה|מקור|העתק|רשיון|רישיון|מס'?)(?=\s|$)/g;
+  /* Words that describe what a business sells. A name is cut before them ("סאלח באסל שירותי מוסך" → "סאלח באסל"),
+     and a line that starts with them is a description, not a name. */
+  const DESC=/(?:^|\s)(?:חומרי|כלים|כליס|ציוד|שירותי|שירותים|תיקון|תיקונים|מכירת|מכירה|יבוא|שיווק|הפצה|סניטריים|צנורות|צינורות|למכירה|קבלן|קבלנות|עבודות)(?=[\s\-,|]|$)/;
+  function cleanSupplierName(n){
+    n=(n||'').replace(LABEL_TAIL,' ').replace(/[|]/g,' ').replace(/\s+/g,' ').trim();
+    const m=n.match(DESC); if(m&&m.index>0) n=n.slice(0,m.index).trim();
+    n=n.replace(/\s*בע\s*['"]?\s*[יו]?\s*[יו]?\s*['"]?\s*מ$/,'').trim();
+    if(/^[א-ת]/.test(n)){ const w=n.split(' '); const k=w.findIndex(x=>/^[A-Za-z]/.test(x)); if(k>0) n=w.slice(0,k).join(' '); }
+    return n.replace(/[\s\-,]+$/,'');
+  }
+  function nameOk(n){
+    if(!n||!goodName(n)||ADDR.test(n)||/\d{4,}/.test(n)||DESC.test(' '+n.split(' ')[0])) return false;
+    if((n.match(/[א-ת]/g)||[]).length<4) return false;
+    const w=n.split(' ').filter(Boolean);
+    if(w.filter(x=>/[A-Za-z]/.test(x)).length>1) return false;
+    if(/[.'"\-]{2,}/.test(n)) return false;
+    const chars=n.replace(/[\s.'"\-]/g,''); if((chars.match(/[א-תA-Za-z]/g)||[]).length<chars.length*0.8) return false;
+    const real=w.filter(x=>(x.match(/[א-ת]/g)||[]).length>=3||/^[א-ת](\.[א-ת])+\.?$/.test(x));
+    return real.length>=w.length*0.5;
+  }
+  function companyOf(line){
+    if(ADDR.test(line)&&!/בע"מ/.test(line)) return '';
+    if(!/בע"מ/.test(line)&&/(?:^|\D)\d{5,7}(?:\D|$)/.test(line.replace(/\d[\d\- ]{7,13}\d/g,' '))) return '';
+    const n=cleanSupplierName(cleanCompany(fixOcr(line).replace(/בע"מ.*$/,' ').replace(ID_LABEL,' ')));
+    return nameOk(n)?n:'';
+  }
+  function heb(n){ return (n.match(/[\u05D0-\u05EA]/g)||[]).length-4*(n.match(/(?:^|\s)[A-Za-z]{1,3}(?=\s|$)/g)||[]).length; }
+  /* Build the evidence for one document from its text lines (and, for scans, the logo-area lines) */
+  function buildEvidence(lines,opts){
+    opts=opts||{};
+    const L=lines.map(l=>collapseSpaced(fixOcr(l)));
+    const top=(opts.topLines||[]).map(l=>collapseSpaced(fixOcr(l)));
+    const recip=new Set();
+    L.forEach((l,i)=>{ if(RECIP_CTX.test(l)) for(let k=i;k<=Math.min(L.length-1,i+5);k++) recip.add(k); });
+    const ids=[]; L.forEach((l,i)=>findIds(l).forEach(x=>ids.push({...x,line:i,recip:recip.has(i)})));
+    top.forEach((l,i)=>findIds(l).forEach(x=>{ if(!ids.some(y=>y.id===x.id)) ids.push({...x,line:-1-i,top:true,recip:false}); }));
+    const all=L.concat(top).join(' \n ');
+    const fileId=((opts.fileName||'').match(/^(\d{9})[_\-\s]/)||[])[1]||'';
+    const recipNames=new Set();
+    // the recipient is the name right after "לכבוד" / "לקוח:" (same line or the next two), never the page's own title
+    const own=new Set([nk(opts.header||'')]); L.slice(0,3).forEach(l=>{ const c=companyOf(l); if(c&&!RECIP_CTX.test(l)) own.add(nk(c)); });
+    L.forEach((l,i)=>{ if(!RECIP_CTX.test(l)) return;
+      for(let k=i;k<=Math.min(L.length-1,i+2);k++){ const c=companyOf(k===i?l.replace(RECIP_CTX,' '):L[k]); if(c&&!own.has(nk(c))){ recipNames.add(nk(c)); break; } } });
+    // company-like names with their line number
+    const names=[];
+    L.forEach((l,i)=>{ if(/בע"מ/.test(l)){ const m=l.match(/(.{2,60}?)\s*בע"מ/); const c=m&&cleanCompany(m[1].replace(RECIP_CTX,' ')); if(c&&goodName(c)) names.push({name:c,line:i,recip:recip.has(i)}); } });
+    top.forEach((l,i)=>{ if(/בע"מ/.test(l)){ const m=l.match(/(.{2,60}?)\s*בע"מ/); const c=m&&cleanCompany(m[1]); if(c&&goodName(c)) names.push({name:c,line:-1-i,recip:false,top:true}); } });
+    const transfer=(all.match(/(?:שם\s*(?:ה)?חשבון(?:\s*להעברות)?|שם\s*המוטב|לפקודת)\s*:?\s*([^\n]{3,60})/)||[])[1]||'';
+    return {lines:L,top,ids,recip,recipNames:[...recipNames],names,fileId,ocr:!!opts.ocr,
+      domains:domainsOf(all),header:opts.header||'',topHeader:opts.topHeader||'',
+      transfer:transfer?companyOf(transfer):'',text:all};
+  }
+  /* Which business numbers and names belong to the recipient: the ones that repeat
+     across files from different suppliers. */
+  function batchRecipients(evs){
+    const idDocs={}, nameDocs={};
+    evs.forEach((ev,d)=>{
+      new Set(ev.ids.filter(x=>x.strong).map(x=>x.id)).forEach(id=>(idDocs[id]=idDocs[id]||new Set()).add(d));
+      new Set(ev.names.map(x=>nk(x.name)).concat(ev.recipNames)).forEach(n=>(nameDocs[n]=nameDocs[n]||new Set()).add(d));
+    });
+    const ids=new Set(), names=new Set();
+    for(const [id,docs] of Object.entries(idDocs)){
+      if(docs.size<2) continue;
+      const others=new Set(); docs.forEach(d=>evs[d].ids.forEach(x=>{ if(x.id!==id&&x.strong) others.add(x.id); }));
+      if(others.size>=3) ids.add(id);
+    }
+    for(const [n,docs] of Object.entries(nameDocs)){
+      if(docs.size<2||n.length<3) continue;
+      const others=new Set(); docs.forEach(d=>evs[d].ids.forEach(x=>{ if(x.strong) others.add(x.id); }));
+      if(others.size>=4) names.add(n);
+    }
+    return {ids,names};
+  }
+  /* Pick the supplier for one document. ctx: {recipIds:Set, recipNames:Set, learned:{ids,domains}} */
+  function resolveSupplier(ev,ctx){
+    ctx=ctx||{}; const rIds=ctx.recipIds||new Set(), rNames=ctx.recipNames||new Set(), learned=ctx.learned||{ids:{},domains:{}};
+    const isRecipName=n=>{ const k=nk(n); if(!k) return true; if(ev.recipNames.includes(k)) return true; for(const r of rNames){ if(r&&(k===r||(r.length>=5&&(k.includes(r)||r.includes(k))))) return true; } return false; };
+    const issuerIds=ev.ids.filter(x=>!rIds.has(x.id)&&!(x.recip&&x.id!==ev.fileId));
+    // 1. learned from your corrections
+    for(const x of issuerIds) if(learned.ids[x.id]) return {name:learned.ids[x.id],how:'learned',id:x.id};
+    for(const d of ev.domains) if(learned.domains[d]) return {name:learned.domains[d],how:'learned',id:''};
+    const pickId=()=>{ const f=issuerIds.find(x=>x.id===ev.fileId); if(f) return f;
+      return issuerIds.find(x=>x.strong)||issuerIds.find(x=>x.labelled)||issuerIds[0]||null; };
+    const idx=pickId();
+    // 2. known supplier website / email
+    for(const d of ev.domains) if(DOMAIN_NAMES[d]) return {name:DOMAIN_NAMES[d],how:'site',id:idx?idx.id:''};
+    // 3. name written next to the supplier's business number
+    const pos=x=>x.line>=0?x.line:-1-x.line, side=x=>x.line>=0;
+    const headers=[ev.topHeader,ev.header].map(cleanSupplierName).filter(h=>nameOk(h)&&!isRecipName(h)).sort((a,b)=>heb(b)-heb(a));
+    if(ev.ocr){ const tn=ev.names.find(x=>x.top&&!isRecipName(x.name)&&nameOk(cleanSupplierName(x.name))); if(tn) return {name:cleanSupplierName(tn.name),how:'top',id:idx?idx.id:''}; }
+    if(ev.ocr&&headers.length) return {name:headers[0],how:'header',id:idx?idx.id:''};
+    if(ev.ocr) for(const l of ev.top.concat(ev.lines.slice(0,6))){ if(RECIP_CTX.test(l)) break; const v=companyOf(l); if(v&&!isRecipName(v)) return {name:v,how:'top',id:idx?idx.id:''}; }
+    if(idx){
+      const same=(idx.line>=0?ev.lines[idx.line]:ev.top[-1-idx.line])||'';
+      const n=companyOf(same);
+      if(n&&!isRecipName(n)) return {name:n,how:'id',id:idx.id};
+      const near=ev.names.find(x=>!x.recip&&side(x)===side(idx)&&Math.abs(pos(x)-pos(idx))<=4&&!isRecipName(x.name)&&nameOk(cleanSupplierName(x.name)));
+      if(near) return {name:cleanSupplierName(near.name),how:'id',id:idx.id};
+      if(headers.length) return {name:headers[0],how:'header',id:idx.id};
+      for(let k=1;k<=4;k++){
+        const i=pos(idx)-k; if(i<0) break;
+        if(side(idx)&&ev.recip.has(i)) continue;
+        const v=companyOf(side(idx)?ev.lines[i]:ev.top[i]);
+        if(v&&!isRecipName(v)) return {name:v,how:'id',id:idx.id};
       }
     }
-    for(const name of KNOWN) if(lines.some(l=>hasWord(l,name))) return name;
-    return '';
+    // 4. bank-transfer account name
+    if(ev.transfer&&!isRecipName(ev.transfer)) return {name:ev.transfer,how:'transfer',id:idx?idx.id:''};
+    // 5. a company name ("בע"מ") that is not the recipient
+    const nm=ev.names.filter(x=>!x.recip&&!isRecipName(x.name)).sort((a,b)=>(a.top?0:1)-(b.top?0:1));
+    const nmOk=nm.map(x=>cleanSupplierName(x.name)).filter(nameOk);
+    if(nmOk.length) return {name:nmOk[0],how:'company',id:idx?idx.id:''};
+    // 6. the big title at the top of the page
+    if(headers.length) return {name:headers[0],how:'header',id:idx?idx.id:''};
+    // 7. a known brand mentioned at the top
+    const head=ev.lines.slice(0,12).concat(ev.top);
+    for(const k of [...KNOWN].sort((a,b)=>b.length-a.length)) if(head.some(l=>hasWord(l,k))) return {name:k,how:'known',id:idx?idx.id:''};
+    return {name:'',how:'',id:idx?idx.id:''};
   }
+  /* ---------- end of supplier identification ---------- */
+  function docSupplier(lines){ return resolveSupplier(buildEvidence(lines,{header:lines.header}),{}).name; }
   /* Text from a photo or scan, read on this computer */
   let ocrWorker=null;
   async function getOcr(){
@@ -1202,32 +1370,70 @@ window.__nf=normalizeFile;
     if(L&&L.length){
       const H=canvas.height;
       const items=L.filter(l=>l.bbox&&l.text&&(l.confidence==null||l.confidence>40)).map(l=>({s:normQ(l.text).replace(/\s+/g,' ').trim(),x:l.bbox.x1,y:H-l.bbox.y0,h:l.bbox.y1-l.bbox.y0}));
-      out.header=headerFrom(items,H);
+      out.header=headerFrom(items,H); out.topHeader=headerFrom(items,0);
     }
     return out;
   }
-  /* Read only the top of the first page as an image, where the logo usually is */
-  async function logoName(file,kind){
-    const full=kind==='image'?await imageCanvas(file):await pdfCanvas(file);
-    const c=document.createElement('canvas'); c.width=full.width; c.height=Math.round(full.height*0.3);
-    c.getContext('2d').drawImage(full,0,0);
-    const lines=await ocrLines(c);
-    for(const name of [...KNOWN].sort((a,b)=>b.length-a.length)) if(lines.some(l=>hasWord(l,name))) return name;
-    return lines.header||'';
+  /* Read the top of the first page again, sharper: more contrast, twice the size, one text block.
+     This is where the supplier's name and logo usually are. */
+  async function topPass(full){
+    const c=document.createElement('canvas'); const h=Math.round(full.height*0.3);
+    c.width=full.width*2; c.height=h*2;
+    const g=c.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(full,0,0,full.width,h,0,0,c.width,c.height);
+    try{
+      const img=g.getImageData(0,0,c.width,c.height), d=img.data, hist=new Array(256).fill(0), n=c.width*c.height;
+      for(let i=0;i<d.length;i+=4){ const v=(d[i]*299+d[i+1]*587+d[i+2]*114)/1000|0; d[i]=v; hist[v]++; }
+      let lo=0,hi=255,acc=0; while(lo<255&&(acc+=hist[lo])<n*0.02) lo++; acc=0; while(hi>0&&(acc+=hist[hi])<n*0.02) hi--;
+      const span=Math.max(1,hi-lo);
+      for(let i=0;i<d.length;i+=4){ const v=Math.max(0,Math.min(255,(d[i]-lo)*255/span)); d[i]=d[i+1]=d[i+2]=v; }
+      g.putImageData(img,0,0);
+    }catch(_){}
+    const w=await getOcr();
+    try{ await w.setParameters({tessedit_pageseg_mode:'6'}); }catch(_){}
+    try{ return await ocrLines(c); }
+    finally{ try{ await w.setParameters({tessedit_pageseg_mode:'3'}); }catch(_){} }
   }
+  /* Read one document and collect what identifies its supplier */
   async function detectDocNow(file,kind){
-    let lines=[];
+    let lines=[], ocr=false, full=null;
     if(kind!=='image'){ try{ lines=await docLines(file); }catch(_){ lines=[]; } }
-    if(lines.join('').replace(/\s/g,'').length<20){
-      const canvas=kind==='image'?await imageCanvas(file):await pdfCanvas(file);
-      lines=await ocrLines(canvas);
+    if(lines.join('').replace(/\s/g,'').length<20||isGarbled(lines)){
+      full=kind==='image'?await imageCanvas(file):await pdfCanvas(file);
+      lines=await ocrLines(full); ocr=true;
     }
     if(!lines.length) return null;
-    let sup=docSupplier(lines);
-    const type=docType(lines), num=docNumber(lines);
-    if(!sup){ try{ sup=await logoName(file,kind); }catch(_){} }
-    if(!sup&&!type) return null;
-    return [sup,[type,num].filter(Boolean).join(' ')].filter(Boolean).join(' - ').replace(/[\\/:*?"<>|]/g,'-');
+    const opts={fileName:file.name,header:lines.header||'',ocr};
+    let ev=buildEvidence(lines,opts);
+    if(ocr||!resolveSupplier(ev,{}).name){
+      try{
+        if(!full) full=kind==='image'?await imageCanvas(file):await pdfCanvas(file);
+        const top=await topPass(full);
+        ev=buildEvidence(lines,{...opts,topLines:top,topHeader:top.topHeader||''});
+      }catch(_){}
+    }
+    return {ev,type:docType(ev.lines),num:docNumber(ev.lines)};
+  }
+  /* Learned suppliers: when you correct a name, Mahdek remembers the supplier's
+     business number and website on this computer. */
+  const LEARN_KEY='mahdek.learned.v1';
+  let learned={ids:{},domains:{}};
+  try{ const v=JSON.parse(localStorage.getItem(LEARN_KEY)||'null'); if(v&&v.ids&&v.domains) learned=v; }catch(_){}
+  function saveLearned(){ try{ localStorage.setItem(LEARN_KEY,JSON.stringify(learned)); }catch(_){} }
+  function labelOf(sup,type,num){ return [sup,[type,num].filter(Boolean).join(' ')].filter(Boolean).join(' - ').replace(/[\\/:*?"<>|]/g,'-'); }
+  /* Resolve every document of one upload together, so the recipient (who repeats) is never taken for the supplier */
+  function labelBatch(list){
+    const evs=list.map(x=>x.ev);
+    const batch=batchRecipients(evs);
+    return list.map(x=>{ const res=resolveSupplier(x.ev,{recipIds:batch.ids,recipNames:batch.names,learned}); return {res,label:labelOf(res.name,x.type,x.num)}; });
+  }
+  function learnSupplier(ev,res,name,others){
+    name=(name||'').split(' - ')[0].replace(/[\\/:*?"<>|]/g,'-').trim();
+    if(!ev||!name||!/[א-תA-Za-z]{2}/.test(name)) return false;
+    const batch=batchRecipients((others||[]).concat([ev]));
+    let id=res&&res.id; if(!id||batch.ids.has(id)){ const x=ev.ids.find(x=>x.strong&&!x.recip&&!batch.ids.has(x.id))||ev.ids.find(x=>!x.recip&&!batch.ids.has(x.id)); id=x?x.id:''; }
+    if(id) learned.ids[id]=name;
+    ev.domains.forEach(d=>{ if(!DOMAIN_NAMES[d]) learned.domains[d]=name; });
+    saveLearned(); return !!(id||ev.domains.length);
   }
   let detectQueue=Promise.resolve();
   function detectDoc(file,kind){
@@ -1353,7 +1559,7 @@ window.__nf=normalizeFile;
   $('pmSave').addEventListener('click',()=>pmClose([...PM.keep].sort((a,b)=>a-b)));
   $('pmodal').addEventListener('click',e=>{if(e.target===$('pmodal')) pmClose(null);});
   $('pmodal').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();pmClose(null);}});
-  window.__mh2={detect:detectDoc,deliver:deliverFiles,pickPages,view:viewDoc};
+  window.__mh2={detect:detectDoc,deliver:deliverFiles,pickPages,view:viewDoc,labelBatch,learn:learnSupplier};
 
   /* ---------- Page editor: one row per page, split and delete ---------- */
   {
@@ -1476,8 +1682,9 @@ window.__nf=normalizeFile;
         if(name){ const m=findMonth(lines); return {name:safe(name+' - תלוש'+(m?' '+m:'')),how:'שם העובד מתוך התלוש',slip:true}; }
         return {name:'',slip:true};
       }
-      const sup=docSupplier(lines), type=docType(lines), num=docNumber(lines);
-      if(sup||type) return {name:safe([sup,[type,num].filter(Boolean).join(' ')].filter(Boolean).join(' - ')),how:'זוהה מתוך המסמך'};
+      const ev=buildEvidence(lines,{header:lines.header||''});
+      const sup=resolveSupplier(ev,{learned}).name, type=docType(ev.lines), num=docNumber(ev.lines);
+      if(sup||type) return {name:safe([sup,[type,num].filter(Boolean).join(' ')].filter(Boolean).join(' - ')),how:'זוהה מתוך המסמך',ev,type,num};
       const name=findName(lines);
       if(name) return {name:safe(name),how:'זוהה מתוך המסמך'};
       return {name:''};
@@ -1488,7 +1695,7 @@ window.__nf=normalizeFile;
         let sample='';
         for(let i=1;i<=Math.min(2,E.n);i++){const tc=await (await pdf.getPage(i)).getTextContent(); sample+=normQ(tc.items.map(t=>t.str).join(' '));}
         const reverse=HINTS.filter(h=>sample.includes(rev(h))).length>HINTS.filter(h=>sample.includes(h)).length;
-        let found=0, prevSlip=false;
+        let found=0, prevSlip=false; const docs=[];
         for(let i=1;i<=E.n;i++){
           if(tok!==E.token) return;
           if(E.names[i-1].state==='edited') continue;
@@ -1501,10 +1708,15 @@ window.__nf=normalizeFile;
           const r=lines.length?pageLabel(lines):{name:''};
           const prev=E.names[i-2];
           if(!r.name&&r.slip&&prevSlip&&prev&&prev.name){ E.names[i-1]={name:prev.name,state:'cont'}; }
-          else if(r.name){ E.names[i-1]={name:r.name,state:'done',how:r.how+how}; found++; }
+          else if(r.name){ E.names[i-1]={name:r.name,state:'done',how:r.how+how}; found++; if(r.ev) docs.push({i:i-1,ev:r.ev,type:r.type,num:r.num}); }
           else E.names[i-1]={name:'',state:'none'};
           prevSlip=!!r.slip;
           showName(i-1);
+        }
+        /* Second look over all invoice pages together: a name that repeats on pages from different suppliers is the recipient */
+        if(tok===E.token&&docs.length>1){
+          const out=labelBatch(docs);
+          docs.forEach((d,k)=>{ if(E.names[d.i].state!=='done'||!out[k].label) return; E.names[d.i]={name:safe(out[k].label),state:'done',how:E.names[d.i].how}; showName(d.i); });
         }
         if(tok===E.token){
           est(found?`זוהו שמות ב־${found} עמודים. אפשר לתקן כל שם לפני הפיצול.`:'לא זוהו שמות בקובץ הזה. אפשר להקליד אותם ידנית בשורות.',found?'ok':'');
