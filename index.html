@@ -247,6 +247,7 @@ button:disabled.go2{opacity:.45;cursor:default}
 .dlist{list-style:none;margin:0;padding:0;display:grid;gap:0}
 .dlist li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 10px;padding:7px 0;border-top:1px solid var(--side-rule);font-size:.86rem}
 .dlist li:first-child{border-top:0;padding-top:0}
+.dlist .dk{display:inline-block;width:8px;height:8px;border-radius:50%;margin-inline-end:7px;vertical-align:1px;background:#999}.dk.k-adv{background:#c0576a}.dk.k-vat{background:#3f6fb5}.dk.k-wh{background:#c58b1f}.dk.k-bl{background:#3a9266}.dk.k-vat874{background:#8678c4}
 .dlist .when{font-variant-numeric:tabular-nums;color:var(--on-bg-muted);font-size:.78rem}
 .dlist .left{align-self:center;font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:5px;background:var(--side-rule);white-space:nowrap}
 .dlist .soon .left{background:#c98a2b;color:#1b1204}
@@ -1231,7 +1232,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 5.7 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 5.8 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -2818,9 +2819,9 @@ window.__nf=normalizeFile;
     let [y,m]=fromIso.split('-').map(Number);
     for(let k=0;k<4&&out.length<count;k++){
       const prev=HM[(m+10)%12];
-      for(const [d,what] of [[15,'מע"מ ומקדמות מס הכנסה'],[16,'ניכויים'],[23,'דוח מע"מ מפורט (874)']]){
+      for(const [d,what,kind] of [[15,'מקדמות מס הכנסה','adv'],[15,'מע"מ תקופתי','vat'],[15,'ביטוח לאומי','bl'],[16,'ניכויים מס הכנסה','wh'],[23,'דוח מע"מ מפורט (874)','vat874']]){
         const dt=new Date(Date.UTC(y,m-1,d)); while(dt.getUTCDay()===5||dt.getUTCDay()===6) dt.setUTCDate(dt.getUTCDate()+1);
-        const iso=dt.toISOString().slice(0,10); if(iso>=fromIso) out.push({date:iso,what:`${what} · ${prev}`,est:true});
+        const iso=dt.toISOString().slice(0,10); if(iso>=fromIso) out.push({date:iso,what:`${what} · ${prev}`,kind,est:true});
       }
       m++; if(m>12){m=1;y++;}
     }
@@ -2845,16 +2846,16 @@ window.__nf=normalizeFile;
     }
     const today=isoToday();
     let list=(D.deadlines||[]).filter(x=>x.date>=today);
-    if(list.length<4){ const last=list.length?list[list.length-1].date:today; list=list.concat(statutory(last>today?last.slice(0,8)+'01':today.slice(0,8)+'01',8).filter(x=>x.date>=today&&!list.some(y=>y.date===x.date&&y.what===x.what)&&(!list.length||x.date>list[list.length-1].date))); }
-    window.__mhUpcoming=list.slice(0,6);
+    if(list.length<8){ const last=list.length?list[list.length-1].date:today; list=list.concat(statutory(last>today?last.slice(0,8)+'01':today.slice(0,8)+'01',8).filter(x=>x.date>=today&&!list.some(y=>y.date===x.date&&y.what===x.what)&&(!list.length||x.date>list[list.length-1].date))); }
+    window.__mhUpcoming=list.slice(0,8);
     const ul=$('dlist'); ul.textContent='';
-    list.slice(0,4).forEach(x=>{ const n=days(x.date); const li=document.createElement('li'); if(n===0) li.className='today'; else if(n<=3) li.className='soon';
-      const a=document.createElement('div'); const w=document.createElement('div'); w.textContent=x.what; const d=document.createElement('div'); d.className='when'; d.textContent=dmy(x.date)+(x.est?' · לפי המועד בחוק':''); a.append(w,d);
+    list.slice(0,8).forEach(x=>{ const n=days(x.date); const li=document.createElement('li'); if(n===0) li.className='today'; else if(n<=3) li.className='soon';
+      const a=document.createElement('div'); const w=document.createElement('div'); if(x.kind){ const k=document.createElement('i'); k.className='dk k-'+x.kind; k.setAttribute('aria-hidden','true'); w.appendChild(k); } const pp=String(x.what).split(' · '); w.appendChild(document.createTextNode(pp[0])); const d=document.createElement('div'); d.className='when'; d.textContent=(pp[1]?pp[1]+' · ':'')+dmy(x.date)+(x.est?' · לפי החוק':''); a.append(w,d);
       const b=document.createElement('span'); b.className='left'; b.textContent=inDays(n); li.append(a,b); ul.appendChild(li); });
     renderCal();
     if(D.updated){ const u=new Date(D.updated); if(!isNaN(u)) $('factsSrc').textContent=`מקורות: בנק ישראל, הלשכה המרכזית לסטטיסטיקה, רשות המסים · עודכן ${new Intl.DateTimeFormat('he-IL',{timeZone:TZ,day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'}).format(u)}`; }
   }
-  const FALLBACK={"updated": "2026-11-18T10:00:00+02:00", "boi": {"rate": 3.25, "since": "2026-10-21", "next": "2026-11-23", "auto": false}, "fx": {"USD": null, "EUR": null}, "cpi": null, "deadlines": [{"date": "2026-11-23", "what": "דוח מע\"מ מפורט (874) · אוקטובר"}, {"date": "2026-12-15", "what": "מע\"מ ומקדמות מס הכנסה · נובמבר"}, {"date": "2026-12-16", "what": "ניכויים · נובמבר"}, {"date": "2026-12-23", "what": "דוח מע\"מ מפורט (874) · נובמבר"}, {"date": "2027-01-18", "what": "מע\"מ ומקדמות מס הכנסה · דצמבר"}, {"date": "2027-01-18", "what": "ניכויים · דצמבר"}, {"date": "2027-01-26", "what": "דוח מע\"מ מפורט (874) · דצמבר"}]};
+  const FALLBACK={"updated": "2026-11-18T10:00:00+02:00", "boi": {"rate": 3.25, "since": "2026-10-21", "next": "2026-11-23", "auto": false}, "fx": {"USD": null, "EUR": null}, "cpi": null, "deadlines": [{"date": "2026-11-23", "what": "דוח מע\"מ מפורט (874) · אוקטובר", "kind": "vat874"}, {"date": "2026-12-15", "what": "מקדמות מס הכנסה · נובמבר", "kind": "adv"}, {"date": "2026-12-15", "what": "מע\"מ תקופתי · נובמבר", "kind": "vat"}, {"date": "2026-12-15", "what": "ביטוח לאומי · נובמבר", "kind": "bl", "est": true}, {"date": "2026-12-16", "what": "ניכויים מס הכנסה · נובמבר", "kind": "wh"}, {"date": "2026-12-23", "what": "דוח מע\"מ מפורט (874) · נובמבר", "kind": "vat874"}, {"date": "2027-01-18", "what": "מקדמות מס הכנסה · דצמבר", "kind": "adv"}, {"date": "2027-01-18", "what": "מע\"מ תקופתי · דצמבר", "kind": "vat"}, {"date": "2027-01-18", "what": "ניכויים מס הכנסה · דצמבר", "kind": "wh"}, {"date": "2027-01-26", "what": "דוח מע\"מ מפורט (874) · דצמבר", "kind": "vat874"}]};
   async function load(){
     for(const u of ['https://raw.githubusercontent.com/fouadrhail/mahdek/main/data/rates.json','./data/rates.json']){
       try{ const r=await fetch(u,{cache:'no-store'}); if(r.ok){ const j=await r.json(); if(j&&j.boi){ DATA=j; render(j); return; } } }catch(_){}
@@ -3164,7 +3165,8 @@ window.__nf=normalizeFile;
   /* Email analysis: Claude writes it each morning to a PRIVATE repo (days/<day>/analysis.json + files). Mahdek reads it with the owner's token, kept only in this browser; a copy is cached in IndexedDB. */
   const $=id=>document.getElementById(id);
   const DONE_KEY='mahdek.mail.done.v1';
-  let db=null, days=[], cur=null, openId=null, urls=[], lastSync=0, syncing=false;
+  let db=null, days=[], cur=null, all=[], openId=null, urls=[], lastSync=0, syncing=false;
+  const dayOf=new WeakMap();
   const REPO='fouadrhail/mahdek-mail', TOK='mahdek.mail.token';
   const tok=()=>{ try{ return localStorage.getItem(TOK)||''; }catch(_){ return ''; } };
   const el=(tag,cls,txt)=>{ const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; };
@@ -3234,8 +3236,8 @@ window.__nf=normalizeFile;
     }finally{ syncing=false; }
   }
   const mime=n=>/\.pdf$/i.test(n)?'application/pdf':/\.jpe?g$/i.test(n)?'image/jpeg':/\.png$/i.test(n)?'image/png':/\.webp$/i.test(n)?'image/webp':'';
-  async function getBlob(x){
-    const rec=cur; if(!rec||!x.path) return null;
+  async function getBlob(x,m){
+    const rec=m&&dayOf.get(m); if(!rec||!x.path) return null;
     if(rec.files&&rec.files[x.path]) return rec.files[x.path];
     const b=await gh(`days/${rec.day}/${x.path}`); if(!b) return null;
     const typed=new Blob([b],{type:mime(x.name)||b.type||''});
@@ -3247,36 +3249,41 @@ window.__nf=normalizeFile;
     days=(await getAll()).sort((x,y)=>y.day.localeCompare(x.day));
     const sel=$('mlDay'); sel.textContent='';
     days.forEach(d=>{ const o=el('option',null,`ניתוח ${fmtDay(d.day)}${d.range?` (${d.range})`:''}`); o.value=d.day; sel.appendChild(o); });
-    sel.hidden=days.length<2;
+    sel.hidden=true;
     cur=days.find(d=>d.day===pick)||days[0]||null; if(cur) sel.value=cur.day;
+    const seen=new Set(); all=[];
+    days.forEach(d=>(d.mails||[]).forEach(m=>{ if(!m||!m.id||seen.has(m.id)) return; seen.add(m.id); dayOf.set(m,d); all.push(m); }));
+    all.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.time||'').localeCompare(String(a.time||'')));
     if(!keep) openId=null; render();
   }
 
   /* views */
   const wide=()=>window.matchMedia('(min-width:1100px)').matches;
+  const todayIso=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jerusalem'}).format(new Date());
+  const whenOf=m=>{ if(m.date===todayIso()) return m.time||'היום'; const y=new Date(); y.setDate(y.getDate()-1); const yi=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jerusalem'}).format(y); return m.date===yi?'אתמול'+(m.time?' '+m.time:''):short(m.date)+(m.time?' '+m.time:''); };
   const initial=m=>[...(m.client||m.sender||'?').replace(/^[^\p{L}\p{N}]+/u,'')][0]||'?';
   const hue=m=>{ let h=0; for(const ch of (m.client||m.id||'')) h=(h*31+ch.charCodeAt(0))%360; return h; };
   const brief=m=>{ if(m.brief) return m.brief; const w=typeof m.want==='string'?m.want:''; const t=w.replace(/\s+/g,' ').trim(); return t.length>110?t.slice(0,107).trimEnd()+'…':t; };
   const CLIP='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5l-8 8a5 5 0 0 1-7-7l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7L9.7 17.2a1.7 1.7 0 0 1-2.4-2.4L15 7"/></svg>';
   function render(){
     urls.forEach(u=>URL.revokeObjectURL(u)); urls=[];
-    const has=!!cur, t=!!tok(); $('mlEmpty').hidden=has; $('mlConn').hidden=t; $('mlRefresh').hidden=!t; if(!t) $('mlSync').hidden=true;
+    const has=all.length>0, t=!!tok(); $('mlEmpty').hidden=has; $('mlConn').hidden=t; $('mlRefresh').hidden=!t; if(!t) $('mlSync').hidden=true;
     $('mlEmptyH').textContent=t?'עדיין אין מיילים':'חיבור לתיבת הדואר הפרטית';
     $('mlEmptyP').textContent=t?'המאגר מחובר. המיילים של היום יופיעו כאן אוטומטית אחרי הריצה של הבוקר (ראשון–חמישי, 07:06).':'כל בוקר Claude קורא את המיילים ושומר את הסיכום והקבצים במאגר פרטי שרק לך יש גישה אליו. מהדק מציג אותם כאן.';
     $('mlStats').hidden=!has; $('mlBox').hidden=!has; $('mlFoot').hidden=!has;
     if(!has){ $('mlSub').textContent='המיילים של היום, עם סיכום קצר לכל אחד.'; return; }
-    const done=doneSet(), order=cur.mails.map((m,i)=>({m,i,d:done.has(cur.day+'/'+m.id)})).sort((a,b)=>(a.d-b.d)||(a.i-b.i));
+    const done=doneSet(), order=all.map((m,i)=>({m,i,d:done.has(dayOf.get(m).day+'/'+m.id)}));
     if(!openId&&wide()&&order.length) openId=order[0].m.id;
-    if(openId&&!cur.mails.some(x=>x.id===openId)) openId=wide()&&order.length?order[0].m.id:null;
-    $('mlSub').textContent=[cur.mailbox,cur.range||fmtDay(cur.day)].filter(Boolean).join(' · ');
-    const nFlag=cur.mails.reduce((s,m)=>s+(flagCount(m)?1:0),0), nDone=order.filter(x=>x.d).length;
-    $('mlStats').textContent=`${cur.mails.length} מיילים · ${nFlag} עם נקודות לבדיקה · ${nDone} טופלו`;
+    if(openId&&!all.some(x=>x.id===openId)) openId=wide()&&order.length?order[0].m.id:null;
+    $('mlSub').textContent=[cur&&cur.mailbox,'כל המיילים, החדש למעלה'].filter(Boolean).join(' · ');
+    const nFlag=all.reduce((s,m)=>s+(flagCount(m)?1:0),0), nDone=order.filter(x=>x.d).length;
+    $('mlStats').textContent=`${all.length} מיילים · ${nFlag} עם נקודות לבדיקה · ${nDone} טופלו`;
     const list=$('mlList'); list.textContent='';
     order.forEach(({m,d})=>{
       const b=el('button','ml-row'+(d?' done':'')+(m.id===openId?' sel':'')); b.type='button'; b.setAttribute('role','listitem');
       const av=el('span','ml-av',initial(m)); av.style.background=`hsl(${hue(m)} 38% 42%)`; b.appendChild(av);
       const rb=el('span','ml-rb'), r1=el('span','ml-r1');
-      r1.appendChild(el('span','ml-who',m.client||m.sender||'ללא שם')); r1.appendChild(el('span','ml-when',short(m.date))); rb.appendChild(r1);
+      r1.appendChild(el('span','ml-who',m.client||m.sender||'ללא שם')); r1.appendChild(el('span','ml-when',whenOf(m))); rb.appendChild(r1);
       rb.appendChild(el('span','ml-sj',m.subject||'')); rb.appendChild(el('span','ml-sn',brief(m)));
       const nf=(m.files||[]).length, fl=flagCount(m);
       if(nf||fl||d){ const r3=el('span','ml-r3'); if(nf){ const f=el('span'); f.innerHTML=CLIP+' '+nf; r3.appendChild(f); } if(fl) r3.appendChild(el('span','fl',`${fl} לבדיקה`)); if(d) r3.appendChild(el('span','t-ok','טופל ✓')); rb.appendChild(r3); }
@@ -3285,13 +3292,13 @@ window.__nf=normalizeFile;
       list.appendChild(b);
     });
     $('mlBox').classList.toggle('open',!!openId);
-    const m=openId&&cur.mails.find(x=>x.id===openId);
+    const m=openId&&all.find(x=>x.id===openId);
     if(m) detail(m); else { const v=$('mlView'); v.textContent=''; v.appendChild(el('p','ml-pick','בוחרים מייל מהרשימה')); }
   }
 
   const isDup=x=>/כפול/.test(x.flag||'');
   async function fileObjs(m,all){ const out=[];
-    for(const x of (m.files||[])){ if(!x.path||(!all&&isDup(x))) continue; const b=await getBlob(x); if(b) out.push(new File([b],x.name,{type:b.type||mime(x.name)})); }
+    for(const x of (m.files||[])){ if(!x.path||(!all&&isDup(x))) continue; const b=await getBlob(x,m); if(b) out.push(new File([b],x.name,{type:b.type||mime(x.name)})); }
     return out; }
 
   function detail(m){
@@ -3305,14 +3312,14 @@ window.__nf=normalizeFile;
       const mv=el('button','ml-btn','במסך ההידוק'); mv.type='button'; mv.title='לסדר, להוריד קבצים או לשנות שם לפני ההידוק'; mv.addEventListener('click',()=>toMerge(m,true,false,mv)); acts.appendChild(mv);
     }
     const g=safeUrl(m.gmail); if(g){ const a=el('a','ml-btn','Gmail'); a.href=g; a.target='_blank'; a.rel='noopener'; a.title='פתיחה ב־Gmail'; acts.appendChild(a); }
-    const key=cur.day+'/'+m.id, isDone=doneSet().has(key), dn=el('button','ml-btn'+(isDone?' on':''),isDone?'טופל ✓':'סימון כטופל'); dn.type='button';
+    const key=dayOf.get(m).day+'/'+m.id, isDone=doneSet().has(key), dn=el('button','ml-btn'+(isDone?' on':''),isDone?'טופל ✓':'סימון כטופל'); dn.type='button';
     dn.addEventListener('click',()=>{ setDone(key,!doneSet().has(key)); render(); }); acts.appendChild(dn);
     bar.appendChild(acts); v.appendChild(bar);
 
     const body=el('div','ml-body'); v.appendChild(body);
     body.appendChild(el('h3','ml-h',m.subject||m.client||''));
     const fr=el('div','ml-from'), av=el('span','ml-av',initial(m)); av.style.background=`hsl(${hue(m)} 38% 42%)`; fr.appendChild(av);
-    const fx=el('div'); fx.appendChild(el('b',null,m.client||m.sender||'')); fx.appendChild(el('span',null,[m.sender&&m.sender!==m.client?m.sender:'',fmtDay(m.date)].filter(Boolean).join(' · '))); fr.appendChild(fx); body.appendChild(fr);
+    const fx=el('div'); fx.appendChild(el('b',null,m.client||m.sender||'')); fx.appendChild(el('span',null,[m.sender&&m.sender!==m.client?m.sender:'',fmtDay(m.date)+(m.time?' '+m.time:'')].filter(Boolean).join(' · '))); fr.appendChild(fx); body.appendChild(fr);
 
     const br=brief(m); if(br){ const bx=el('div','ml-brief'); bx.appendChild(el('small',null,'בקצרה')); bx.appendChild(document.createTextNode(br)); body.appendChild(bx); }
     const pts=el('ul','ml-pts');
@@ -3343,7 +3350,7 @@ window.__nf=normalizeFile;
         const tx=el('span'); tx.style.minWidth='0'; tx.appendChild(el('span','nm',x.name)); tx.lastChild.style.display='block';
         const nt=el('span','nt',[x.flag?(isDup(x)?'כפול – לא ייכלל בהידוק':x.flag):'',x.note||''].filter(Boolean).join(' · ')); nt.style.display='block'; tx.appendChild(nt); b.appendChild(tx);
         b.addEventListener('click',async()=>{ const w=window.open('about:blank','_blank'); b.disabled=true;
-          try{ const bl=await getBlob(x); if(!bl) throw 0; const u=URL.createObjectURL(bl); urls.push(u);
+          try{ const bl=await getBlob(x,m); if(!bl) throw 0; const u=URL.createObjectURL(bl); urls.push(u);
             if(w) w.location.href=u; else { const l=document.createElement('a'); l.href=u; l.target='_blank'; l.rel='noopener'; document.body.appendChild(l); l.click(); l.remove(); } }
           catch(_){ if(w) w.close(); status('לא הצלחתי לפתוח את הקובץ. אולי אין חיבור כרגע.',true); }
           b.disabled=false; });
