@@ -1,0 +1,9 @@
+name = "mahdek-api"
+main = "worker.js"
+compatibility_date = "2025-06-01"
+workers_dev = true
+
+[vars]
+MODEL = "claude-sonnet-5-5"
+ALLOW_ORIGIN = "https://fouadrhail.github.io"
+REPO = "fouadrhail/mahdek-mail"

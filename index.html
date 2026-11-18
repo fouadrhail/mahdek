@@ -1317,7 +1317,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
       <p class="hm-hint">גוררים מסמכים. מהדק מזהה אותם מיד, ואפשר לכתוב מה נכון. "שליחה לאיתי" שומרת אותם במאגר הפרטי, ואיתי בודק אותם ולומד מהם.</p>
       <label class="lb-drop" id="lbDrop"><input type="file" id="lbFile" multiple accept=".pdf,image/*" hidden><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><span>גוררים קבצים לכאן או לוחצים לבחירה</span></label>
       <ol class="lb-files" id="lbFiles"></ol>
-      <div class="lb-row" id="lbFileAct" hidden><button type="button" class="hm-link pri" id="lbSend">שליחה לאיתי</button><button type="button" class="hm-link" id="lbClear">ניקוי</button></div>
+      <div class="lb-row" id="lbFileAct" hidden><button type="button" class="hm-link pri" id="lbClaude" hidden>בדיקה עכשיו עם Claude</button><button type="button" class="hm-link pri" id="lbSend">שליחה לאיתי</button><button type="button" class="hm-link" id="lbClear">ניקוי</button></div>
     </section>
     <section class="hm-card lb-card">
       <h3>בקשה לאיתי</h3>
@@ -1441,7 +1441,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 7.1 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 7.2 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -3721,6 +3721,7 @@ window.__nf=normalizeFile;
       const s=el('input'); s.placeholder='הספק הנכון (לא חובה)'; s.value=it.truth.supplier; s.oninput=()=>{ it.truth.supplier=s.value.trim(); upd(i); }; s.setAttribute('aria-label','הספק הנכון');
       const t=el('select'); TYPES.forEach(v=>{ const o=el('option',null,v||'סוג המסמך'); o.value=v; t.appendChild(o); }); t.value=it.truth.type; t.onchange=()=>{ it.truth.type=t.value; upd(i); }; t.setAttribute('aria-label','סוג המסמך');
       const n=el('input'); n.placeholder='4 ספרות אחרונות'; n.inputMode='numeric'; n.maxLength=4; n.value=it.truth.number4; n.oninput=()=>{ it.truth.number4=n.value.replace(/\D/g,'').slice(-4); upd(i); }; n.setAttribute('aria-label','4 הספרות האחרונות של מספר המסמך');
+      if(it.claude){ const cl=el('div','gs'); if(it.claude.busy) cl.textContent='Claude בודק…'; else if(it.claude.err) cl.textContent='Claude: '+it.claude.err; else { const c=it.claude.res; cl.appendChild(document.createTextNode('Claude קרא: ')); cl.appendChild(el('b',null,[c.supplier,c.type,c.number4].filter(Boolean).join(' · ')||'לא הצליח לקרוא')); if(c.confidence) cl.appendChild(document.createTextNode(c.confidence==='high'?' (בטוח)':c.confidence==='low'?' (לא בטוח)':' (די בטוח)')); if(c.note) cl.appendChild(el('small',null,' '+c.note)); } li.appendChild(cl); }
       row.appendChild(s); row.appendChild(t); row.appendChild(n); li.appendChild(row);
       const cmp=el('div','gs'); cmp.dataset.i=i; cmp.textContent=instant(it); li.appendChild(cmp); ol.appendChild(li); });
   }
@@ -3732,12 +3733,40 @@ window.__nf=normalizeFile;
         await put(base+'files/'+name,await b64file(it.f),'מעבדה: מסמך לבדיקה'); sent.push({name,it}); status(`נשלחו ${sent.length} מתוך ${items.length}…`); }
       await updateJson(base+'labels.json',d=>{ d=d&&Array.isArray(d.items)?d:{app:'mahdek',kind:'lab-set',v:1,note:'מסמכים שפואד העלה במסך המעבדה',items:[]};
         sent.forEach(({name,it})=>{ const t=it.truth, has=t.supplier||t.type||t.number4; d.items=d.items.filter(x=>x.file!=='files/'+name);
-          d.items.push({file:'files/'+name,by:'fouad',at:new Date().toISOString(),mahdek:it.guess&&it.guess.label||'',label:null,fouad:has?{supplier:t.supplier,type:t.type,number4:t.number4}:null}); });
+          d.items.push({file:'files/'+name,by:'fouad',at:new Date().toISOString(),mahdek:it.guess&&it.guess.label||'',label:null,fouad:has?{supplier:t.supplier,type:t.type,number4:t.number4}:null,claude:it.claude&&it.claude.res||null}); });
         return d; },'מעבדה: תוויות');
       status(`נשלחו ${sent.length} קבצים. איתי יבדוק אותם ${nextCheck()}, והתוצאה תופיע למעלה בלי לרענן.`); items=[]; draw();
     }catch(e){ fail(e,'לשלוח את הקבצים'); }
     b.disabled=false;
   }
+
+  /* ---- instant check with Claude, through Mahdek's own server ---- */
+  let server=null;
+  async function serverUrl(){ if(server!==null) return server; try{ const r=await fetch('data/server.json',{cache:'no-store'}); const j=r.ok?await r.json():null; server=j&&/^https:\/\/[a-z0-9.-]+\.workers\.dev$/.test(j.url)?j.url:''; }catch(_){ server=''; } return server; }
+  async function pageImage(it){
+    let src;
+    if(it.kind==='pdf'){ await window.__mhNeed('pdfjs'); const pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(await it.f.arrayBuffer())}).promise; const pg=await pdf.getPage(1);
+      const v0=pg.getViewport({scale:1}), sc=Math.min(2.2,1700/Math.max(v0.width,v0.height)), v=pg.getViewport({scale:sc}); src=document.createElement('canvas'); src.width=Math.round(v.width); src.height=Math.round(v.height);
+      const cx=src.getContext('2d'); cx.fillStyle='#fff'; cx.fillRect(0,0,src.width,src.height); await pg.render({canvasContext:cx,viewport:v}).promise; }
+    else { const bmp=await createImageBitmap(it.f); const sc=Math.min(1,1800/Math.max(bmp.width,bmp.height)); src=document.createElement('canvas'); src.width=Math.round(bmp.width*sc); src.height=Math.round(bmp.height*sc); const cx=src.getContext('2d'); cx.fillStyle='#fff'; cx.fillRect(0,0,src.width,src.height); cx.drawImage(bmp,0,0,src.width,src.height); }
+    return src.toDataURL('image/jpeg',0.85).split(',')[1];
+  }
+  const ERR={auth:'השרת לא אישר את המפתח של המחשב הזה.',no_key:'לשרת עוד אין מפתח של Claude.',too_big:'הקובץ גדול מדי.',type:'סוג הקובץ לא נתמך.'};
+  async function askClaude(it){
+    const url=await serverUrl(); if(!url) return;
+    it.claude={busy:true}; draw();
+    try{ const b64=await pageImage(it);
+      const r=await fetch(url+'/check',{method:'POST',headers:{Authorization:'Bearer '+tok(),'X-Mime':'image/jpeg','Content-Type':'text/plain'},body:b64});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||!j.result){ it.claude={err:ERR[j.error]||(j.error==='claude'?'Claude לא ענה'+(j.status?` (${j.status})`:'')+'. אולי נגמר הקרדיט בחשבון ה־API.':'לא הצלחתי לבדוק את הקובץ.')}; }
+      else { const c=j.result; it.claude={res:c}; const t=it.truth;
+        if(!t.supplier&&c.supplier) t.supplier=String(c.supplier); if(!t.type&&TYPES.includes(c.type)) t.type=c.type; if(!t.number4&&/^\d{1,4}$/.test(String(c.number4||''))) t.number4=String(c.number4); }
+    }catch(e){ it.claude={err:'השרת לא זמין כרגע.'}; }
+    draw();
+  }
+  async function claudeAll(){ const b=$('lbClaude'); b.disabled=true; for(const it of items) if(!it.claude||it.claude.err) await askClaude(it); b.disabled=false;
+    const n=items.filter(x=>x.claude&&x.claude.res).length; if(n) status(`Claude בדק ${n} קבצים. התשובות שלו מולאו בשדות "מה נכון", ואפשר לתקן לפני השליחה לאיתי.`); }
+  serverUrl().then(u=>{ $('lbClaude').hidden=!u; });
 
   /* ---- requests ---- */
   let reqs=[];
@@ -3807,6 +3836,7 @@ window.__nf=normalizeFile;
   ['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{ e.preventDefault(); drop.classList.remove('drag'); }));
   drop.addEventListener('drop',e=>addFiles(e.dataTransfer.files));
   $('lbSend').addEventListener('click',sendDocs);
+  $('lbClaude').addEventListener('click',claudeAll);
   $('lbClear').addEventListener('click',()=>{ items=[]; draw(); status(''); });
   $('lbReqSend').addEventListener('click',sendReq);
   $('lbCorrSend').addEventListener('click',sendCorr);
