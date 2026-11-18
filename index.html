@@ -535,7 +535,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver">מהדק · גרסה 3.2 · עודכן 18.11.2026</footer>
+  <footer class="ver">מהדק · גרסה 3.3 · עודכן 18.11.2026</footer>
 </div>
 
 <script>
@@ -1125,14 +1125,14 @@ window.__nf=normalizeFile;
   /* Document number: the number printed next to the document title ("חשבונית מס 11444", "מספר: 02/000327").
      Customer, phone, date, amount, allocation and business numbers around it are skipped. */
   const NUM_DOC=/חשבונית|חשבון|חשב[רנו]|קבלה|כבלה|ריכוז|מרכזת|זמנית|עסקה|invoice|receipt/gi;
-  const NUM_BAD=/לקוח|מנוי|עוסק|מורשה|ע\.?\s?מ(?![א-ת])|ח\.?\s?פ(?![א-ת])|ת\.?\s?ז|תיק|הקצאה|מספרכם|כרטיס|רישיון|רכב|הזמנה|אסמכתא|טל|פקס|נייד|מיקוד|ת\.?\s?ד(?![א-ת])|דף|עמוד|סניף|שובר|מסוף|זהות|תאגיד|סוכן|שעה|תאריך|יתרה|סה"?כ|פריט|הפקה|תקופ|מחזור|קופה|ref|order|customer|account|vat|tel|fax/i;
-  const NUM_LABEL=/^(?:מס|מספר|no|#|on|he|sa|[a-z]{1,2})$/i;
+  const NUM_BAD=/לקוח|מנוי|עוסק|מורשה|ע\.?\s?מ(?![א-ת])|ח\.?\s?פ(?![א-ת])|ת\.?\s?ז|תיק|הקצאה|מספרכם|כרטיס|רישיון|רכב|הזמנה|אסמכתא|טל|פקס|נייד|מיקוד|[סמ]יקו[דר]|ת\.?\s?ד(?![א-ת])|דף|עמוד|סניף|שובר|מסוף|זהות|תאגיד|סוכן|שעה|תאריך|יתרה|סה"?כ|פריט|הפקה|תקופ|מחזור|קופה|ref|order|customer|account|vat|tel|fax/i;
+  const NUM_LABEL=/^(?:מס|מספר|no|#|on|he|sa|[a-z]{1,2}|[א-ת]{1,2})$/i;
   function last4(n){ return String(n||'').replace(/\D/g,'').slice(-4); }
   function numberFrom(src){
     const ev=Array.isArray(src)?{lines:src}:(src||{});
     const L=[...new Set([...(ev.top||[]),...(ev.lines||[]).slice(0,60)].map(l=>String(l||'').replace(/[\u200e\u200f\u202a-\u202e]/g,'').replace(/[‘’“”]/g,"'")))];
     const mask=l=>l.replace(/\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4}|\d{1,2}:\d{2}(?::\d{2})?|\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+\.\d+|0[2-489]-\d{7}|05\d-?\d{7}|\*\d{4}|1-?[78]00-?\d{3}-?\d{3}/g,m=>' '.repeat(m.length));
-    const TOK=/[A-Za-z]*\d[A-Za-z\d]*(?:\s*[\/\-]\s*[A-Za-z]*\d[A-Za-z\d]*)*/g;
+    const TOK=/[A-Za-z]*\d[A-Za-z\d]*(?:\s*[\/\-]\s*\.?[A-Za-z]*\d[A-Za-z\d]*)*/g;
     const core=t=>t.split(/\s*[\/\-]\s*/).map(p=>(p.match(/\d+/g)||[]).sort((a,b)=>b.length-a.length)[0]||'').reduce((a,b)=>b.length>=a.length?b:a,'');
     const found=[];
     function scan(line,i,forceAdj){
@@ -1146,10 +1146,12 @@ window.__nf=normalizeFile;
         const pre=m.slice(cut,start), suf=m.slice(end,end+12).match(/^\s*:\s*([^\s\d:]+)/);
         if(NUM_BAD.test(pre)||(suf&&NUM_BAD.test(suf[1]))) continue;
         any=true;
-        const words=pre.replace(/[\s:.\-\/|=()'"׳״!,_]+/g,' ').trim().split(' ').filter(Boolean);
+        const words=pre.replace(/[\s:;.\-\/|=()\[\]'"׳״!,_~*]+/g,' ').trim().split(' ').filter(Boolean);
         const adj=forceAdj||(words.length?words.every(w=>NUM_LABEL.test(w)):!afterTok)||(suf&&/^(?:מס|מספר)/.test(suf[1]));
         let score=1+(adj?3:0)+(num.length>=4?1:0)+(i<15?1:0);
-        if(num.length===9&&!adj&&typeof validId==='function'&&validId(num)) score-=5;
+        const bizId=num.length===9&&typeof validId==='function'&&validId(num);
+        if(bizId&&(forceAdj||ev.ocr||(ev.ids||[]).some(x=>x.id===num))) continue; // the issuer's own business number
+        if(bizId&&!adj) score-=5;
         found.push({num,score,i});
       }
       return any;
@@ -1166,7 +1168,9 @@ window.__nf=normalizeFile;
   }
   /* band: a second, sharper reading of just the title line of a scan (see numPass) */
   function docNumber(src,band){
-    const a=numberFrom(src), b=band?numberFrom(['חשבונית '+band]):null;
+    let a=numberFrom(src), b=band?numberFrom({lines:['חשבונית '+band],ids:(src&&src.ids)||[],ocr:true}):null;
+    if(b&&b.score<4) b=null;
+    if(a&&a.score<4&&src&&src.ocr) a=null; // in a scan, a number with no label beside it is too often noise
     if(b&&(!a||(b.num.length>=a.num.length&&b.score>=a.score))) return b.num;
     return a?a.num:'';
   }
@@ -1469,9 +1473,11 @@ window.__nf=normalizeFile;
   }
   /* Read the title line of a scan again to catch its number: the band around it, twice the size,
      coloured ink made dark (receipt books print the number in red), sparse-text mode. */
-  async function numPass(full,box){
-    const h=Math.max(12,box.y1-box.y0), y0=Math.max(0,Math.round(box.y0-h*1.2)), y1=Math.min(full.height,Math.round(box.y1+h*1.2));
-    const c=document.createElement('canvas'); c.width=full.width*2; c.height=(y1-y0)*2;
+  async function numPass(full,box,wide){
+    const h=Math.max(12,box.y1-box.y0);
+    const y0=Math.max(0,Math.round(box.y0-h*(wide?1.2:0.3))), y1=Math.min(full.height,Math.round(box.y1+h*(wide?1.2:0.05)));
+    const sc=wide?2:Math.min(3,Math.max(0.5,60/h));   // title line alone, about 60px tall: big titles read better smaller
+    const c=document.createElement('canvas'); c.width=Math.round(full.width*sc); c.height=Math.max(1,Math.round((y1-y0)*sc));
     const g=c.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(full,0,y0,full.width,y1-y0,0,0,c.width,c.height);
     try{
       const img=g.getImageData(0,0,c.width,c.height), d=img.data, hist=new Array(256).fill(0), n=c.width*c.height;
@@ -1482,7 +1488,7 @@ window.__nf=normalizeFile;
       g.putImageData(img,0,0);
     }catch(_){}
     const w=await getOcr();
-    try{ await w.setParameters({tessedit_pageseg_mode:'11'}); }catch(_){}
+    try{ await w.setParameters({tessedit_pageseg_mode:wide?'11':'6'}); }catch(_){}
     try{ const r=await w.recognize(c); return normQ(r.data.text||'').replace(/\s+/g,' ').trim(); }
     finally{ try{ await w.setParameters({tessedit_pageseg_mode:'3'}); }catch(_){} }
   }
@@ -1508,7 +1514,10 @@ window.__nf=normalizeFile;
     if(ocr&&full){
       let box=lines.titleBox;
       if(!box&&topRes&&topRes.titleBox) box={y0:topRes.titleBox.y0/2,y1:topRes.titleBox.y1/2};
-      if(box){ try{ band=await numPass(full,box); }catch(_){} }
+      if(box){
+        try{ band=await numPass(full,box,false); }catch(_){}
+        if(!docNumber({ocr:true,ids:ev.ids},band)){ try{ band=await numPass(full,box,true); }catch(_){} }
+      }
     }
     return {ev,type:docType(ev.lines),num:docNumber(ev,band)};
   }
