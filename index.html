@@ -776,6 +776,56 @@ body[data-tab="convert"]{--sec:var(--sage)} body[data-tab="edit"]{--sec:var(--bl
 .card.mkt .mkt-fail a{color:var(--ink)}
 .card.mkt .mkt-src{margin:8px 0 0;font-size:.72rem;color:var(--muted);line-height:1.4}
 .card.mkt iframe{display:block}
+/* dashboard */
+#s-home{display:flex;flex-direction:column;gap:16px}
+#s-home[hidden]{display:none}
+.hm-top h2{margin:0;font-weight:500;font-size:1.45rem;color:var(--ink)}
+.hm-date{margin:2px 0 0;color:var(--muted);font-size:.92rem}
+.hm-agent{background:var(--paper);border:1px solid var(--rule);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.hm-agent::before{content:"";position:absolute;inset-block:0;inset-inline-start:0;width:4px;background:var(--navy,var(--ink))}
+.hm-ag-head{display:flex;align-items:center;gap:11px}
+.hm-ag-av{width:40px;height:40px;border-radius:50%;background:var(--navy,var(--ink));color:var(--paper);display:grid;place-items:center;font-weight:600;font-size:1.05rem;flex:none}
+.hm-ag-head b{display:block;font-size:1rem;color:var(--ink)}
+.hm-ag-head span{font-size:.8rem;color:var(--muted)}
+.hm-ag-at{margin-inline-start:auto;font-size:.78rem!important;white-space:nowrap}
+.hm-ag-msg{margin:0;font-size:1rem;line-height:1.6;color:var(--ink)}
+.hm-today{margin:0;padding:0;list-style:none;counter-reset:t;display:flex;flex-direction:column;gap:2px}
+.hm-today li{counter-increment:t;display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--rule);font-size:.93rem;line-height:1.5}
+.hm-today li::before{content:counter(t);width:22px;height:22px;border-radius:50%;background:var(--soft);color:var(--muted);display:grid;place-items:center;font-size:.75rem;font-weight:600;margin-top:1px}
+.hm-today li span{overflow-wrap:anywhere;color:var(--ink)}
+.hm-link{font:inherit;font-size:.8rem;color:var(--muted);background:none;border:1px solid var(--rule);border-radius:8px;padding:3px 9px;cursor:pointer;white-space:nowrap}
+.hm-link:hover{color:var(--ink);border-color:var(--ink)}
+.hm-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.hm-tile{background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:11px 14px;display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--ink);min-width:0}
+a.hm-tile:hover{border-color:var(--ink)}
+.hm-tile .k{font-size:.78rem;color:var(--muted)}
+.hm-tile b{font-size:1.45rem;font-weight:500;line-height:1.2;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hm-tile .s{font-size:.78rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hm-tile.bad b{color:var(--ml-flag)}
+.hm-tile.ok b{color:var(--ml-ok)}
+.hm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;align-items:start}
+.hm-card{background:var(--paper);border:1px solid var(--rule);border-radius:16px;padding:14px 16px;min-width:0}
+.hm-card h3{margin:0 0 8px;font-size:.98rem;font-weight:600;color:var(--ink)}
+.hm-hint{margin:-4px 0 8px;font-size:.78rem;color:var(--muted)}
+.hm-sug,.hm-health{list-style:none;margin:0;padding:0}
+.hm-sug li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--rule)}
+.hm-sug li:first-child,.hm-health li:first-child{border-top:0}
+.hm-sug .t{font-size:.9rem;color:var(--ink);overflow-wrap:anywhere}
+.hm-sug .c{display:block;font-size:.76rem;color:var(--muted)}
+.hm-add{font:inherit;font-size:.8rem;border-radius:8px;padding:5px 11px;cursor:pointer;background:var(--ink);color:var(--paper);border:1px solid var(--ink);white-space:nowrap}
+.hm-add[disabled]{background:transparent;color:var(--ml-ok);border-color:transparent;cursor:default}
+.hm-dr{border-top:1px solid var(--rule);padding:8px 0}
+.hm-dr:first-child{border-top:0}
+.hm-dr summary{cursor:pointer;list-style:none;font-size:.9rem;color:var(--ink)}
+.hm-dr summary::-webkit-details-marker{display:none}
+.hm-dr summary small{display:block;font-size:.76rem;color:var(--muted);direction:ltr;text-align:right}
+.hm-dr pre{white-space:pre-wrap;font:inherit;font-size:.88rem;line-height:1.55;background:var(--soft);border-radius:10px;padding:10px 12px;margin:8px 0 6px;color:var(--ink)}
+.hm-health li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:8px;padding:6px 0;border-top:1px solid var(--rule);font-size:.88rem;color:var(--ink)}
+.hm-health li i{font-style:normal;font-weight:700}
+.hm-health li.ok i{color:var(--ml-ok)}.hm-health li.bad i{color:var(--ml-flag)}.hm-health li.na i{color:var(--muted)}
+.hm-health small{display:block;color:var(--muted);font-size:.76rem}
+.hm-empty{font-size:.86rem;color:var(--muted);padding:6px 0;margin:0}
+@media (max-width:720px){.hm-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.hm-agent{padding:14px}}
 /* email analysis */
 :root{--ml-flag:#b4373a;--ml-flag-bg:#fbeaea;--ml-ok:#2f7a52;--ml-ok-bg:#e8f3ec;--ml-tab:#e8dcc4;--ml-folder:#f6efe1}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ml-flag:#ff9496;--ml-flag-bg:#3a1d1f;--ml-ok:#86d3a6;--ml-ok-bg:#183126;--ml-tab:#4a4232;--ml-folder:#2a261e}}
@@ -925,7 +975,8 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
   </header>
 
   <nav class="mainnav" role="tablist" aria-label="אזורים">
-    <button type="button" role="tab" id="m-tasks" aria-controls="s-tasks" aria-selected="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 9l1.6 1.6L12.5 7.7M8 15l1.6 1.6 2.9-2.9M14.5 9.5H17M14.5 15.5H17"/></svg>משימות<span class="nbadge" id="mTasksBadge" hidden><svg class="lamp" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 18h6M10 21h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3z" fill="currentColor"/></svg><b>0</b></span></button>
+    <button type="button" role="tab" id="m-home" aria-controls="s-home" aria-selected="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="8" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="5" rx="1.5"/><rect x="13.5" y="11.5" width="7" height="9" rx="1.5"/><rect x="3.5" y="14.5" width="7" height="6" rx="1.5"/></svg>לוח בקרה</button>
+    <button type="button" role="tab" id="m-tasks" aria-controls="s-tasks" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 9l1.6 1.6L12.5 7.7M8 15l1.6 1.6 2.9-2.9M14.5 9.5H17M14.5 15.5H17"/></svg>משימות<span class="nbadge" id="mTasksBadge" hidden><svg class="lamp" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 18h6M10 21h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3z" fill="currentColor"/></svg><b>0</b></span></button>
     <button type="button" role="tab" id="m-files" aria-controls="s-files" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>קבצים</button>
     <button type="button" role="tab" id="m-mail" aria-controls="s-mail" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>תיבת דואר</button>
   </nav>
@@ -1153,7 +1204,32 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
   </section>
   </section>
 
-  <section class="section tk" id="s-tasks" role="tabpanel" aria-labelledby="m-tasks">
+  <section class="section hm" id="s-home" role="tabpanel" aria-labelledby="m-home">
+    <div class="hm-top">
+      <div><h2 id="hmHello">שלום פואד</h2><p class="hm-date" id="hmDate"></p></div>
+    </div>
+    <article class="hm-agent" id="hmAgent">
+      <div class="hm-ag-head">
+        <span class="hm-ag-av" aria-hidden="true">נ</span>
+        <div><b>נועם</b><span>מנהל המשרד</span></div>
+        <span class="hm-ag-at" id="hmAgAt"></span>
+      </div>
+      <p class="hm-ag-msg" id="hmAgMsg">טוען את דוח הבוקר…</p>
+      <ol class="hm-today" id="hmToday"></ol>
+    </article>
+    <div class="hm-tiles">
+      <a class="hm-tile" href="#tasks" id="hmTTasks"><span class="k">משימות להיום</span><b id="hmTasksN">–</b><span class="s" id="hmTasksS"></span></a>
+      <a class="hm-tile" href="#mail" id="hmTMail"><span class="k">תיבת דואר</span><b id="hmMailN">–</b><span class="s" id="hmMailS"></span></a>
+      <div class="hm-tile" id="hmTDl"><span class="k">המועד הקרוב</span><b id="hmDlN">–</b><span class="s" id="hmDlS"></span></div>
+      <div class="hm-tile" id="hmTHealth"><span class="k">מצב המערכת</span><b id="hmHealthN">–</b><span class="s" id="hmHealthS"></span></div>
+    </div>
+    <div class="hm-grid">
+      <section class="hm-card" id="hmSugBox"><h3>נועם מציע משימות</h3><ul class="hm-sug" id="hmSug"></ul></section>
+      <section class="hm-card" id="hmDrBox"><h3>טיוטות תשובה</h3><p class="hm-hint">נועם לא שולח כלום. מעתיקים, עוברים על הנוסח ושולחים מהמייל.</p><div id="hmDrafts"></div></section>
+      <section class="hm-card" id="hmHeBox"><h3>בדיקות מערכת</h3><ul class="hm-health" id="hmHealth"></ul></section>
+    </div>
+  </section>
+  <section class="section tk" id="s-tasks" role="tabpanel" aria-labelledby="m-tasks" hidden>
     <div class="tk-top">
       <div class="tk-title"><h2>משימות</h2><p id="tkDate"></p></div>
       <div class="tk-ring" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" class="bg"/><circle cx="24" cy="24" r="20" class="fg" id="tkRing"/></svg><b id="tkPct">0%</b></div>
@@ -1238,7 +1314,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 5.9 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 6.0 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -1575,8 +1651,8 @@ window.__nf=normalizeFile;
   /* Tabs */
   let lastFiles='join';
   function show(t){
-    const sec=(!t||t==='tasks')?'tasks':t==='mail'?'mail':'files';
-    ['files','tasks','mail'].forEach(k=>{$('s-'+k).hidden=k!==sec;$('m-'+k).setAttribute('aria-selected',String(k===sec));});
+    const sec=(!t||t==='home')?'home':t==='tasks'?'tasks':t==='mail'?'mail':'files';
+    ['home','files','tasks','mail'].forEach(k=>{$('s-'+k).hidden=k!==sec;$('m-'+k).setAttribute('aria-selected',String(k===sec));});
     if(sec!=='files'){ document.body.dataset.tab=sec; ['merge','convert','edit','sign'].forEach(k=>{$('p-'+k).hidden=true;}); return; }
     const key=t==='files'||t==='convert'?'convert':t==='pages'?'edit':t==='sign'?'sign':'merge';
     lastFiles=t&&key!=='merge'?t:'join';
@@ -1584,6 +1660,7 @@ window.__nf=normalizeFile;
     ['merge','convert','edit','sign'].forEach(k=>{$('p-'+k).hidden=k!==key;$('t-'+k).setAttribute('aria-selected',String(k===key));});
   }
   $('m-files').addEventListener('click',()=>{location.hash=lastFiles;show(lastFiles);});
+  $('m-home').addEventListener('click',()=>{location.hash='home';show('home');});
   $('m-tasks').addEventListener('click',()=>{location.hash='tasks';show('tasks');});
   $('m-mail').addEventListener('click',()=>{location.hash='mail';show('mail');});
   $('t-merge').addEventListener('click',()=>{location.hash='join';show('join');});
@@ -2859,6 +2936,7 @@ window.__nf=normalizeFile;
       const a=document.createElement('div'); const w=document.createElement('div'); if(x.kind){ const k=document.createElement('i'); k.className='dk k-'+x.kind; k.setAttribute('aria-hidden','true'); w.appendChild(k); } const pp=String(x.what).split(' · '); w.appendChild(document.createTextNode(pp[0])); const d=document.createElement('div'); d.className='when'; d.textContent=(pp[1]?pp[1]+' · ':'')+dmy(x.date)+(x.est?' · לפי החוק':''); a.append(w,d);
       const b=document.createElement('span'); b.className='left'; b.textContent=inDays(n); li.append(a,b); ul.appendChild(li); });
     renderCal();
+    window.__mhRatesAt=D.updated||null; try{ window.dispatchEvent(new Event('mh:mail')); }catch(_){}
     if(D.updated){ const u=new Date(D.updated); if(!isNaN(u)) $('factsSrc').textContent=`מקורות: בנק ישראל, הלשכה המרכזית לסטטיסטיקה, רשות המסים · עודכן ${new Intl.DateTimeFormat('he-IL',{timeZone:TZ,day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'}).format(u)}`; }
   }
   const FALLBACK={"updated": "2026-11-18T10:00:00+02:00", "boi": {"rate": 3.25, "since": "2026-10-21", "next": "2026-11-23", "auto": false}, "fx": {"USD": null, "EUR": null}, "cpi": null, "deadlines": [{"date": "2026-11-23", "what": "דוח מע\"מ מפורט (874) · אוקטובר", "kind": "vat874"}, {"date": "2026-12-15", "what": "מקדמות מס הכנסה · נובמבר", "kind": "adv"}, {"date": "2026-12-15", "what": "מע\"מ תקופתי · נובמבר", "kind": "vat"}, {"date": "2026-12-15", "what": "ביטוח לאומי · נובמבר", "kind": "bl", "est": true}, {"date": "2026-12-16", "what": "ניכויים מס הכנסה · נובמבר", "kind": "wh"}, {"date": "2026-12-23", "what": "דוח מע\"מ מפורט (874) · נובמבר", "kind": "vat874"}, {"date": "2027-01-18", "what": "מקדמות מס הכנסה · דצמבר", "kind": "adv"}, {"date": "2027-01-18", "what": "מע\"מ תקופתי · דצמבר", "kind": "vat"}, {"date": "2027-01-18", "what": "ניכויים מס הכנסה · דצמבר", "kind": "wh"}, {"date": "2027-01-26", "what": "דוח מע\"מ מפורט (874) · דצמבר", "kind": "vat874"}]};
@@ -2915,7 +2993,7 @@ window.__nf=normalizeFile;
       order:t.order!=null?+t.order:(t.created||Date.now()),created:t.created||Date.now()};
   }
   T=T.map(norm).filter(t=>t.title);
-  const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(T)); }catch(_){ toast('לא הצלחתי לשמור בדפדפן הזה'); } };
+  const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(T)); }catch(_){ toast('לא הצלחתי לשמור בדפדפן הזה'); } try{ window.dispatchEvent(new Event('mh:tasks')); }catch(_){} };
 
   const tKey=t=>t.due?keyOf(t.scope,t.due):cur(t.scope);
   /* repeating tasks: do they come up in the current period? */
@@ -3162,6 +3240,9 @@ window.__nf=normalizeFile;
       arr.map(norm).forEach(t=>{ if(t.title&&!T.some(x=>x.id===t.id)){ T.push(t); n++; } }); save(); render(); toast(n?`שוחזרו ${n} משימות`:'כל המשימות מהגיבוי כבר קיימות'); }
     catch(_){ toast('הקובץ הזה לא נראה כמו גיבוי של משימות מהדק'); } });
   save(); render();
+  window.__mhTasks={ counts:()=>({day:count('day'),week:count('week'),month:count('month')}),
+    has:title=>T.some(t=>t.title===String(title||'').trim()),
+    add:o=>{ const t=norm({...o,id:rid(),created:Date.now(),order:Date.now()}); if(!t.title||T.some(x=>x.title===t.title&&!x.done)) return false; T.push(t); save(); render(); toast(`נוספה משימה ${SC[t.scope]}`); return true; } };
   let last=todayIso(); setInterval(()=>{ if(todayIso()!==last){ last=todayIso(); $('tkDue').value=last; if(addScope) setAddScope(addScope); render(); } },60000);
 })();
 
@@ -3271,7 +3352,8 @@ window.__nf=normalizeFile;
   const hue=m=>{ let h=0; for(const ch of (m.client||m.id||'')) h=(h*31+ch.charCodeAt(0))%360; return h; };
   const brief=m=>{ if(m.brief) return m.brief; const w=typeof m.want==='string'?m.want:''; const t=w.replace(/\s+/g,' ').trim(); return t.length>110?t.slice(0,107).trimEnd()+'…':t; };
   const CLIP='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5l-8 8a5 5 0 0 1-7-7l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7L9.7 17.2a1.7 1.7 0 0 1-2.4-2.4L15 7"/></svg>';
-  function render(){
+  function render(){ renderInner(); try{ window.dispatchEvent(new Event('mh:mail')); }catch(_){} }
+  function renderInner(){
     urls.forEach(u=>URL.revokeObjectURL(u)); urls=[];
     const has=all.length>0, t=!!tok(); $('mlEmpty').hidden=has; $('mlConn').hidden=t; $('mlRefresh').hidden=!t; if(!t) $('mlSync').hidden=true;
     $('mlEmptyH').textContent=t?'עדיין אין מיילים':'חיבור לתיבת הדואר הפרטית';
@@ -3380,6 +3462,12 @@ window.__nf=normalizeFile;
     if(M.ready()) M.run();
   }
 
+  /* for the dashboard */
+  window.__mhMail={ get:(p,j)=>gh(p,j), hasToken:()=>!!tok(), mails:()=>all, lastSync:()=>lastSync,
+    isDone:m=>{ const d=dayOf.get(m); return !!d&&doneSet().has(d.day+'/'+m.id); }, flags:m=>flagCount(m),
+    open:id=>{ openId=id; location.hash='mail'; render(); } };
+  const ping=()=>{ try{ window.dispatchEvent(new Event('mh:mail')); }catch(_){} };
+
   /* wiring */
   $('mlDay').addEventListener('change',()=>{ cur=days.find(d=>d.day===$('mlDay').value)||cur; openId=null; render(); });
   let wasWide=wide(); window.addEventListener('resize',()=>{ const w=wide(); if(w!==wasWide){ wasWide=w; if(!$('s-mail').hidden) render(); } });
@@ -3417,6 +3505,102 @@ window.__nf=normalizeFile;
   const start=()=>{ setTimeout(load,600); };
   if(document.readyState==='complete') start(); else window.addEventListener('load',start);
   try{ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',load); new MutationObserver(load).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']}); }catch(_){}
+})();
+</script>
+<script>
+(function(){
+  /* Dashboard: Noam's morning brief (agent/brief.json in the private repo) + live numbers from the other screens. */
+  const $=id=>document.getElementById(id);
+  const el=(t,c,x)=>{ const e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; };
+  const BK='mahdek.agent.brief.v1', TZ='Asia/Jerusalem';
+  const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date());
+  const dmy=iso=>{ const [y,m,d]=String(iso).slice(0,10).split('-'); return `${+d}.${+m}`+(y!==today().slice(0,4)?'.'+y:''); };
+  const days=iso=>Math.round((Date.parse(iso+'T12:00:00Z')-Date.parse(today()+'T12:00:00Z'))/864e5);
+  let brief=null; try{ brief=JSON.parse(localStorage.getItem(BK)||'null'); }catch(_){}
+  let loading=false, lastLoad=0;
+
+  function hello(){
+    const h=+new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'numeric',hour12:false}).format(new Date());
+    $('hmHello').textContent=(h<12?'בוקר טוב':h<17?'צהריים טובים':h<21?'ערב טוב':'לילה טוב')+' פואד';
+    $('hmDate').textContent=new Intl.DateTimeFormat('he-IL',{timeZone:TZ,weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());
+  }
+
+  async function loadBrief(force){
+    const M=window.__mhMail; if(!M||!M.hasToken()||loading) return; if(!force&&Date.now()-lastLoad<120000) return;
+    loading=true;
+    try{ const b=await M.get('agent/brief.json',true); lastLoad=Date.now();
+      if(b&&b.kind==='agent-brief'){ brief=b; try{ localStorage.setItem(BK,JSON.stringify(b)); }catch(_){} } }
+    catch(_){ }
+    loading=false; render();
+  }
+
+  function agent(){
+    const msg=$('hmAgMsg'), ol=$('hmToday'); ol.textContent='';
+    const M=window.__mhMail;
+    if(!M||!M.hasToken()){ msg.textContent='כדי שנועם יוכל לדבר איתך כאן, צריך לחבר פעם אחת את תיבת הדואר הפרטית.'; const li=el('li'); li.appendChild(el('span',null,'נכנסים לתיבת דואר ומדביקים את מפתח הגישה.')); const b=el('button','hm-link','לתיבת הדואר'); b.type='button'; b.onclick=()=>{ location.hash='mail'; }; li.appendChild(b); ol.appendChild(li); $('hmAgAt').textContent=''; return; }
+    if(!brief){ msg.textContent='עוד אין דוח בוקר. נועם כותב אותו בימים ראשון–חמישי ב־07:06.'; $('hmAgAt').textContent=''; return; }
+    const at=brief.at?new Date(brief.at):null;
+    $('hmAgAt').textContent=at&&!isNaN(at)?('דוח מ־'+new Intl.DateTimeFormat('he-IL',{timeZone:TZ,day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'}).format(at)):'';
+    msg.textContent=brief.message||'';
+    (brief.today||[]).slice(0,6).forEach(x=>{ const li=el('li'); li.appendChild(el('span',null,x.text||''));
+      if(x.mail&&M.mails().some(m=>m.id===x.mail)){ const b=el('button','hm-link','למייל'); b.type='button'; b.onclick=()=>M.open(x.mail); li.appendChild(b); } else li.appendChild(el('i'));
+      ol.appendChild(li); });
+  }
+
+  function tiles(){
+    const Tk=window.__mhTasks, M=window.__mhMail;
+    if(Tk){ const c=Tk.counts(); const tot=c.day.open+c.day.done; $('hmTasksN').textContent=tot?`${c.day.done}/${tot}`:'0';
+      $('hmTasksS').textContent=c.day.post?`${c.day.post} נדחו מימים קודמים`:(tot?(c.day.open?`${c.day.open} פתוחות`:'הכול הושלם'):'אין משימות להיום'); }
+    if(M&&M.hasToken()){ const all=M.mails(), open=all.filter(m=>!M.isDone(m)), fl=open.filter(m=>M.flags(m)>0).length, t=all.filter(m=>m.date===today()).length;
+      $('hmMailN').textContent=String(open.length); $('hmMailS').textContent=`לא טופלו · ${fl} עם נקודות לבדיקה`+(t?` · ${t} היום`:''); }
+    else { $('hmMailN').textContent='–'; $('hmMailS').textContent='לא מחובר'; }
+    const up=(window.__mhUpcoming||[]).filter(x=>x.date>=today());
+    if(up.length){ const d=up[0].date, same=up.filter(x=>x.date===d), n=days(d);
+      $('hmDlN').textContent=n===0?'היום':n===1?'מחר':`בעוד ${n} ימים`;
+      $('hmDlS').textContent=`${dmy(d)} · `+same.map(x=>String(x.what).split(' · ')[0]).join(', '); }
+  }
+
+  function health(){
+    const ul=$('hmHealth'); ul.textContent=''; const items=[];
+    const M=window.__mhMail;
+    const ra=window.__mhRatesAt?new Date(window.__mhRatesAt):null;
+    if(ra&&!isNaN(ra)){ const h=(Date.now()-ra)/36e5; items.push({ok:h<30?1:0,name:'ריבית ושערים',detail:'עודכנו '+new Intl.DateTimeFormat('he-IL',{timeZone:TZ,day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'}).format(ra)}); }
+    if(M&&M.hasToken()){ const ls=M.lastSync(); items.push({ok:ls?1:-1,name:'תיבת הדואר',detail:ls?'סונכרנה '+new Intl.DateTimeFormat('he-IL',{timeZone:TZ,hour:'2-digit',minute:'2-digit'}).format(new Date(ls)):'עוד לא סונכרנה בפתיחה הזו'}); }
+    else items.push({ok:-1,name:'תיבת הדואר',detail:'לא מחוברת במחשב הזה'});
+    if(brief&&brief.at){ const h=(Date.now()-Date.parse(brief.at))/36e5, wd=new Date().getDay(); items.push({ok:h<26||wd===5||wd===6||(wd===0&&h<74)?1:0,name:'הריצה של נועם',detail:'אחרונה '+new Intl.DateTimeFormat('he-IL',{timeZone:TZ,weekday:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(brief.at))}); }
+    (brief&&brief.health||[]).forEach(x=>items.push({ok:x.ok?1:0,name:x.name,detail:x.detail}));
+    const bad=items.filter(x=>x.ok===0).length;
+    items.forEach(x=>{ const li=el('li',x.ok===1?'ok':x.ok===0?'bad':'na'); li.appendChild(el('i',null,x.ok===1?'✓':x.ok===0?'!':'–')); const d=el('div',null,x.name); if(x.detail) d.appendChild(el('small',null,x.detail)); li.appendChild(d); ul.appendChild(li); });
+    const t=$('hmTHealth'); t.classList.toggle('bad',bad>0); t.classList.toggle('ok',!bad&&items.length>0);
+    $('hmHealthN').textContent=bad?`${bad} לבדיקה`:'תקין'; $('hmHealthS').textContent=`${items.length} בדיקות`;
+  }
+
+  function sugs(){
+    const ul=$('hmSug'); ul.textContent=''; const Tk=window.__mhTasks, list=(brief&&brief.tasks)||[];
+    $('hmSugBox').hidden=!list.length;
+    list.forEach(x=>{ const li=el('li'), t=el('div','t',x.title||''); if(x.client) t.appendChild(el('span','c',x.client)); li.appendChild(t);
+      const has=Tk&&Tk.has(x.title);
+      const b=el('button','hm-add',has?'נוסף ✓':'הוספה'); b.type='button'; b.disabled=!!has||!Tk;
+      b.onclick=()=>{ if(!Tk) return; Tk.add({title:x.title,client:x.client||'',scope:x.scope||'day',due:x.due||today(),prio:x.prio||0,note:x.note||''}); b.textContent='נוסף ✓'; b.disabled=true; tiles(); };
+      li.appendChild(b); ul.appendChild(li); });
+  }
+
+  function drafts(){
+    const box=$('hmDrafts'); box.textContent=''; const list=(brief&&brief.drafts)||[];
+    $('hmDrBox').hidden=!list.length;
+    list.forEach(x=>{ const d=el('details','hm-dr'), s=el('summary',null,x.subject||'טיוטה'); s.appendChild(el('small',null,x.to||'')); d.appendChild(s);
+      const pre=el('pre',null,x.body||''); d.appendChild(pre);
+      const b=el('button','hm-link','העתקת הנוסח'); b.type='button';
+      b.onclick=async()=>{ try{ await navigator.clipboard.writeText(x.body||''); b.textContent='הועתק ✓'; }catch(_){ const r=document.createRange(); r.selectNodeContents(pre); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent='סמנתי, אפשר להעתיק'; } setTimeout(()=>{ b.textContent='העתקת הנוסח'; },2500); };
+      d.appendChild(b); box.appendChild(d); });
+  }
+
+  function render(){ hello(); agent(); tiles(); sugs(); drafts(); health(); }
+  window.addEventListener('mh:mail',()=>{ render(); loadBrief(false); });
+  window.addEventListener('mh:tasks',tiles);
+  window.addEventListener('hashchange',()=>{ if(!location.hash||location.hash==='#home'){ render(); loadBrief(false); } });
+  render(); setTimeout(()=>{ render(); loadBrief(true); },1200);
+  setInterval(()=>{ if(!document.hidden&&!$('s-home').hidden){ render(); loadBrief(false); } },60000);
 })();
 </script>
 </body>
