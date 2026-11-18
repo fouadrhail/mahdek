@@ -889,7 +889,9 @@ body[data-tab="convert"]{--sec:var(--sage)} body[data-tab="edit"]{--sec:var(--bl
 .lb-top h2{margin:0;font-weight:500;font-size:1.45rem;color:var(--ink)}
 .lb-sub{margin:4px 0 0;color:var(--muted);font-size:.92rem;line-height:1.55}
 .lb-status{margin:0;padding:10px 14px;border-radius:12px;background:var(--soft);font-size:.9rem;line-height:1.5}
-.lb-status.bad{color:var(--ml-flag)}
+.lb-status.bad{color:var(--ink);border:1px solid var(--rule)}
+.lb-steps{margin:6px 0 0;padding-inline-start:20px;line-height:1.7}
+.lb-steps a{color:var(--navy,var(--ink));font-weight:600}
 .lb-card{display:flex;flex-direction:column;gap:8px}
 .lb-card h3{margin:0;font-size:1rem;font-weight:600}
 .lb-drop{display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px dashed var(--rule);border-radius:12px;padding:18px;color:var(--muted);cursor:pointer;font-size:.9rem;text-align:center}
@@ -1439,7 +1441,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 7.0 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 7.0.1 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -3673,7 +3675,15 @@ window.__nf=normalizeFile;
     for(let i=0;i<3;i++){ const {data,sha}=await getJson(path); const next=fn(data); try{ return await put(path,b64text(JSON.stringify(next,null,1)),message,sha); }catch(e){ if(!e.conflict) throw e; } }
     throw new Error('conflict');
   }
-  function fail(e,what){ console.warn(e); if(e&&e.write) status(WRITE_HELP,true); else status(`לא הצלחתי ${what}. אולי אין חיבור כרגע.`,true); }
+  function writeHelp(){ const s=$('lbStatus'); s.hidden=false; s.classList.add('bad'); s.textContent='';
+    s.appendChild(el('b',null,'המפתח במחשב הזה מאפשר רק לקרוא. כדי לשלוח למעבדה צריך לתת לו גם הרשאת כתיבה, פעם אחת:'));
+    const ol=el('ol','lb-steps'); const a=el('a',null,'דף המפתחות ב־GitHub'); a.href='https://github.com/settings/personal-access-tokens'; a.target='_blank'; a.rel='noopener';
+    const l1=el('li'); l1.appendChild(document.createTextNode('פותחים את ')); l1.appendChild(a); l1.appendChild(document.createTextNode(' ולוחצים על המפתח של mahdek-mail.')); ol.appendChild(l1);
+    ol.appendChild(el('li',null,'בחלק Repository permissions, בשורה Contents, בוחרים Read and write.'));
+    ol.appendChild(el('li',null,'לוחצים Update בתחתית הדף.'));
+    ol.appendChild(el('li',null,'חוזרים לכאן ולוחצים שוב על השליחה. לא צריך להדביק את המפתח מחדש.'));
+    s.appendChild(ol); }
+  function fail(e,what){ console.warn(e); if(e&&e.write) writeHelp(); else status(`לא הצלחתי ${what}. אולי אין חיבור כרגע.`,true); }
   function needKey(){ if(tok()) return false; status('קודם צריך לחבר את המאגר הפרטי במסך "תיבת דואר".',true); return true; }
 
   /* ---- documents ---- */
