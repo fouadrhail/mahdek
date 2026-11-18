@@ -771,6 +771,11 @@ body[data-tab="convert"]{--sec:var(--sage)} body[data-tab="edit"]{--sec:var(--bl
 :root:not([data-theme="light"]) .tk-group.post .tk-ul{border-color:#5a4718;background:var(--paper)}
 :root:not([data-theme="light"]) .st-post.alert{background:#241e10;border-color:#5a4718}}
 @media (max-width:720px){.tk-notice{flex-wrap:wrap}}
+.card.mkt .mkt-box{min-height:200px;border-radius:12px;overflow:hidden}
+.card.mkt .mkt-ph,.card.mkt .mkt-fail{margin:0;padding:70px 8px;text-align:center;font-size:.85rem;color:var(--muted)}
+.card.mkt .mkt-fail a{color:var(--ink)}
+.card.mkt .mkt-src{margin:8px 0 0;font-size:.72rem;color:var(--muted);line-height:1.4}
+.card.mkt iframe{display:block}
 /* email analysis */
 :root{--ml-flag:#b4373a;--ml-flag-bg:#fbeaea;--ml-ok:#2f7a52;--ml-ok-bg:#e8f3ec;--ml-tab:#e8dcc4;--ml-folder:#f6efe1}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ml-flag:#ff9496;--ml-flag-bg:#3a1d1f;--ml-ok:#86d3a6;--ml-ok-bg:#183126;--ml-tab:#4a4232;--ml-folder:#2a261e}}
@@ -1223,6 +1228,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
   </main>
   <aside class="side" aria-label="ריבית ומועדים">
     <div class="card note"><span class="washi" aria-hidden="true"></span><h3><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3 20h18"/></svg>ריבית ושערים</h3><dl class="facts" id="facts"></dl></div>
+    <div class="card mkt"><h3><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>S&amp;P 500 · בזמן אמת</h3><div class="mkt-box" id="mktBox"><p class="mkt-ph">טוען…</p></div><p class="mkt-src">נתונים: TradingView (חוזה ה־CFD על המדד). בשבתות ובסופי שבוע השוק סגור.</p></div>
     <div class="card receipt"><span class="pushpin" aria-hidden="true"></span><h3><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>מועדי דיווח קרובים</h3><ul class="dlist" id="dlist"></ul></div>
     <div class="plant" aria-hidden="true"><svg viewBox="0 0 80 90" width="64" height="72"><path d="M40 52C38 40 30 30 18 26c2 12 10 22 22 26z" fill="#9cc3a4"/><path d="M40 52c2-14 10-26 24-30-1 14-10 25-24 30z" fill="#7fb08a"/><path d="M40 54c-1-16 1-30 6-40 4 12 2 26-6 40z" fill="#b6d5bc"/><path d="M40 54V40" stroke="#6f9b78" stroke-width="2" stroke-linecap="round"/><path d="M24 54h32l-4 28a4 4 0 0 1-4 3.5H32a4 4 0 0 1-4-3.5z" fill="#e9d6bf"/><path d="M22 52h36v6H22z" fill="#dcc3a6" rx="2"/></svg></div>
     <p class="src" id="factsSrc">מקורות: בנק ישראל, הלשכה המרכזית לסטטיסטיקה, רשות המסים.</p>
@@ -1232,7 +1238,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 5.8 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 5.9 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -3389,6 +3395,28 @@ window.__nf=normalizeFile;
   setInterval(()=>{ if(!document.hidden&&!$('s-mail').hidden&&Date.now()-lastSync>600000) sync(); },60000);
 
   openDb().then(d=>{ db=d; return refresh(); }).then(()=>sync()).catch(()=>{ status('הדפדפן הזה לא מאפשר לשמור את הניתוח (אולי חלון גלישה בסתר).',true); render(); });
+})();
+</script>
+<script>
+(function(){
+  /* S&P 500 mini chart: TradingView's free embeddable widget, loaded after the page is ready. No data from Mahdek is sent to it. */
+  const box=document.getElementById('mktBox'); if(!box) return;
+  const dark=()=>{ const t=document.documentElement.getAttribute('data-theme'); return t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches); };
+  let timer=0, shown='';
+  function fail(){ box.textContent=''; const p=document.createElement('p'); p.className='mkt-fail'; p.appendChild(document.createTextNode('הגרף לא נטען כרגע. '));
+    const a=document.createElement('a'); a.href='https://www.tradingview.com/symbols/SPX/'; a.target='_blank'; a.rel='noopener'; a.textContent='פתיחה ב־TradingView'; p.appendChild(a); box.appendChild(p); }
+  function load(){
+    const theme=dark()?'dark':'light'; if(shown===theme) return; shown=theme;
+    box.textContent=''; const wrap=document.createElement('div'); wrap.className='tradingview-widget-container';
+    const w=document.createElement('div'); w.className='tradingview-widget-container__widget'; wrap.appendChild(w);
+    const sc=document.createElement('script'); sc.async=true; sc.src='https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
+    sc.text=JSON.stringify({symbol:'FOREXCOM:SPXUSD',width:'100%',height:200,locale:'he_IL',dateRange:'1D',colorTheme:theme,isTransparent:true,autosize:false,largeChartUrl:'',chartOnly:false,noTimeScale:false});
+    sc.onerror=fail; wrap.appendChild(sc); box.appendChild(wrap);
+    clearTimeout(timer); timer=setTimeout(()=>{ if(!box.querySelector('iframe')) fail(); },10000);
+  }
+  const start=()=>{ setTimeout(load,600); };
+  if(document.readyState==='complete') start(); else window.addEventListener('load',start);
+  try{ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',load); new MutationObserver(load).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']}); }catch(_){}
 })();
 </script>
 </body>
