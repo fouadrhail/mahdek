@@ -1376,7 +1376,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 6.8 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 6.9 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -1501,7 +1501,7 @@ window.__nf=normalizeFile;
       });
       nmIn.addEventListener('mousedown',e=>e.stopPropagation());
       const fn=document.createElement('div'); fn.className='fname orig'; fn.title=it.file.name;
-      fn.textContent=it.file.name+(it.detecting?' · מזהה…':'')+(it.nf&&!it.edited?' · לא זוהה':'')+(it.learnedNow?' · מהדק ילמד את הספק הזה':'')+(!it.edited&&it.res&&it.res.how==='learned'?' · זוהה לפי תיקון קודם':'')+(!it.edited&&it.res&&it.res.how==='registry'?' · אומת ברשם החברות':'')+(it.kind==='other'?' · לא ייכלל בקובץ':'');
+      fn.textContent=it.file.name+(it.detecting?' · מזהה…':'')+(it.nf&&!it.edited?' · לא זוהה':'')+(it.learnedNow?' · מהדק ילמד את הספק הזה':'')+(!it.edited&&it.res&&it.res.how==='learned'?' · זוהה לפי תיקון קודם':'')+(!it.edited&&it.res&&it.res.how==='registry'?' · אומת ברשם החברות':'')+(!it.edited&&it.res&&it.res.how==='team'?' · זוהה לפי ספר הספקים של הצוות':'')+(it.kind==='other'?' · לא ייכלל בקובץ':'');
       c3.append(nmIn,fn);
       const c4=td(); c4.className='pgc'+(it.keep?' cut':'');
       if(it.kind==='pdf'){
@@ -2242,6 +2242,8 @@ window.__nf=normalizeFile;
     // 1. learned from your corrections
     for(const x of issuerIds) if(learned.ids[x.id]) return {name:learned.ids[x.id],how:'learned',id:x.id};
     for(const d of ev.domains) if(learned.domains[d]) return {name:learned.domains[d],how:'learned',id:''};
+    // 1a. the team's supplier book (built by the files clerk from documents he checked)
+    const tb=ctx.team; if(tb){ for(const x of issuerIds) if(tb.ids[x.id]) return {name:tb.ids[x.id],how:'team',id:x.id}; for(const d of ev.domains) if(tb.domains[d]) return {name:tb.domains[d],how:'team',id:''}; }
     const pickId=()=>{ const f=issuerIds.find(x=>x.id===ev.fileId); if(f) return f;
       return issuerIds.find(x=>x.strong&&x.upper)||issuerIds.find(x=>x.strong)||issuerIds.find(x=>x.labelled&&x.upper)||issuerIds.find(x=>x.labelled)||issuerIds[0]||null; };
     const idx=pickId();
@@ -2403,6 +2405,16 @@ window.__nf=normalizeFile;
   let learned={ids:{},domains:{}};
   try{ const v=JSON.parse(localStorage.getItem(LEARN_KEY)||'null'); if(v&&v.ids&&v.domains) learned=v; }catch(_){}
   function saveLearned(){ try{ localStorage.setItem(LEARN_KEY,JSON.stringify(learned)); }catch(_){} }
+  /* The team's supplier book: team/suppliers.json in the private repo, read with the mailbox key; kept in this browser for offline use */
+  const TEAM_KEY='mahdek.teamsup.v1'; let teamBook=null;
+  function setBook(b){ if(!b||!Array.isArray(b.suppliers)) return; const t={ids:{},domains:{}};
+    b.suppliers.forEach(s=>{ if(!s||!s.name) return; const id=String(s.id||'').replace(/\D/g,''); if(id.length===9&&validId(id)) t.ids[id]=String(s.name).slice(0,60); (s.domains||[]).forEach(d=>{ if(typeof d==='string'&&d.includes('.')) t.domains[d.toLowerCase()]=String(s.name).slice(0,60); }); });
+    teamBook=t; }
+  try{ setBook(JSON.parse(localStorage.getItem(TEAM_KEY)||'null')); }catch(_){}
+  let bookAt=0;
+  async function loadBook(){ const M=window.__mhMail; if(!M||!M.hasToken()||Date.now()-bookAt<600000) return; bookAt=Date.now();
+    try{ const b=await M.get('team/suppliers.json',true); if(b&&b.kind==='supplier-book'){ setBook(b); try{ localStorage.setItem(TEAM_KEY,JSON.stringify(b)); }catch(_){} } }catch(_){} }
+  window.addEventListener('mh:mail',loadBook); setTimeout(loadBook,2500);
   function labelOf(sup,type,num){ return [sup,[type,last4(num)].filter(Boolean).join(' ')].filter(Boolean).join(' - ').replace(/[\\/:*?"<>|]/g,'-'); }
   /* Resolve every document of one upload together, so the recipient (who repeats) is never taken for the supplier */
   /* Companies Registrar (data.gov.il, open government data). Only a corporation's number is sent
@@ -2430,7 +2442,7 @@ window.__nf=normalizeFile;
     }
     registry[id]={n:'',t:Date.now()};
   }
-  const CONFIDENT=new Set(['learned','site','registry','id']);
+  const CONFIDENT=new Set(['learned','team','site','registry','id']);
   /* Look up, in the background, the numbers of suppliers we are not sure about; call done() when names arrive */
   function verifyOnline(results,done){
     const todo=[...new Set(results.filter(r=>r&&r.res&&!CONFIDENT.has(r.res.how)&&r.res.id&&!r.res.vatFile&&regSet(r.res.id)).map(r=>r.res.id))]
@@ -2450,7 +2462,7 @@ window.__nf=normalizeFile;
   function labelBatch(list){
     const evs=list.map(x=>x.ev);
     const batch=batchRecipients(evs);
-    return list.map(x=>{ const res=resolveSupplier(x.ev,{recipIds:batch.ids,recipNames:batch.names,learned,registry}); return {res,label:labelOf(res.name,x.type,x.num)}; });
+    return list.map(x=>{ const res=resolveSupplier(x.ev,{recipIds:batch.ids,recipNames:batch.names,learned,registry,team:teamBook}); return {res,label:labelOf(res.name,x.type,x.num)}; });
   }
   function learnSupplier(ev,res,name,others){
     name=(name||'').split(' - ')[0].replace(/[\\/:*?"<>|]/g,'-').trim();
@@ -2709,7 +2721,7 @@ window.__nf=normalizeFile;
         return {name:'',slip:true};
       }
       const ev=buildEvidence(lines,{header:lines.header||'',topCount:lines.topCount||0});
-      const sup=resolveSupplier(ev,{learned,registry}).name, type=docType(ev.lines), num=docNumber(ev);
+      const sup=resolveSupplier(ev,{learned,registry,team:teamBook}).name, type=docType(ev.lines), num=docNumber(ev);
       if(sup||type) return {name:safe([sup,[type,last4(num)].filter(Boolean).join(' ')].filter(Boolean).join(' - ')),how:'זוהה מתוך המסמך',ev,type,num};
       const name=findName(lines);
       if(name) return {name:safe(name),how:'זוהה מתוך המסמך'};
