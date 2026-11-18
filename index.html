@@ -535,7 +535,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver">מהדק · גרסה 3.0 · עודכן 18.11.2026</footer>
+  <footer class="ver">מהדק · גרסה 3.1 · עודכן 18.11.2026</footer>
 </div>
 
 <script>
@@ -1079,7 +1079,8 @@ window.__nf=normalizeFile;
 
 
   /* ---------- Identify a document from its own text ---------- */
-  const revStr=t=>[...t].reverse().join('');
+  /* Some systems store Hebrew in reversed (visual) order. Reverse it back, but keep numbers and English as they are. */
+  const revStr=t=>[...t].reverse().join('').replace(/[0-9A-Za-z@._:\/\-]+/g,m=>[...m].reverse().join(''));
   const DOC_HINTS=['חשבונית','קבלה','תאריך','לתשלום','מע"מ','סה"כ','סכום','ספק','לקוח'];
   const DOC_TYPES=[
     [/חשבונית\s*[\-–]?\s*מס\s*[\/\\|\-–,]?\s*קבלה/,'חשבונית מס קבלה'],[/חשבונית\s*זיכוי|זיכוי\s*מס/,'חשבונית זיכוי'],[/קבלה\s*זמנית/,'קבלה זמנית'],[/ריכוז\s*(?:חשבוניות|תנועות|חיובים|קבלות)?/,'ריכוז'],
@@ -1211,6 +1212,7 @@ window.__nf=normalizeFile;
         if(PHONE_WORD.test(before+' '+after)) continue;
       }
       if(labelled&&PHONE_WORD.test(before.slice(-8))&&!/עוסק|ח\s*\.?\s*פ|ע\s*\.?\s*מ/.test(before)) continue;
+      if(/כרטיס|לקוח|מנוי/.test(before.slice(-16))) out.push({id:digits,labelled:true,strong:false,cust:true}); else
       out.push({id:digits,labelled,strong:/עוסק|ח\s*\.?\s*פ|ע\s*\.?\s*מ|תיק/.test(before+after),vatFile:/תיק/.test(before.slice(-20))&&!/עוסק|ח\s*\.?\s*פ|ע\s*\.?\s*מ/.test(before.slice(-14))});
     }
     return out;
@@ -1228,13 +1230,14 @@ window.__nf=normalizeFile;
      and a line that starts with them is a description, not a name. */
   const DESC=/(?:^|\s)(?:חומרי|כלים|כליס|ציוד|שירותי|שירותים|תיקון|תיקונים|מכירת|מכירה|יבוא|שיווק|הפצה|סניטריים|צנורות|צינורות|למכירה|קבלן|קבלנות|עבודות)(?=[\s\-,|]|$)/;
   function cleanSupplierName(n){
-    n=(n||'').replace(LABEL_TAIL,' ').replace(/[|]/g,' ').replace(/\s+/g,' ').trim();
+    n=(n||'').replace(LABEL_TAIL,' ').replace(/[|]/g,' ').replace(/\s+/g,' ').trim().replace(/^חברת\s+(?=\S+)/,'');
     const m=n.match(DESC); if(m&&m.index>0) n=n.slice(0,m.index).trim();
     n=n.replace(/\s*בע\s*['"]?\s*[יו]?\s*[יו]?\s*['"]?\s*מ$/,'').trim();
     if(/^[א-ת]/.test(n)){ const w=n.split(' '); const k=w.findIndex(x=>/^[A-Za-z]/.test(x)); if(k>0) n=w.slice(0,k).join(' '); }
+    { const w=n.split(' '); while(w.length>1&&/^(?:נשארת|נשאר|בידי|של|ע"י|על|ידי|מאת|עבור|לכבוד|שם|הספק|ספק|חשבונית|מס|קבלה|המוכר|המוכרת|רכוש|בבעלות)$/.test(w[0])) w.shift(); n=w.join(' '); }
     return n.replace(/[\s\-,]+$/,'');
   }
-  const FORM_WORDS=/(?:^|\s)(?:נתקבל|התקבל|מאת|עבור|לכבוד|תאריך|סכום|שיק|סניף|בנק|משלם|חתימה|אסמכתא)(?=\s|$)/;
+  const FORM_WORDS=/(?:^|\s)(?:נתקבל|התקבל|מאת|עבור|לכבוד|תאריך|סכום|שיק|סניף|בנק|משלם|חתימה|אסמכתא|כרטיס|לקוח|מנוי|מספר|שעה|העתק|מקור|בידי|נשארת)(?=\s|$)/;
   function nameOk(n){
     if(FORM_WORDS.test(n||'')) return false;
     if(!n||!goodName(n)||ADDR.test(n)||/\d{4,}/.test(n)||DESC.test(' '+n.split(' ')[0])) return false;
@@ -1310,7 +1313,10 @@ window.__nf=normalizeFile;
   function resolveSupplierCore(ev,ctx){
     ctx=ctx||{}; const rIds=ctx.recipIds||new Set(), rNames=ctx.recipNames||new Set(), learned=ctx.learned||{ids:{},domains:{}};
     const isRecipName=n=>{ const k=nk(n); if(!k) return true; if(ev.recipNames.includes(k)) return true; for(const r of rNames){ if(r&&(k===r||(r.length>=5&&(k.includes(r)||r.includes(k))))) return true; } return false; };
-    const issuerIds=ev.ids.filter(x=>!rIds.has(x.id)&&!(x.recip&&x.id!==ev.fileId)).sort((a,b)=>(a.vatFile?1:0)-(b.vatFile?1:0));
+    /* ids near "לכבוד" usually belong to the customer, but when two columns share lines a strongly-labelled
+       number there can still be the supplier's: keep those, after all the others */
+    const issuerIds=ev.ids.filter(x=>!x.cust&&!rIds.has(x.id)&&(!x.recip||x.id===ev.fileId||(x.strong&&!x.vatFile&&ev.ids.some(y=>y.cust))))
+      .sort((a,b)=>(a.recip?1:0)-(b.recip?1:0)||(a.vatFile?1:0)-(b.vatFile?1:0));
     // 1. learned from your corrections
     for(const x of issuerIds) if(learned.ids[x.id]) return {name:learned.ids[x.id],how:'learned',id:x.id};
     for(const d of ev.domains) if(learned.domains[d]) return {name:learned.domains[d],how:'learned',id:''};
@@ -1332,12 +1338,12 @@ window.__nf=normalizeFile;
     if(ev.ocr) for(const l of ev.top.concat(ev.lines.slice(0,6))){ if(RECIP_CTX.test(l)) break; const v=companyOf(l); if(v&&!isRecipName(v)) return {name:v,how:'top',id:idx?idx.id:''}; }
     if(idx){
       const same=(idx.line>=0?ev.lines[idx.line]:ev.top[-1-idx.line])||'';
-      const n=companyOf(same);
+      const n=idx.recip?'':companyOf(same);
       if(n&&!isRecipName(n)) return {name:n,how:'id',id:idx.id};
       const near=ev.names.find(x=>!x.recip&&side(x)===side(idx)&&Math.abs(pos(x)-pos(idx))<=4&&!isRecipName(x.name)&&nameOk(cleanSupplierName(x.name)));
       if(near) return {name:cleanSupplierName(near.name),how:'id',id:idx.id};
       if(headers.length) return {name:headers[0],how:'header',id:idx.id};
-      for(let k=1;k<=4;k++){
+      for(let k=1;k<=4&&!idx.recip;k++){
         const i=pos(idx)-k; if(i<0) break;
         if(side(idx)&&ev.recip.has(i)) continue;
         const v=companyOf(side(idx)?ev.lines[i]:ev.top[i]);
@@ -1692,7 +1698,7 @@ window.__nf=normalizeFile;
     }
 
     /* Read each page: employee name on a payslip, otherwise supplier and document type */
-    const rev=t=>[...t].reverse().join('');
+    const rev=t=>[...t].reverse().join('').replace(/[0-9A-Za-z@._:\/\-]+/g,m=>[...m].reverse().join(''));
     const HINTS=['תלוש','שכר','עובד','ברוטו','נטו','ניכויים','תשלומים','חשבונית','קבלה','תאריך','לתשלום'];
     async function pageLines(pdf,i,reverse){
       const page=await pdf.getPage(i); const tc=await page.getTextContent(); const pageH=page.getViewport({scale:1}).height; page.cleanup();
