@@ -476,6 +476,74 @@ button{border-radius:10px}
 @media (max-width:520px){.work{padding:16px 14px 10px;border-radius:16px}.tabs{display:grid;grid-template-columns:1fr 1fr;align-self:stretch}.tabs button{padding:8px 6px}}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .dlist .soon .left{background:#3a2c10;color:#f5c26b}}
 :root[data-theme="dark"] .dlist .soon .left{background:#3a2c10;color:#f5c26b}
+
+/* ===== Header clock pill, calendar pop-up, main sections, office touches, daily tasks ===== */
+.mast{align-items:center}
+.hbar{position:relative}
+.hclock{display:flex;align-items:center;gap:12px;background:var(--paper);border:1px solid var(--rule);border-radius:999px;padding:6px 8px 6px 16px}
+.hclock .aclock{width:44px;height:44px;flex:none}
+.hc-text{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.hclock .time{font-size:1.15rem;font-weight:500;direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.hclock .time small{font-size:.75em;color:var(--muted)}
+.hc-date{all:unset;cursor:pointer;display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--muted);border-radius:6px;white-space:nowrap}
+.hc-date:hover{color:var(--ink)}
+.hc-date:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.hc-date .sep{opacity:.6}
+.calpop{position:absolute;top:calc(100% + 8px);left:0;z-index:40;width:310px;max-width:calc(100vw - 32px)}
+.calpop .mcal{background:var(--paper);border:1px solid var(--rule);border-radius:18px;padding:14px;box-shadow:0 20px 40px -18px rgba(0,0,0,.28)}
+/* main sections */
+.mainnav{display:flex;gap:6px;flex-wrap:wrap;margin-top:-6px}
+.mainnav button{display:inline-flex;align-items:center;gap:8px;border:1px solid transparent;background:transparent;color:var(--muted);border-radius:999px;padding:8px 16px;font-weight:500}
+.mainnav button:hover{color:var(--ink);background:var(--paper);border-color:var(--rule)}
+.mainnav button[aria-selected="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.soon-pill{font-size:.66rem;font-weight:500;padding:1px 7px;border-radius:99px;background:var(--soft);color:var(--muted);border:1px solid var(--rule)}
+.mainnav button[aria-selected="true"] .soon-pill{background:transparent;color:inherit;border-color:currentColor;opacity:.7}
+.section{display:flex;flex-direction:column;gap:22px}
+/* office touch: a paper clip on the corner of the sheet */
+.work{position:relative}
+.work .clip{position:absolute;top:-16px;left:34px;color:#a1a1aa;transform:rotate(8deg);filter:drop-shadow(0 1px 0 rgba(255,255,255,.8))}
+/* side column, compact */
+.layout{grid-template-columns:minmax(0,1fr) 260px}
+.side{top:16px}
+.side .card{padding:14px 16px}
+.side h3{display:flex;align-items:center;gap:7px}
+.facts > div{padding:7px 0}
+/* daily tasks */
+.t-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.t-head h2{margin:0;font-size:1.3rem;font-weight:500}
+.t-date{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+.t-prog{display:flex;flex-direction:column;gap:6px;align-items:flex-end;font-size:.82rem;color:var(--muted);min-width:160px}
+.t-bar{width:160px;height:6px;border-radius:99px;background:var(--soft);overflow:hidden}
+.t-bar i{display:block;height:100%;width:0;background:#30a46c;border-radius:99px;transition:width .3s}
+.t-add{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--soft);border-radius:14px;padding:8px}
+.t-add input[type=text]{flex:1 1 260px;min-width:0;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:9px 12px}
+.t-add input[type=date]{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:8px 10px}
+.t-add input:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.t-rep{display:inline-flex;align-items:center;gap:6px;font-size:.88rem;color:var(--muted);padding:0 4px;cursor:pointer}
+.t-add .go{padding:9px 20px}
+.t-quick button{border:1px dashed var(--rule);background:transparent;color:var(--muted);font-size:.85rem;border-radius:10px}
+.t-quick button:hover{color:var(--ink);border-color:var(--muted)}
+.t-group h3{margin:0 0 6px;font-size:.8rem;font-weight:500;color:var(--muted)}
+.t-list{list-style:none;margin:0;padding:0;border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:var(--paper)}
+.t-list li{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:11px 14px;border-top:1px solid var(--rule)}
+.t-list li:first-child{border-top:0}
+.t-check{width:22px;height:22px;padding:0;border-radius:50%;border:1.6px solid #c4c4c8;background:var(--paper);color:transparent;display:grid;place-items:center;transition:background .15s,border-color .15s}
+.t-check:hover{border-color:#30a46c}
+.t-list li.done .t-check{background:#30a46c;border-color:#30a46c;color:#fff}
+.t-text{overflow-wrap:anywhere}
+.t-list li.done .t-text{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(0,0,0,.25)}
+.t-meta{font-size:.75rem;color:var(--muted);white-space:nowrap}
+.t-meta.late{color:#e5484d;font-weight:500}
+.t-del{border:0;background:transparent;color:var(--muted);font-size:1.2rem;line-height:1;padding:2px 8px;border-radius:8px;opacity:0;transition:opacity .15s}
+.t-list li:hover .t-del,.t-del:focus-visible{opacity:1}
+.t-del:hover{color:#e5484d;background:var(--soft)}
+.t-empty{display:block!important;color:var(--muted);text-align:center;padding:22px 14px!important;font-size:.9rem}
+.soon-box{text-align:center;color:var(--muted);padding:56px 20px;border:1.5px dashed var(--rule);border-radius:16px;background:var(--soft)}
+.soon-box h2{margin:10px 0 4px;color:var(--ink);font-weight:500}
+.soon-box p{margin:0}
+@media (hover:none){.t-del{opacity:1}}
+@media (max-width:1020px){.layout{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){.hbar{width:100%}.hclock{border-radius:16px}.calpop{left:auto;right:0}.mainnav button{padding:8px 12px}}
 </style>
 </head>
 <body>
@@ -488,14 +556,47 @@ button{border-radius:10px}
         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMzMzU1ZTAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxYTJmOWMiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSIyNDAiIGhlaWdodD0iMjQwIiByeD0iNTYiIGZpbGw9InVybCgjZykiLz4KICA8cmVjdCB4PSI1OCIgeT0iNDQiIHdpZHRoPSIxMTIiIGhlaWdodD0iMTUyIiByeD0iNiIgZmlsbD0iI2M5ZDNmZiIgdHJhbnNmb3JtPSJyb3RhdGUoLTggMTE0IDEyMCkiLz4KICA8cmVjdCB4PSI4NCIgeT0iNjIiIHdpZHRoPSIxMTIiIGhlaWdodD0iMTUyIiByeD0iNiIgZmlsbD0iI2ZmZmZmZiIvPgogIDxyZWN0IHg9IjEwNCIgeT0iMTA0IiB3aWR0aD0iNzIiIGhlaWdodD0iOSIgcng9IjQuNSIgZmlsbD0iI2QzZDllNCIvPgogIDxyZWN0IHg9IjEwNCIgeT0iMTI2IiB3aWR0aD0iNzIiIGhlaWdodD0iOSIgcng9IjQuNSIgZmlsbD0iI2QzZDllNCIvPgogIDxyZWN0IHg9IjEwNCIgeT0iMTQ4IiB3aWR0aD0iNTAiIGhlaWdodD0iOSIgcng9IjQuNSIgZmlsbD0iI2QzZDllNCIvPgogIDxwYXRoIGQ9Ik0xMTIgNjYgVjQ2IEgxNjggVjY2IiBmaWxsPSJub25lIiBzdHJva2U9IiNkODFiNzIiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxyZWN0IHg9IjEwNCIgeT0iMTgwIiB3aWR0aD0iMTgiIGhlaWdodD0iOSIgcng9IjIiIGZpbGw9IiMwMGEzZDkiLz4KICA8cmVjdCB4PSIxMjIiIHk9IjE4MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjkiIGZpbGw9IiNkODFiNzIiLz4KICA8cmVjdCB4PSIxNDAiIHk9IjE4MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjkiIGZpbGw9IiNmMmMyMDAiLz4KICA8cmVjdCB4PSIxNTgiIHk9IjE4MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjkiIHJ4PSIyIiBmaWxsPSIjMTIxODJiIi8+Cjwvc3ZnPgo=" alt="" width="54" height="54" style="width:54px;height:54px;flex:none">
         <h1>מהדק</h1>
       </div>
-      <p class="tag">מהדקים קבצים ל־PDF אחד להדפסה, ממירים קבצים מפורמט לפורמט, ומפצלים או מוחקים עמודים ב־PDF. בקרוב גם עריכה וחתימה על מסמכים. בלי הגבלה על מספר הקבצים, והכול נשאר אצלך בדפדפן.</p>
+      <p class="tag">כלים למשרד במקום אחד: הידוק, המרה ופיצול של קבצים, משימות יומיות, ריבית ומועדי דיווח. בלי הגבלה על מספר הקבצים, והכול נשאר אצלך בדפדפן.</p>
     </div>
-    <div class="specs"><span class="spec">A4 · 210×297 מ״מ</span><span class="spec">שוליים 1 ס״מ</span><span class="spec">בלי חיתוך</span></div>
+    <div class="hbar">
+      <div class="hclock">
+        <svg class="aclock" viewBox="0 0 120 120" role="img" aria-label="שעון">
+<circle cx="60" cy="60" r="56" class="face"/><line x1="60" y1="9" x2="60" y2="17" transform="rotate(0 60 60)" stroke="currentColor" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(30 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(60 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="9" x2="60" y2="17" transform="rotate(90 60 60)" stroke="currentColor" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(120 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(150 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="9" x2="60" y2="17" transform="rotate(180 60 60)" stroke="currentColor" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(210 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(240 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="9" x2="60" y2="17" transform="rotate(270 60 60)" stroke="currentColor" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(300 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(330 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/>
+<line id="wH" x1="60" y1="64" x2="60" y2="33" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+<line id="wM" x1="60" y1="66" x2="60" y2="18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+<g id="wS"><line x1="60" y1="70" x2="60" y2="14" stroke="#e5484d" stroke-width="1.2" stroke-linecap="round"/></g>
+<circle cx="60" cy="60" r="3.2" fill="#e5484d"/><circle cx="60" cy="60" r="1.2" class="pin"/>
+</svg>
+        <div class="hc-text">
+          <div class="time" id="clk" aria-live="off">--:--:--</div>
+          <button type="button" class="hc-date" id="calBtn" aria-expanded="false" aria-controls="calPop" title="לוח שנה"><span id="clkDate"></span><span class="sep" aria-hidden="true">·</span><span id="clkHeb"></span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        </div>
+      </div>
+      <div class="calpop" id="calPop" hidden>
+        <div class="card mcal" id="mcal">
+      <div class="mc-head">
+        <button type="button" class="mc-nav" id="mcPrev" aria-label="החודש הקודם">›</button>
+        <div class="mc-title"><b id="mcTitle"></b><small id="mcHeb"></small></div>
+        <button type="button" class="mc-nav" id="mcNext" aria-label="החודש הבא">‹</button>
+      </div>
+      <div class="mc-grid" id="mcGrid" role="grid" aria-label="לוח שנה"></div>
+      <div class="mc-foot"><span><i class="lg dl"></i>מועד דיווח</span><span><i class="lg rt"></i>החלטת ריבית</span><button type="button" id="mcToday">היום</button></div>
+    </div>
+      </div>
+    </div>
     
   </header>
 
+  <nav class="mainnav" role="tablist" aria-label="אזורים">
+    <button type="button" role="tab" id="m-files" aria-controls="s-files" aria-selected="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>קבצים</button>
+    <button type="button" role="tab" id="m-tasks" aria-controls="s-tasks" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 9l1.6 1.6L12.5 7.7M8 15l1.6 1.6 2.9-2.9M14.5 9.5H17M14.5 15.5H17"/></svg>משימות יומיות</button>
+    <button type="button" role="tab" id="m-mail" aria-controls="s-mail" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>ניתוח מיילים<span class="soon-pill">בקרוב</span></button>
+  </nav>
+
   <div class="layout">
   <main class="work">
+  <svg class="clip" viewBox="0 0 24 64" width="20" height="54" aria-hidden="true"><path d="M8 50V12a4 4 0 0 1 8 0v40a6 6 0 0 1-12 0V18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+  <section class="section" id="s-files" role="tabpanel" aria-labelledby="m-files">
   <div class="tabs" role="tablist" aria-label="שירותים">
     <button type="button" role="tab" id="t-merge" aria-controls="p-merge" aria-selected="true">הידוק לקובץ אחד</button>
     <button type="button" role="tab" id="t-convert" aria-controls="p-convert" aria-selected="false">המרת קבצים</button>
@@ -711,32 +812,37 @@ button{border-radius:10px}
       <div><h3>פרטי ובטוח</h3><p>כל העבודה נעשית בדפדפן, על המחשב שלכם. הקבצים לא עולים לשום שרת, ואף אחד אחר לא רואה אותם. אחרי ההתקנה מהדק עובד גם בלי אינטרנט.</p></div>
     </div>
   </section>
+  </section>
+
+  <section class="section" id="s-tasks" role="tabpanel" aria-labelledby="m-tasks" hidden>
+    <div class="t-head">
+      <div><h2>המשימות של היום</h2><p class="t-date" id="tDate"></p></div>
+      <div class="t-prog"><span id="tProgTxt"></span><div class="t-bar"><i id="tProg"></i></div></div>
+    </div>
+    <form class="t-add" id="tForm" autocomplete="off">
+      <input type="text" id="tText" placeholder="משימה חדשה, למשל: להתקשר לרואה החשבון של לקוח" aria-label="משימה חדשה" maxlength="200">
+      <input type="date" id="tDue" aria-label="תאריך">
+      <label class="t-rep"><input type="checkbox" id="tRep"> כל יום</label>
+      <button type="submit" class="go">הוספה</button>
+    </form>
+    <div class="t-quick"><button type="button" id="tDeadlines">+ להוסיף את מועדי הדיווח הקרובים</button></div>
+    <div class="t-group"><h3>היום</h3><ul class="t-list" id="tToday"></ul></div>
+    <div class="t-group" id="tLaterG"><h3>בהמשך</h3><ul class="t-list" id="tLater"></ul></div>
+    <div class="t-group" id="tDoneG"><h3>הושלמו היום</h3><ul class="t-list" id="tDone"></ul></div>
+    <p class="hint">המשימות נשמרות בדפדפן במחשב הזה בלבד.</p>
+  </section>
+
+  <section class="section" id="s-mail" role="tabpanel" aria-labelledby="m-mail" hidden>
+    <div class="soon-box">
+      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>
+      <h2>ניתוח מיילים</h2>
+      <p>האזור הזה בבנייה. בקרוב: ניתוח מיילים של המשרד.</p>
+    </div>
+  </section>
   </main>
-  <aside class="side" aria-label="שעה ונתונים">
-    <div class="card clockcard">
-      <svg class="aclock" viewBox="0 0 120 120" role="img" aria-label="שעון">
-<circle cx="60" cy="60" r="56" class="face"/><line x1="60" y1="9" x2="60" y2="17" transform="rotate(0 60 60)" stroke="currentColor" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(30 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(60 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="9" x2="60" y2="17" transform="rotate(90 60 60)" stroke="currentColor" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(120 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(150 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="9" x2="60" y2="17" transform="rotate(180 60 60)" stroke="currentColor" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(210 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(240 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="9" x2="60" y2="17" transform="rotate(270 60 60)" stroke="currentColor" stroke-opacity="0.9" stroke-width="2.4" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(300 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="10" x2="60" y2="14" transform="rotate(330 60 60)" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/>
-<line id="wH" x1="60" y1="64" x2="60" y2="33" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-<line id="wM" x1="60" y1="66" x2="60" y2="18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-<g id="wS"><line x1="60" y1="70" x2="60" y2="14" stroke="#e5484d" stroke-width="1.2" stroke-linecap="round"/></g>
-<circle cx="60" cy="60" r="3.2" fill="#e5484d"/><circle cx="60" cy="60" r="1.2" class="pin"/>
-</svg>
-      <div class="time" id="clk" aria-live="off">--:--:--</div>
-      <div class="date" id="clkDate"></div>
-      <div class="hdate" id="clkHeb"></div>
-    </div>
-    <div class="card mcal" id="mcal">
-      <div class="mc-rings" aria-hidden="true"></div>
-      <div class="mc-head">
-        <button type="button" class="mc-nav" id="mcPrev" aria-label="החודש הקודם">›</button>
-        <div class="mc-title"><b id="mcTitle"></b><small id="mcHeb"></small></div>
-        <button type="button" class="mc-nav" id="mcNext" aria-label="החודש הבא">‹</button>
-      </div>
-      <div class="mc-grid" id="mcGrid" role="grid" aria-label="לוח שנה"></div>
-      <div class="mc-foot"><span><i class="lg dl"></i>מועד דיווח</span><span><i class="lg rt"></i>החלטת ריבית</span><button type="button" id="mcToday">היום</button></div>
-    </div>
-    <div class="card note"><h3>ריבית ושערים</h3><dl class="facts" id="facts"></dl></div>
-    <div class="card receipt"><h3>מועדי דיווח קרובים</h3><ul class="dlist" id="dlist"></ul></div>
+  <aside class="side" aria-label="ריבית ומועדים">
+    <div class="card note"><h3><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3 20h18"/></svg>ריבית ושערים</h3><dl class="facts" id="facts"></dl></div>
+    <div class="card receipt"><h3><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>מועדי דיווח קרובים</h3><ul class="dlist" id="dlist"></ul></div>
     <p class="src" id="factsSrc">מקורות: בנק ישראל, הלשכה המרכזית לסטטיסטיקה, רשות המסים.</p>
   </aside>
   </div>
@@ -744,7 +850,7 @@ button{border-radius:10px}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><span class="stamp">מהדק · גרסה 4.3 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><span class="stamp">מהדק · גרסה 5.0 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -1071,11 +1177,19 @@ window.__nf=normalizeFile;
   const $=id=>document.getElementById(id);
 
   /* Tabs */
+  let lastFiles='join';
   function show(t){
+    const sec=t==='tasks'?'tasks':t==='mail'?'mail':'files';
+    ['files','tasks','mail'].forEach(k=>{$('s-'+k).hidden=k!==sec;$('m-'+k).setAttribute('aria-selected',String(k===sec));});
+    if(sec!=='files'){ document.body.dataset.tab=sec; ['merge','convert','edit','sign'].forEach(k=>{$('p-'+k).hidden=true;}); return; }
     const key=t==='files'||t==='convert'?'convert':t==='pages'?'edit':t==='sign'?'sign':'merge';
+    lastFiles=t&&key!=='merge'?t:'join';
     document.body.dataset.tab=key;
     ['merge','convert','edit','sign'].forEach(k=>{$('p-'+k).hidden=k!==key;$('t-'+k).setAttribute('aria-selected',String(k===key));});
   }
+  $('m-files').addEventListener('click',()=>{location.hash=lastFiles;show(lastFiles);});
+  $('m-tasks').addEventListener('click',()=>{location.hash='tasks';show('tasks');});
+  $('m-mail').addEventListener('click',()=>{location.hash='mail';show('mail');});
   $('t-merge').addEventListener('click',()=>{location.hash='join';show('join');});
   $('t-convert').addEventListener('click',()=>{location.hash='files';show('files');});
   $('t-edit').addEventListener('click',()=>{location.hash='pages';show('pages');});
@@ -2290,6 +2404,11 @@ window.__nf=normalizeFile;
     }
   }
   const shift=k=>{ let [y,m]=VIEW.split('-').map(Number); m+=k; if(m<1){m=12;y--;} if(m>12){m=1;y++;} VIEW=`${y}-${String(m).padStart(2,'0')}`; renderCal(); };
+  const pop=$('calPop'), pb=$('calBtn');
+  function setPop(open){ pop.hidden=!open; pb.setAttribute('aria-expanded',String(open)); if(open){ VIEW=isoToday().slice(0,7); renderCal(); } }
+  pb.addEventListener('click',e=>{ e.stopPropagation(); setPop(pop.hidden); });
+  document.addEventListener('click',e=>{ if(!pop.hidden&&!pop.contains(e.target)&&!pb.contains(e.target)) setPop(false); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!pop.hidden){ setPop(false); pb.focus(); } });
   document.addEventListener('click',e=>{ const t=e.target.closest&&e.target.closest('#mcPrev,#mcNext,#mcToday'); if(!t) return;
     if(t.id==='mcPrev') shift(-1); else if(t.id==='mcNext') shift(1); else { VIEW=isoToday().slice(0,7); renderCal(); } });
   function tick(){
@@ -2337,6 +2456,7 @@ window.__nf=normalizeFile;
     const today=isoToday();
     let list=(D.deadlines||[]).filter(x=>x.date>=today);
     if(list.length<4){ const last=list.length?list[list.length-1].date:today; list=list.concat(statutory(last>today?last.slice(0,8)+'01':today.slice(0,8)+'01',8).filter(x=>x.date>=today&&!list.some(y=>y.date===x.date&&y.what===x.what)&&(!list.length||x.date>list[list.length-1].date))); }
+    window.__mhUpcoming=list.slice(0,6);
     const ul=$('dlist'); ul.textContent='';
     list.slice(0,4).forEach(x=>{ const n=days(x.date); const li=document.createElement('li'); if(n===0) li.className='today'; else if(n<=3) li.className='soon';
       const a=document.createElement('div'); const w=document.createElement('div'); w.textContent=x.what; const d=document.createElement('div'); d.className='when'; d.textContent=dmy(x.date)+(x.est?' · לפי המועד בחוק':''); a.append(w,d);
@@ -2352,6 +2472,56 @@ window.__nf=normalizeFile;
     if(!DATA){ DATA=FALLBACK; render(DATA); }
   }
   DATA=FALLBACK; tick(); render(DATA); requestAnimationFrame(frame); load(); setInterval(load,60*60*1000);
+})();
+</script>
+
+<script>
+/* Daily tasks: kept in this browser (localStorage). Repeating tasks come back every day. */
+(function(){
+  const $=id=>document.getElementById(id), KEY='mahdek.tasks.v1', TZ='Asia/Jerusalem';
+  const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+  const dmy=iso=>{ const [y,m,d]=iso.split('-'); return `${+d}.${+m}`; };
+  let T=[]; try{ T=JSON.parse(localStorage.getItem(KEY)||'[]')||[]; }catch(_){ T=[]; }
+  const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(T)); }catch(_){} };
+  const isDone=t=>t.repeat?(t.doneDays||[]).includes(today()):t.done;
+  function item(t){
+    const li=document.createElement('li'), d=today(); li.className=isDone(t)?'done':'';
+    const cb=document.createElement('button'); cb.type='button'; cb.className='t-check'; cb.setAttribute('aria-pressed',String(isDone(t))); cb.setAttribute('aria-label',(isDone(t)?'סימון כלא בוצע: ':'סימון כבוצע: ')+t.text);
+    cb.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+    cb.addEventListener('click',()=>{ if(t.repeat){ t.doneDays=(t.doneDays||[]).filter(x=>x>=d); const i=t.doneDays.indexOf(d); i<0?t.doneDays.push(d):t.doneDays.splice(i,1); } else { t.done=!t.done; t.doneOn=t.done?d:null; } save(); render(); });
+    const tx=document.createElement('span'); tx.className='t-text'; tx.textContent=t.text;
+    const meta=document.createElement('span'); meta.className='t-meta';
+    if(t.repeat) meta.textContent='כל יום';
+    else if(t.due&&t.due<d&&!t.done){ meta.textContent='באיחור · '+dmy(t.due); meta.classList.add('late'); }
+    else if(t.due&&t.due>d) meta.textContent=dmy(t.due);
+    const del=document.createElement('button'); del.type='button'; del.className='t-del'; del.setAttribute('aria-label','מחיקת המשימה: '+t.text); del.textContent='×';
+    del.addEventListener('click',()=>{ T=T.filter(x=>x!==t); save(); render(); });
+    li.append(cb,tx,meta,del); return li;
+  }
+  function render(){
+    const d=today();
+    $('tDate').textContent=new Intl.DateTimeFormat('he-IL',{timeZone:TZ,weekday:'long',day:'numeric',month:'long'}).format(new Date());
+    const now=T.filter(t=>t.repeat||(!t.done&&(!t.due||t.due<=d))||(t.done&&t.doneOn===d&&(!t.due||t.due<=d)));
+    const todo=now.filter(t=>!isDone(t)).sort((a,b)=>(b.due&&b.due<d)-(a.due&&a.due<d)||(a.created||0)-(b.created||0));
+    const done=now.filter(isDone);
+    const later=T.filter(t=>!t.repeat&&!t.done&&t.due&&t.due>d).sort((a,b)=>a.due.localeCompare(b.due));
+    const fill=(id,arr,empty)=>{ const ul=$(id); ul.textContent=''; if(!arr.length&&empty){ const li=document.createElement('li'); li.className='t-empty'; li.textContent=empty; ul.appendChild(li); } arr.forEach(t=>ul.appendChild(item(t))); };
+    fill('tToday',todo,done.length?'כל המשימות של היום בוצעו. כל הכבוד!':'אין משימות להיום. כתבו משימה למעלה ולחצו "הוספה".');
+    fill('tLater',later); $('tLaterG').hidden=!later.length;
+    fill('tDone',done); $('tDoneG').hidden=!done.length;
+    const tot=now.length; $('tProgTxt').textContent=tot?`${done.length} מתוך ${tot} בוצעו`:'';
+    $('tProg').style.width=tot?Math.round(done.length/tot*100)+'%':'0';
+    $('tProg').parentNode.hidden=!tot;
+  }
+  $('tDue').value=today();
+  $('tForm').addEventListener('submit',e=>{ e.preventDefault(); const text=$('tText').value.trim(); if(!text) return;
+    T.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),text,due:$('tRep').checked?null:($('tDue').value||today()),repeat:$('tRep').checked,done:false,doneDays:[],created:Date.now()});
+    save(); $('tText').value=''; $('tRep').checked=false; $('tDue').value=today(); render(); $('tText').focus(); });
+  $('tDeadlines').addEventListener('click',()=>{ const up=window.__mhUpcoming||[]; let n=0;
+    up.forEach(x=>{ const text=x.what; if(!T.some(t=>t.text===text&&t.due===x.date)){ T.push({id:Math.random().toString(36).slice(2),text,due:x.date,repeat:false,done:false,doneDays:[],created:Date.now()}); n++; } });
+    save(); render(); const b=$('tDeadlines'); b.textContent=n?`נוספו ${n} מועדים`:'המועדים כבר ברשימה'; setTimeout(()=>{ b.textContent='+ להוסיף את מועדי הדיווח הקרובים'; },2500); });
+  render();
+  let last=today(); setInterval(()=>{ if(today()!==last){ last=today(); $('tDue').value=last; render(); } },60000);
 })();
 </script>
 </body>
