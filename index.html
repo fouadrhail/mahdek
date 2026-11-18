@@ -1306,11 +1306,11 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
   </section>
 
   <section class="section lb" id="s-lab" role="tabpanel" aria-labelledby="m-lab" hidden>
-    <div class="lb-top"><h2>מעבדה</h2><p class="lb-sub">כאן מנסים דברים. איתי אחראי על המעבדה: בכל בוקר ב־07:40 הוא בודק כל מה שנשלח לכאן, וגם בודק שכל עדכון של מהדק באמת עובד.</p></div>
+    <div class="lb-top"><h2>מעבדה</h2><p class="lb-sub">כאן מנסים דברים. איתי אחראי על המעבדה: מה שנשלח לכאן הוא בודק בתוך שעה (בכל שעה עגולה ועוד 12 דקות, ראשון–חמישי 08:12–19:12), וגם בודק שכל עדכון של מהדק באמת עובד.</p></div>
     <p class="lb-status" id="lbStatus" role="status" hidden></p>
     <section class="hm-card lb-card" id="lbRes">
       <div class="hm-th"><h3>מה איתי מצא</h3><span class="hm-n" id="lbResAt"></span></div>
-      <div id="lbResBody"><p class="hm-empty">עוד אין בדיקה. הבדיקה הראשונה תהיה מחר ב־07:40.</p></div>
+      <div id="lbResBody"><p class="hm-empty">עוד אין בדיקה. שולחים מסמך או בקשה, ואיתי בודק בבדיקה השעתית הקרובה.</p></div>
     </section>
     <section class="hm-card lb-card">
       <h3>בדיקת מסמכים</h3>
@@ -1441,7 +1441,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 7.0.1 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 7.1 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -3686,6 +3686,23 @@ window.__nf=normalizeFile;
   function fail(e,what){ console.warn(e); if(e&&e.write) writeHelp(); else status(`לא הצלחתי ${what}. אולי אין חיבור כרגע.`,true); }
   function needKey(){ if(tok()) return false; status('קודם צריך לחבר את המאגר הפרטי במסך "תיבת דואר".',true); return true; }
 
+  /* when the quick lab check runs next: :12 past each hour, 08–19, Sunday–Thursday (Israel time) */
+  function nextCheck(){
+    const parts=d=>Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Jerusalem',hour:'numeric',minute:'numeric',weekday:'short',year:'numeric',month:'2-digit',day:'2-digit',hourCycle:'h23'}).formatToParts(d).map(x=>[x.type,x.value]));
+    const now=new Date(), p0=parts(now), day0=p0.year+p0.month+p0.day, tom=parts(new Date(now.getTime()+864e5)), day1=tom.year+tom.month+tom.day;
+    const DN={Sun:'ביום ראשון',Mon:'ביום שני',Tue:'ביום שלישי',Wed:'ביום רביעי',Thu:'ביום חמישי'};
+    for(let i=0;i<24*8;i++){ const p=parts(new Date(now.getTime()+i*36e5)), hr=+p.hour;
+      if(!DN[p.weekday]||hr<8||hr>19) continue; if(i===0&&+p.minute>=12) continue;
+      const d=p.year+p.month+p.day, at=`${String(hr).padStart(2,'0')}:12`;
+      return d===day0?`היום ב־${at}`:d===day1?`מחר ב־${at}`:`${DN[p.weekday]} ב־${at}`; }
+    return 'בבדיקה הבאה';
+  }
+  const norm=s=>String(s||'').replace(/["'״׳\-.,()]/g,'').replace(/\s+/g,' ').trim();
+  function instant(it){ const t=it.truth, g=it.guess; if(!g||it.busy) return ''; const out=[];
+    if(t.supplier){ const a=norm(t.supplier), b=norm(g.sup||g.label); out.push(b&&(b.includes(a)||a.includes(b.split(' - ')[0]))?'ספק ✓':'ספק ✗'); }
+    if(t.number4){ out.push(String(g.label||'').includes(t.number4)?'מספר ✓':'מספר ✗'); }
+    if(t.type){ out.push(String(g.label||'').includes(t.type.split(' ')[0])?'סוג ✓':'סוג ✗'); }
+    return out.join(' · '); }
   /* ---- documents ---- */
   let items=[];
   const TYPES=['','חשבונית מס','חשבונית מס קבלה','קבלה','חשבונית זיכוי','חשבון עסקה','דרישת תשלום','אחר'];
@@ -3695,15 +3712,17 @@ window.__nf=normalizeFile;
       const D=window.__mh2; if(D&&D.detect){ D.detect(f,it.kind).then(r=>{ it.busy=false; if(r){ const o=D.labelBatch([r])[0]; it.guess={label:o.label,sup:o.res&&o.res.name||'',how:o.res&&o.res.how||''}; } else it.guess={label:'',sup:''}; draw(); }).catch(()=>{ it.busy=false; it.guess={label:'',sup:''}; draw(); }); } else it.busy=false; });
     draw();
   }
+  function upd(i){ const c=document.querySelector(`#lbFiles .gs[data-i="${i}"]`); if(c) c.textContent=instant(items[i]); }
   function draw(){
     const ol=$('lbFiles'); ol.textContent=''; $('lbFileAct').hidden=!items.length;
     items.forEach((it,i)=>{ const li=el('li','lb-f'); li.appendChild(el('div','nm',it.f.name));
       const gs=el('div','gs'); gs.appendChild(document.createTextNode('מהדק זיהה: ')); gs.appendChild(el('b',null,it.busy?'מזהה…':(it.guess&&it.guess.label)||'לא זוהה')); li.appendChild(gs);
       const row=el('div','lb-in');
-      const s=el('input'); s.placeholder='הספק הנכון (לא חובה)'; s.value=it.truth.supplier; s.oninput=()=>{ it.truth.supplier=s.value.trim(); }; s.setAttribute('aria-label','הספק הנכון');
-      const t=el('select'); TYPES.forEach(v=>{ const o=el('option',null,v||'סוג המסמך'); o.value=v; t.appendChild(o); }); t.value=it.truth.type; t.onchange=()=>{ it.truth.type=t.value; }; t.setAttribute('aria-label','סוג המסמך');
-      const n=el('input'); n.placeholder='4 ספרות אחרונות'; n.inputMode='numeric'; n.maxLength=4; n.value=it.truth.number4; n.oninput=()=>{ it.truth.number4=n.value.replace(/\D/g,'').slice(-4); }; n.setAttribute('aria-label','4 הספרות האחרונות של מספר המסמך');
-      row.appendChild(s); row.appendChild(t); row.appendChild(n); li.appendChild(row); ol.appendChild(li); });
+      const s=el('input'); s.placeholder='הספק הנכון (לא חובה)'; s.value=it.truth.supplier; s.oninput=()=>{ it.truth.supplier=s.value.trim(); upd(i); }; s.setAttribute('aria-label','הספק הנכון');
+      const t=el('select'); TYPES.forEach(v=>{ const o=el('option',null,v||'סוג המסמך'); o.value=v; t.appendChild(o); }); t.value=it.truth.type; t.onchange=()=>{ it.truth.type=t.value; upd(i); }; t.setAttribute('aria-label','סוג המסמך');
+      const n=el('input'); n.placeholder='4 ספרות אחרונות'; n.inputMode='numeric'; n.maxLength=4; n.value=it.truth.number4; n.oninput=()=>{ it.truth.number4=n.value.replace(/\D/g,'').slice(-4); upd(i); }; n.setAttribute('aria-label','4 הספרות האחרונות של מספר המסמך');
+      row.appendChild(s); row.appendChild(t); row.appendChild(n); li.appendChild(row);
+      const cmp=el('div','gs'); cmp.dataset.i=i; cmp.textContent=instant(it); li.appendChild(cmp); ol.appendChild(li); });
   }
   async function sendDocs(){
     if(needKey()||!items.length) return; const b=$('lbSend'); b.disabled=true; status(`שולח ${items.length} קבצים למעבדה…`);
@@ -3715,7 +3734,7 @@ window.__nf=normalizeFile;
         sent.forEach(({name,it})=>{ const t=it.truth, has=t.supplier||t.type||t.number4; d.items=d.items.filter(x=>x.file!=='files/'+name);
           d.items.push({file:'files/'+name,by:'fouad',at:new Date().toISOString(),mahdek:it.guess&&it.guess.label||'',label:null,fouad:has?{supplier:t.supplier,type:t.type,number4:t.number4}:null}); });
         return d; },'מעבדה: תוויות');
-      status(`נשלחו ${sent.length} קבצים. איתי יבדוק אותם מחר ב־07:40 והתוצאה תופיע למעלה.`); items=[]; draw();
+      status(`נשלחו ${sent.length} קבצים. איתי יבדוק אותם ${nextCheck()}, והתוצאה תופיע למעלה בלי לרענן.`); items=[]; draw();
     }catch(e){ fail(e,'לשלוח את הקבצים'); }
     b.disabled=false;
   }
@@ -3727,7 +3746,7 @@ window.__nf=normalizeFile;
     const v=$('lbReq').value.trim(); if(!v||needKey()) return; const b=$('lbReqSend'); b.disabled=true;
     try{ const r={id:'r-'+Date.now(),at:new Date().toISOString(),text:v.slice(0,1000),status:'open',result:''};
       await updateJson('lab/requests.json',d=>{ d=d&&Array.isArray(d.items)?d:{app:'mahdek',kind:'lab-requests',v:1,items:[]}; d.items.push(r); d.items=d.items.slice(-60); return d; },'מעבדה: בקשה מפואד');
-      reqs.push(r); drawReqs(); $('lbReq').value=''; status('הבקשה נשלחה. איתי יטפל בה מחר ב־07:40.'); }
+      reqs.push(r); drawReqs(); $('lbReq').value=''; status(`הבקשה נשלחה. איתי יטפל בה ${nextCheck()}.`); }
     catch(e){ fail(e,'לשלוח את הבקשה'); }
     b.disabled=false;
   }
@@ -3747,7 +3766,7 @@ window.__nf=normalizeFile;
   async function approve(branch,btn){
     if(needKey()) return; btn.disabled=true;
     try{ await updateJson('lab/approvals.json',d=>{ d=d&&Array.isArray(d.items)?d:{app:'mahdek',kind:'lab-approvals',v:1,items:[]}; if(!d.items.some(x=>x.branch===branch)) d.items.push({branch,at:new Date().toISOString(),status:'approved'}); return d; },'מעבדה: אישור שיפור');
-      btn.textContent='אושר ✓'; status('אישרת. איתי יבדוק שוב, יכניס את השיפור למהדק ויוודא שהגרסה החדשה עובדת.'); }
+      btn.textContent='אושר ✓'; status(`אישרת. איתי יבדוק שוב ${nextCheck()}, יכניס את השיפור למהדק ויוודא שהגרסה החדשה עובדת.`); }
     catch(e){ btn.disabled=false; fail(e,'לשמור את האישור'); }
   }
   const pct=a=>Array.isArray(a)&&a[1]?Math.round(a[0]/a[1]*100)+'%':'–';
@@ -3794,6 +3813,7 @@ window.__nf=normalizeFile;
   window.addEventListener('hashchange',()=>{ if(location.hash==='#lab') load(false); });
   window.addEventListener('mh:mail',()=>{ if(!$('s-lab').hidden) load(false); });
   if(location.hash==='#lab') setTimeout(()=>load(true),1500);
+  setInterval(()=>{ if(!document.hidden&&!$('s-lab').hidden) load(true); },120000);
   window.__mhLab={load};
 })();
 </script>
@@ -4212,7 +4232,7 @@ window.__nf=normalizeFile;
       ul.appendChild(li); }); box.appendChild(ul); }
     else if(t.id!=='manager') box.appendChild(el('p','hm-hint',`עוד אין דוח מ${t.name}. הריצה הקבועה: ראשון–חמישי ב־${t.run}.`));
     if(a&&a.tip&&a.tip.text) box.appendChild(el('p','hm-hint','💡 '+a.tip.text+(a.tip.source?' ('+a.tip.source+')':'')));
-    const lab=agents.lab; if(t.id==='files'){ const lp=el('p','hm-hint'); lp.textContent=lab&&lab.summary?'🔬 מעבדת זיהוי ('+fmt(new Date(lab.at),{day:'numeric',month:'numeric'})+'): '+lab.summary:'🔬 מעבדת זיהוי: איתי בודק כמה טוב מהדק מזהה מסמכים ומחפש שיפורים. כדי לבדוק מסמכים משלך, שלח אותם במייל לעצמך עם המילה "מעבדה" בנושא; התוצאה תופיע כאן למחרת בבוקר.'; box.appendChild(lp);
+    const lab=agents.lab; if(t.id==='files'){ const lp=el('p','hm-hint'); lp.textContent=lab&&lab.summary?'🔬 מעבדת זיהוי ('+fmt(new Date(lab.at),{day:'numeric',month:'numeric'})+'): '+lab.summary:'🔬 מעבדת זיהוי: איתי בודק כמה טוב מהדק מזהה מסמכים ומחפש שיפורים. כדי לבדוק מסמכים משלך, פותחים את מסך "מעבדה".'; box.appendChild(lp);
       const rec=(labRep&&Array.isArray(labRep.recent))?labRep.recent:[];
       if(rec.length){ const sets=[...new Set(rec.map(x=>x.set))].slice(0,2); sets.forEach(sn=>{ const rows=rec.filter(x=>x.set===sn), ok=rows.filter(x=>x.ok).length; const d=el('details','lab-set'); d.appendChild(el('summary',null,`המסמכים מ־${String(sn).replace('set-','').split('-').reverse().join('.')}: מהדק זיהה ${ok} מתוך ${rows.length}`));
         const ul=el('ul'); rows.forEach(x=>{ const li=el('li'); const s=el('span'); s.appendChild(el('b',null,(x.ok?'✓ ':'✗ ')+(x.file||''))); s.appendChild(el('small',null,`נכון: ${x.truth||''} · מהדק: ${x.mahdek||'–'}`+(x.book&&x.book!==x.mahdek?` · עם ספר הספקים: ${x.book}`:'')+(x.why?` · ${x.why}`:''))); li.appendChild(s); li.appendChild(el('i')); ul.appendChild(li); }); d.appendChild(ul); box.appendChild(d); }); } }
