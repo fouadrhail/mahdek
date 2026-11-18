@@ -58,15 +58,24 @@ async function fx() {
 
 async function interest() {
   const urls = [
-    BOI + 'BR/1.0/MNT_RIB_BOI_D?format=csv&lastNObservations=1',
-    BOI + 'BR/1.0/?format=csv&lastNObservations=1'
+    BOI + 'BR/1.0/MNT_RIB_BOI_D?format=csv&lastNObservations=120',
+    BOI + 'BR/1.0/?format=csv&lastNObservations=120'
   ];
   for (const u of urls) {
     try {
-      const obs = latest(parseCsv(await get(u))).filter(o => o.value >= 0 && o.value < 20 && Math.abs(o.value * 4 - Math.round(o.value * 4)) < 1e-6);
+      const rows = parseCsv(await get(u));
+      const obs = latest(rows).filter(o => o.value >= 0 && o.value < 20 && Math.abs(o.value * 4 - Math.round(o.value * 4)) < 1e-6);
       const o = obs.find(o => /RIB_BOI/.test(o.text)) || (obs.length === 1 ? obs[0] : null);
       if (o) {
-        if (o.value !== data.boi.rate) { data.boi.rate = o.value; data.boi.since = o.date.slice(0, 10); }
+        if (o.value !== data.boi.rate) {
+          // the rate has changed: in effect since the first day of the current run of the new value
+          const hist = rows.filter(r => (r.SERIES_CODE || r.SERIES_KEY || Object.values(r).join('|')) === o.key)
+            .map(r => ({ d: (r.TIME_PERIOD || '').slice(0, 10), v: parseFloat(String(r.OBS_VALUE || '').replace(',', '.')) }))
+            .filter(x => x.d && isFinite(x.v)).sort((a, b) => a.d.localeCompare(b.d));
+          let since = o.date.slice(0, 10);
+          for (let i = hist.length - 1; i >= 0 && hist[i].v === o.value; i--) since = hist[i].d;
+          data.boi.rate = o.value; data.boi.since = since; data.boi.next = null;
+        }
         data.boi.auto = true; log('interest ok', data.boi); return;
       }
     } catch (e) { log('interest failed:', e.message); }
