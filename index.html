@@ -883,6 +883,39 @@ body[data-tab="convert"]{--sec:var(--sage)} body[data-tab="edit"]{--sec:var(--bl
 @media (max-width:860px){.of-strip{grid-template-columns:repeat(3,minmax(0,1fr))}.td{grid-template-columns:26px minmax(0,1fr)}.td-a{grid-column:2;justify-content:flex-start}}
 @media (max-width:380px){.of-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+/* lab */
+#s-lab{display:flex;flex-direction:column;gap:14px;max-width:880px}
+#s-lab[hidden]{display:none}
+.lb-top h2{margin:0;font-weight:500;font-size:1.45rem;color:var(--ink)}
+.lb-sub{margin:4px 0 0;color:var(--muted);font-size:.92rem;line-height:1.55}
+.lb-status{margin:0;padding:10px 14px;border-radius:12px;background:var(--soft);font-size:.9rem;line-height:1.5}
+.lb-status.bad{color:var(--ml-flag)}
+.lb-card{display:flex;flex-direction:column;gap:8px}
+.lb-card h3{margin:0;font-size:1rem;font-weight:600}
+.lb-drop{display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px dashed var(--rule);border-radius:12px;padding:18px;color:var(--muted);cursor:pointer;font-size:.9rem;text-align:center}
+.lb-drop:hover,.lb-drop.drag{border-color:var(--ink);color:var(--ink)}
+.lb-files{list-style:none;margin:0;padding:0}
+.lb-f{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;padding:10px 0;border-top:1px solid var(--rule)}
+.lb-f:first-child{border-top:0}
+.lb-f .nm{font-size:.88rem;font-weight:600;overflow-wrap:anywhere}
+.lb-f .gs{font-size:.84rem;color:var(--muted)}
+.lb-f .gs b{color:var(--ink);font-weight:600}
+.lb-in{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) minmax(0,1fr);gap:6px}
+.lb-in input,.lb-in select,#lbReq{font:inherit;font-size:.86rem;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:6px 8px;min-width:0;width:100%;box-sizing:border-box}
+#lbReq{resize:vertical;line-height:1.5}
+.lb-row{display:flex;gap:8px;flex-wrap:wrap}
+.lb-reqs,.lb-list{list-style:none;margin:0;padding:0}
+.lb-reqs li,.lb-list li{padding:8px 0;border-top:1px solid var(--rule);font-size:.88rem;line-height:1.5}
+.lb-reqs li:first-child,.lb-list li:first-child{border-top:0}
+.lb-reqs small,.lb-list small{display:block;color:var(--muted);font-size:.78rem}
+.lb-score{display:flex;gap:8px;flex-wrap:wrap}
+.lb-score span{font-size:.8rem;background:var(--soft);border-radius:8px;padding:3px 10px;color:var(--muted)}
+.lb-score b{color:var(--ink)}
+.lb-ver{font-size:.9rem;line-height:1.5;margin:0}
+.lb-ver.ok{color:var(--ml-ok)}.lb-ver.bad{color:var(--ml-flag)}
+.lb-prop{border:1px solid var(--rule);border-radius:12px;padding:10px 12px;background:var(--soft);display:flex;flex-direction:column;gap:6px;font-size:.88rem}
+.lb-card details summary{cursor:pointer;font-size:.88rem;padding:4px 0}
+@media (max-width:560px){.lb-in{grid-template-columns:minmax(0,1fr)}}
 /* email analysis */
 .ml-act{border:1px solid var(--rule);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:var(--soft)}
 .ml-act>small{display:block;font-size:.72rem;letter-spacing:.05em;color:var(--muted);margin-bottom:2px}
@@ -1044,6 +1077,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <button type="button" role="tab" id="m-tasks" aria-controls="s-tasks" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 9l1.6 1.6L12.5 7.7M8 15l1.6 1.6 2.9-2.9M14.5 9.5H17M14.5 15.5H17"/></svg>משימות<span class="nbadge" id="mTasksBadge" hidden><svg class="lamp" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 18h6M10 21h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3z" fill="currentColor"/></svg><b>0</b></span></button>
     <button type="button" role="tab" id="m-files" aria-controls="s-files" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>קבצים</button>
     <button type="button" role="tab" id="m-mail" aria-controls="s-mail" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>תיבת דואר</button>
+    <button type="button" role="tab" id="m-lab" aria-controls="s-lab" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5.5 9.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7.5 15h9"/></svg>מעבדה</button>
   </nav>
 
   <div class="layout">
@@ -1269,6 +1303,33 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
   </section>
   </section>
 
+  <section class="section lb" id="s-lab" role="tabpanel" aria-labelledby="m-lab" hidden>
+    <div class="lb-top"><h2>מעבדה</h2><p class="lb-sub">כאן מנסים דברים. איתי אחראי על המעבדה: בכל בוקר ב־07:40 הוא בודק כל מה שנשלח לכאן, וגם בודק שכל עדכון של מהדק באמת עובד.</p></div>
+    <p class="lb-status" id="lbStatus" role="status" hidden></p>
+    <section class="hm-card lb-card" id="lbRes">
+      <div class="hm-th"><h3>מה איתי מצא</h3><span class="hm-n" id="lbResAt"></span></div>
+      <div id="lbResBody"><p class="hm-empty">עוד אין בדיקה. הבדיקה הראשונה תהיה מחר ב־07:40.</p></div>
+    </section>
+    <section class="hm-card lb-card">
+      <h3>בדיקת מסמכים</h3>
+      <p class="hm-hint">גוררים מסמכים. מהדק מזהה אותם מיד, ואפשר לכתוב מה נכון. "שליחה לאיתי" שומרת אותם במאגר הפרטי, ואיתי בודק אותם ולומד מהם.</p>
+      <label class="lb-drop" id="lbDrop"><input type="file" id="lbFile" multiple accept=".pdf,image/*" hidden><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><span>גוררים קבצים לכאן או לוחצים לבחירה</span></label>
+      <ol class="lb-files" id="lbFiles"></ol>
+      <div class="lb-row" id="lbFileAct" hidden><button type="button" class="hm-link pri" id="lbSend">שליחה לאיתי</button><button type="button" class="hm-link" id="lbClear">ניקוי</button></div>
+    </section>
+    <section class="hm-card lb-card">
+      <h3>בקשה לאיתי</h3>
+      <p class="hm-hint">מה לבדוק? למשל: "עדכנו את זיהוי הסריקות, תבדוק שזה עובד", או "למה מהדק לא מזהה את בזק".</p>
+      <textarea id="lbReq" rows="3" placeholder="כותבים כאן…"></textarea>
+      <div class="lb-row"><button type="button" class="hm-link pri" id="lbReqSend">שליחה</button></div>
+      <ul class="lb-reqs" id="lbReqs"></ul>
+    </section>
+    <section class="hm-card lb-card">
+      <h3>התיקונים שלי</h3>
+      <p class="hm-hint" id="lbCorrTxt">כשמתקנים שם של ספק במסך "קבצים", מהדק זוכר את התיקון רק במחשב הזה. שליחה לאיתי מכניסה אותם, אחרי בדיקה, לספר הספקים של כל הצוות.</p>
+      <div class="lb-row"><button type="button" class="hm-link" id="lbCorrSend">שליחת התיקונים לאיתי</button></div>
+    </section>
+  </section>
   <section class="section hm" id="s-home" role="tabpanel" aria-labelledby="m-home">
     <div class="hm-top">
       <div><h2 id="hmHello">שלום פואד</h2><p class="hm-date" id="hmDate"></p></div>
@@ -1378,7 +1439,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 6.9 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 7.0 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -1715,8 +1776,8 @@ window.__nf=normalizeFile;
   /* Tabs */
   let lastFiles='join';
   function show(t){
-    const sec=(!t||t==='home')?'home':t==='tasks'?'tasks':t==='mail'?'mail':'files';
-    ['home','files','tasks','mail'].forEach(k=>{$('s-'+k).hidden=k!==sec;$('m-'+k).setAttribute('aria-selected',String(k===sec));});
+    const sec=(!t||t==='home')?'home':t==='tasks'?'tasks':t==='mail'?'mail':t==='lab'?'lab':'files';
+    ['home','files','tasks','mail','lab'].forEach(k=>{$('s-'+k).hidden=k!==sec;$('m-'+k).setAttribute('aria-selected',String(k===sec));});
     if(sec!=='files'){ document.body.dataset.tab=sec; ['merge','convert','edit','sign'].forEach(k=>{$('p-'+k).hidden=true;}); return; }
     const key=t==='files'||t==='convert'?'convert':t==='pages'?'edit':t==='sign'?'sign':'merge';
     lastFiles=t&&key!=='merge'?t:'join';
@@ -1727,6 +1788,7 @@ window.__nf=normalizeFile;
   $('m-home').addEventListener('click',()=>{location.hash='home';show('home');});
   $('m-tasks').addEventListener('click',()=>{location.hash='tasks';show('tasks');});
   $('m-mail').addEventListener('click',()=>{location.hash='mail';show('mail');});
+  $('m-lab').addEventListener('click',()=>{location.hash='lab';show('lab'); if(window.__mhLab) window.__mhLab.load(true);});
   $('t-merge').addEventListener('click',()=>{location.hash='join';show('join');});
   $('t-convert').addEventListener('click',()=>{location.hash='files';show('files');});
   $('t-edit').addEventListener('click',()=>{location.hash='pages';show('pages');});
@@ -2599,7 +2661,7 @@ window.__nf=normalizeFile;
   $('pmSave').addEventListener('click',()=>pmClose([...PM.keep].sort((a,b)=>a-b)));
   $('pmodal').addEventListener('click',e=>{if(e.target===$('pmodal')) pmClose(null);});
   $('pmodal').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();pmClose(null);}});
-  window.__mh2={detect:detectDoc,deliver:deliverFiles,pickPages,view:viewDoc,labelBatch,learn:learnSupplier,verifyOnline};
+  window.__mh2={learned:()=>learned,detect:detectDoc,deliver:deliverFiles,pickPages,view:viewDoc,labelBatch,learn:learnSupplier,verifyOnline};
 
   /* ---------- Page editor: one row per page, split and delete ---------- */
   {
@@ -3581,6 +3643,148 @@ window.__nf=normalizeFile;
   setInterval(()=>{ if(!document.hidden&&!$('s-mail').hidden&&Date.now()-lastSync>600000) sync(); },60000);
 
   openDb().then(d=>{ db=d; return refresh(); }).then(()=>sync()).catch(()=>{ status('הדפדפן הזה לא מאפשר לשמור את הניתוח (אולי חלון גלישה בסתר).',true); render(); });
+})();
+</script>
+<script>
+(function(){
+  /* Lab: try documents and ideas; the lab clerk (איתי) checks them each morning and tests every Mahdek update.
+     Writes go to the PRIVATE repo with the owner's key (needs Contents: read and write on fouadrhail/mahdek-mail). */
+  const $=id=>document.getElementById(id);
+  const el=(t,c,x)=>{ const e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; };
+  const REPO='fouadrhail/mahdek-mail', TOK='mahdek.mail.token';
+  const tok=()=>{ try{ return localStorage.getItem(TOK)||''; }catch(_){ return ''; } };
+  const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jerusalem'}).format(new Date());
+  const fmt=(d,o)=>new Intl.DateTimeFormat('he-IL',{timeZone:'Asia/Jerusalem',...o}).format(d);
+  const api=p=>`https://api.github.com/repos/${REPO}/contents/${p.split('/').map(encodeURIComponent).join('/')}`;
+  const H=()=>({Authorization:'Bearer '+tok(),Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'});
+  function status(msg,bad){ const s=$('lbStatus'); s.hidden=!msg; s.textContent=msg||''; s.classList.toggle('bad',!!bad); }
+  const WRITE_HELP='המפתח במחשב הזה מאפשר רק קריאה. כדי לשלוח למעבדה צריך מפתח עם הרשאת כתיבה: ב־GitHub ‏‹ Settings ‹ Developer settings ‹ Fine-grained tokens, עורכים את המפתח של mahdek-mail ומשנים את Contents ל־Read and write (רק למאגר הפרטי). אחר כך מדביקים אותו מחדש במסך "תיבת דואר".';
+  async function getJson(path){ const r=await fetch(api(path),{headers:H(),cache:'no-store'}); if(r.status===404) return {data:null,sha:null}; if(!r.ok) throw new Error('get '+r.status);
+    const j=await r.json(); const txt=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))); return {data:JSON.parse(txt),sha:j.sha}; }
+  const b64text=s=>{ const u=new TextEncoder().encode(s); let b=''; for(let i=0;i<u.length;i+=0x8000) b+=String.fromCharCode(...u.subarray(i,i+0x8000)); return btoa(b); };
+  const b64file=f=>new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(String(r.result).split(',')[1]||''); r.onerror=rej; r.readAsDataURL(f); });
+  async function put(path,b64,message,sha){
+    const r=await fetch(api(path),{method:'PUT',headers:{...H(),'Content-Type':'application/json'},body:JSON.stringify({message,content:b64,...(sha?{sha}:{})})});
+    if(r.status===403||r.status===404){ const e=new Error('write'); e.write=1; throw e; }
+    if(r.status===409||r.status===422){ const e=new Error('conflict'); e.conflict=1; throw e; }
+    if(!r.ok) throw new Error('put '+r.status); return r.json();
+  }
+  async function updateJson(path,fn,message){
+    for(let i=0;i<3;i++){ const {data,sha}=await getJson(path); const next=fn(data); try{ return await put(path,b64text(JSON.stringify(next,null,1)),message,sha); }catch(e){ if(!e.conflict) throw e; } }
+    throw new Error('conflict');
+  }
+  function fail(e,what){ console.warn(e); if(e&&e.write) status(WRITE_HELP,true); else status(`לא הצלחתי ${what}. אולי אין חיבור כרגע.`,true); }
+  function needKey(){ if(tok()) return false; status('קודם צריך לחבר את המאגר הפרטי במסך "תיבת דואר".',true); return true; }
+
+  /* ---- documents ---- */
+  let items=[];
+  const TYPES=['','חשבונית מס','חשבונית מס קבלה','קבלה','חשבונית זיכוי','חשבון עסקה','דרישת תשלום','אחר'];
+  function addFiles(list){
+    [...list].forEach(f=>{ if(!/\.pdf$/i.test(f.name)&&!/^image\//.test(f.type)) return; if(items.length>=25) return;
+      const it={f,kind:/^image\//.test(f.type)?'image':'pdf',guess:null,busy:true,truth:{supplier:'',type:'',number4:''}}; items.push(it);
+      const D=window.__mh2; if(D&&D.detect){ D.detect(f,it.kind).then(r=>{ it.busy=false; if(r){ const o=D.labelBatch([r])[0]; it.guess={label:o.label,sup:o.res&&o.res.name||'',how:o.res&&o.res.how||''}; } else it.guess={label:'',sup:''}; draw(); }).catch(()=>{ it.busy=false; it.guess={label:'',sup:''}; draw(); }); } else it.busy=false; });
+    draw();
+  }
+  function draw(){
+    const ol=$('lbFiles'); ol.textContent=''; $('lbFileAct').hidden=!items.length;
+    items.forEach((it,i)=>{ const li=el('li','lb-f'); li.appendChild(el('div','nm',it.f.name));
+      const gs=el('div','gs'); gs.appendChild(document.createTextNode('מהדק זיהה: ')); gs.appendChild(el('b',null,it.busy?'מזהה…':(it.guess&&it.guess.label)||'לא זוהה')); li.appendChild(gs);
+      const row=el('div','lb-in');
+      const s=el('input'); s.placeholder='הספק הנכון (לא חובה)'; s.value=it.truth.supplier; s.oninput=()=>{ it.truth.supplier=s.value.trim(); }; s.setAttribute('aria-label','הספק הנכון');
+      const t=el('select'); TYPES.forEach(v=>{ const o=el('option',null,v||'סוג המסמך'); o.value=v; t.appendChild(o); }); t.value=it.truth.type; t.onchange=()=>{ it.truth.type=t.value; }; t.setAttribute('aria-label','סוג המסמך');
+      const n=el('input'); n.placeholder='4 ספרות אחרונות'; n.inputMode='numeric'; n.maxLength=4; n.value=it.truth.number4; n.oninput=()=>{ it.truth.number4=n.value.replace(/\D/g,'').slice(-4); }; n.setAttribute('aria-label','4 הספרות האחרונות של מספר המסמך');
+      row.appendChild(s); row.appendChild(t); row.appendChild(n); li.appendChild(row); ol.appendChild(li); });
+  }
+  async function sendDocs(){
+    if(needKey()||!items.length) return; const b=$('lbSend'); b.disabled=true; status(`שולח ${items.length} קבצים למעבדה…`);
+    const set='set-'+today(), base=`lab/${set}/`; const sent=[];
+    try{
+      for(const it of items){ const safe=it.f.name.replace(/[\\/:*?"<>|#%]/g,'-'); let name=safe, k=2; while(sent.some(x=>x.name===name)) name=safe.replace(/(\.[^.]+)?$/,`-${k++}$1`);
+        await put(base+'files/'+name,await b64file(it.f),'מעבדה: מסמך לבדיקה'); sent.push({name,it}); status(`נשלחו ${sent.length} מתוך ${items.length}…`); }
+      await updateJson(base+'labels.json',d=>{ d=d&&Array.isArray(d.items)?d:{app:'mahdek',kind:'lab-set',v:1,note:'מסמכים שפואד העלה במסך המעבדה',items:[]};
+        sent.forEach(({name,it})=>{ const t=it.truth, has=t.supplier||t.type||t.number4; d.items=d.items.filter(x=>x.file!=='files/'+name);
+          d.items.push({file:'files/'+name,by:'fouad',at:new Date().toISOString(),mahdek:it.guess&&it.guess.label||'',label:null,fouad:has?{supplier:t.supplier,type:t.type,number4:t.number4}:null}); });
+        return d; },'מעבדה: תוויות');
+      status(`נשלחו ${sent.length} קבצים. איתי יבדוק אותם מחר ב־07:40 והתוצאה תופיע למעלה.`); items=[]; draw();
+    }catch(e){ fail(e,'לשלוח את הקבצים'); }
+    b.disabled=false;
+  }
+
+  /* ---- requests ---- */
+  let reqs=[];
+  function drawReqs(){ const ul=$('lbReqs'); ul.textContent=''; reqs.slice().reverse().slice(0,8).forEach(r=>{ const li=el('li'); li.appendChild(document.createTextNode(r.text)); li.appendChild(el('small',null,(r.status==='done'?'✓ ':'⏳ ')+fmt(new Date(r.at),{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})+(r.result?' · איתי: '+r.result:' · מחכה לבדיקה של איתי'))); ul.appendChild(li); }); }
+  async function sendReq(){
+    const v=$('lbReq').value.trim(); if(!v||needKey()) return; const b=$('lbReqSend'); b.disabled=true;
+    try{ const r={id:'r-'+Date.now(),at:new Date().toISOString(),text:v.slice(0,1000),status:'open',result:''};
+      await updateJson('lab/requests.json',d=>{ d=d&&Array.isArray(d.items)?d:{app:'mahdek',kind:'lab-requests',v:1,items:[]}; d.items.push(r); d.items=d.items.slice(-60); return d; },'מעבדה: בקשה מפואד');
+      reqs.push(r); drawReqs(); $('lbReq').value=''; status('הבקשה נשלחה. איתי יטפל בה מחר ב־07:40.'); }
+    catch(e){ fail(e,'לשלוח את הבקשה'); }
+    b.disabled=false;
+  }
+
+  /* ---- my corrections ---- */
+  function corrCount(){ const D=window.__mh2, L=D&&D.learned?D.learned():null; return L?Object.keys(L.ids||{}).length+Object.keys(L.domains||{}).length:0; }
+  async function sendCorr(){
+    if(needKey()) return; const D=window.__mh2, L=D&&D.learned?D.learned():null; const n=corrCount(); if(!n){ status('אין עדיין תיקונים במחשב הזה.'); return; }
+    const b=$('lbCorrSend'); b.disabled=true;
+    try{ await updateJson('lab/corrections.json',d=>{ d=d&&d.kind==='lab-corrections'?d:{app:'mahdek',kind:'lab-corrections',v:1,ids:{},domains:{}}; Object.assign(d.ids,L.ids||{}); Object.assign(d.domains,L.domains||{}); d.at=new Date().toISOString(); d.status='open'; return d; },'מעבדה: תיקוני ספקים מפואד');
+      status(`נשלחו ${n} תיקונים. אחרי שאיתי יבדוק אותם הם ייכנסו לספר הספקים של הצוות.`); }
+    catch(e){ fail(e,'לשלוח את התיקונים'); }
+    b.disabled=false;
+  }
+
+  /* ---- results ---- */
+  async function approve(branch,btn){
+    if(needKey()) return; btn.disabled=true;
+    try{ await updateJson('lab/approvals.json',d=>{ d=d&&Array.isArray(d.items)?d:{app:'mahdek',kind:'lab-approvals',v:1,items:[]}; if(!d.items.some(x=>x.branch===branch)) d.items.push({branch,at:new Date().toISOString(),status:'approved'}); return d; },'מעבדה: אישור שיפור');
+      btn.textContent='אושר ✓'; status('אישרת. איתי יבדוק שוב, יכניס את השיפור למהדק ויוודא שהגרסה החדשה עובדת.'); }
+    catch(e){ btn.disabled=false; fail(e,'לשמור את האישור'); }
+  }
+  const pct=a=>Array.isArray(a)&&a[1]?Math.round(a[0]/a[1]*100)+'%':'–';
+  function drawRes(rep,appr){
+    const box=$('lbResBody'); if(!rep) return; box.textContent='';
+    $('lbResAt').textContent=rep.at?'עודכן '+fmt(new Date(rep.at),{weekday:'short',day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+    const v=rep.version; if(v&&v.app){ const ok=!v.regression; box.appendChild(el('p','lb-ver '+(ok?'ok':'bad'),(ok?'✓ ':'✗ ')+(v.note||`גרסה ${v.app} נבדקה`))); }
+    const fs=(rep.sets||[]).find(s=>s.set==='set-2026-11-16'), sc=el('div','lb-score');
+    const add=(k,val)=>{ const s=el('span'); s.appendChild(document.createTextNode(k+' ')); s.appendChild(el('b',null,val)); sc.appendChild(s); };
+    if(fs){ add('ספק נכון',pct(fs.supplier)); add('מספר נכון',pct(fs.number)); if(fs.type) add('סוג נכון',pct(fs.type)); }
+    if(rep.daily&&rep.daily.files) add('מסמכי מייל',pct(rep.daily.supplier));
+    if(sc.childNodes.length){ box.appendChild(el('p','hm-hint','35 המסמכים הקבועים מ־16.11 (ההתחלה: 29 מתוך 35, ‏83%):')); box.appendChild(sc); }
+    const p=rep.proposal; if(p&&p.branch){ const d=el('div','lb-prop'); d.appendChild(el('b',null,'שיפור שנבדק ומחכה לאישור שלך'));
+      d.appendChild(el('span',null,p.what||'')); if(p.before&&p.after) d.appendChild(el('small',null,`לפני: ${JSON.stringify(p.before).replace(/[{}"]/g,'')} · אחרי: ${JSON.stringify(p.after).replace(/[{}"]/g,'')}`));
+      const done=(appr||[]).some(x=>x.branch===p.branch); const bt=el('button','hm-link pri',done?'אושר ✓':'מאשר להכניס למהדק'); bt.type='button'; bt.disabled=done; bt.onclick=()=>approve(p.branch,bt); d.appendChild(bt); box.appendChild(d); }
+    const rec=Array.isArray(rep.recent)?rep.recent:[];
+    [...new Set(rec.map(x=>x.set))].slice(0,3).forEach(sn=>{ const rows=rec.filter(x=>x.set===sn), ok=rows.filter(x=>x.ok).length; const d=el('details');
+      d.appendChild(el('summary',null,`המסמכים מ־${String(sn).replace('set-','').split('-').reverse().join('.')}: מהדק זיהה ${ok} מתוך ${rows.length}`));
+      const ul=el('ul','lb-list'); rows.forEach(x=>{ const li=el('li'); li.appendChild(el('b',null,(x.ok?'✓ ':'✗ ')+(x.file||''))); li.appendChild(el('small',null,`נכון: ${x.truth||''} · מהדק: ${x.mahdek||'–'}`+(x.book&&x.book!==x.mahdek?` · עם ספר הספקים: ${x.book}`:'')+(x.why?` · ${x.why}`:''))); ul.appendChild(li); }); d.appendChild(ul); box.appendChild(d); });
+    const cz=rep.causes||[]; if(cz.length){ const d=el('details'); d.appendChild(el('summary',null,'למה מהדק טועה')); const ul=el('ul','lb-list'); cz.forEach(c=>{ const li=el('li'); li.appendChild(document.createTextNode(`${c.cause} (${c.count})`)); ul.appendChild(li); }); d.appendChild(ul); box.appendChild(d); }
+    const rs=rep.research||[]; if(rs.length){ const d=el('details'); d.appendChild(el('summary',null,'מה איתי למד מאחרים')); const ul=el('ul','lb-list'); rs.forEach(r=>{ const li=el('li'); li.appendChild(el('b',null,r.title||'')); li.appendChild(el('small',null,[r.how,r.fit,r.source].filter(Boolean).join(' · '))); ul.appendChild(li); }); d.appendChild(ul); box.appendChild(d); }
+  }
+  let loadedAt=0;
+  async function load(force){
+    const M=window.__mhMail; if(!M||!M.hasToken()) { $('lbResBody').textContent=''; $('lbResBody').appendChild(el('p','hm-empty','כדי לראות תוצאות צריך לחבר את המאגר הפרטי במסך "תיבת דואר".')); return; }
+    if(!force&&Date.now()-loadedAt<60000) return; loadedAt=Date.now();
+    try{ const [rep,rq,ap]=await Promise.all([M.get('team/lab.json',true).catch(()=>null),M.get('lab/requests.json',true).catch(()=>null),M.get('lab/approvals.json',true).catch(()=>null)]);
+      if(rq&&Array.isArray(rq.items)){ reqs=rq.items; drawReqs(); }
+      if(rep&&rep.kind==='ocr-lab') drawRes(rep,ap&&ap.items);
+    }catch(_){}
+    const n=corrCount(); $('lbCorrTxt').textContent=`כשמתקנים שם של ספק במסך "קבצים", מהדק זוכר את התיקון רק במחשב הזה (כרגע ${n} תיקונים). שליחה לאיתי מכניסה אותם, אחרי בדיקה, לספר הספקים של כל הצוות.`;
+  }
+
+  /* wiring */
+  const drop=$('lbDrop');
+  $('lbFile').addEventListener('change',e=>{ addFiles(e.target.files); e.target.value=''; });
+  ['dragenter','dragover'].forEach(t=>drop.addEventListener(t,e=>{ e.preventDefault(); drop.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{ e.preventDefault(); drop.classList.remove('drag'); }));
+  drop.addEventListener('drop',e=>addFiles(e.dataTransfer.files));
+  $('lbSend').addEventListener('click',sendDocs);
+  $('lbClear').addEventListener('click',()=>{ items=[]; draw(); status(''); });
+  $('lbReqSend').addEventListener('click',sendReq);
+  $('lbCorrSend').addEventListener('click',sendCorr);
+  window.addEventListener('hashchange',()=>{ if(location.hash==='#lab') load(false); });
+  window.addEventListener('mh:mail',()=>{ if(!$('s-lab').hidden) load(false); });
+  if(location.hash==='#lab') setTimeout(()=>load(true),1500);
+  window.__mhLab={load};
 })();
 </script>
 <script>
