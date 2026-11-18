@@ -188,6 +188,11 @@ button:disabled.go2{opacity:.45;cursor:default}
 .tabs button[aria-selected="true"]{box-shadow:0 4px 12px -4px var(--cobalt);background:var(--cobalt);color:var(--cobalt-ink)}
 .tabs button:hover{border:0}
 .panel{display:flex;flex-direction:column;gap:22px}
+.soon{background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:14px;box-shadow:0 0 0 1px var(--rule);padding:28px 24px;max-width:640px}
+.soon h2{font-family:var(--font-display);font-weight:400;font-size:1.35rem;margin:10px 0 8px;text-wrap:balance}
+.soon p{margin:0 0 12px;color:var(--muted)}
+.soon ul{margin:0;padding-inline-start:18px;display:grid;gap:6px}
+.soon-tag{display:inline-block;font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--cobalt-soft);color:var(--cobalt)}
 
 /* Converter rows */
 .rows{list-style:none;margin:0;padding:0;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:12px;box-shadow:0 0 0 1px var(--rule);overflow:hidden}
@@ -331,7 +336,7 @@ button:disabled.go2{opacity:.45;cursor:default}
         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMzMzU1ZTAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxYTJmOWMiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSIyNDAiIGhlaWdodD0iMjQwIiByeD0iNTYiIGZpbGw9InVybCgjZykiLz4KICA8cmVjdCB4PSI1OCIgeT0iNDQiIHdpZHRoPSIxMTIiIGhlaWdodD0iMTUyIiByeD0iNiIgZmlsbD0iI2M5ZDNmZiIgdHJhbnNmb3JtPSJyb3RhdGUoLTggMTE0IDEyMCkiLz4KICA8cmVjdCB4PSI4NCIgeT0iNjIiIHdpZHRoPSIxMTIiIGhlaWdodD0iMTUyIiByeD0iNiIgZmlsbD0iI2ZmZmZmZiIvPgogIDxyZWN0IHg9IjEwNCIgeT0iMTA0IiB3aWR0aD0iNzIiIGhlaWdodD0iOSIgcng9IjQuNSIgZmlsbD0iI2QzZDllNCIvPgogIDxyZWN0IHg9IjEwNCIgeT0iMTI2IiB3aWR0aD0iNzIiIGhlaWdodD0iOSIgcng9IjQuNSIgZmlsbD0iI2QzZDllNCIvPgogIDxyZWN0IHg9IjEwNCIgeT0iMTQ4IiB3aWR0aD0iNTAiIGhlaWdodD0iOSIgcng9IjQuNSIgZmlsbD0iI2QzZDllNCIvPgogIDxwYXRoIGQ9Ik0xMTIgNjYgVjQ2IEgxNjggVjY2IiBmaWxsPSJub25lIiBzdHJva2U9IiNkODFiNzIiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxyZWN0IHg9IjEwNCIgeT0iMTgwIiB3aWR0aD0iMTgiIGhlaWdodD0iOSIgcng9IjIiIGZpbGw9IiMwMGEzZDkiLz4KICA8cmVjdCB4PSIxMjIiIHk9IjE4MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjkiIGZpbGw9IiNkODFiNzIiLz4KICA8cmVjdCB4PSIxNDAiIHk9IjE4MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjkiIGZpbGw9IiNmMmMyMDAiLz4KICA8cmVjdCB4PSIxNTgiIHk9IjE4MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjkiIHJ4PSIyIiBmaWxsPSIjMTIxODJiIi8+Cjwvc3ZnPgo=" alt="" width="54" height="54" style="width:54px;height:54px;flex:none">
         <h1>מהדק</h1>
       </div>
-      <p class="tag">מהדקים קבצים ל־PDF אחד להדפסה, ממירים קבצים מפורמט לפורמט, ומפצלים או מוחקים עמודים ב־PDF. בלי הגבלה על מספר הקבצים, והכול נשאר אצלך בדפדפן.</p>
+      <p class="tag">מהדקים קבצים ל־PDF אחד להדפסה, ממירים קבצים מפורמט לפורמט, ומפצלים או מוחקים עמודים ב־PDF. בקרוב גם עריכה וחתימה על מסמכים. בלי הגבלה על מספר הקבצים, והכול נשאר אצלך בדפדפן.</p>
     </div>
     <div class="specs"><span class="spec">A4 · 210×297 מ״מ</span><span class="spec">שוליים 1 ס״מ</span><span class="spec">בלי חיתוך</span></div>
     <div class="cmyk" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -341,6 +346,7 @@ button:disabled.go2{opacity:.45;cursor:default}
     <button type="button" role="tab" id="t-merge" aria-controls="p-merge" aria-selected="true">הידוק לקובץ אחד</button>
     <button type="button" role="tab" id="t-convert" aria-controls="p-convert" aria-selected="false">המרת קבצים</button>
     <button type="button" role="tab" id="t-edit" aria-controls="p-edit" aria-selected="false">פיצול ומחיקת עמודים</button>
+    <button type="button" role="tab" id="t-sign" aria-controls="p-sign" aria-selected="false">עריכה וחתימה</button>
   </div>
 
   <div class="panel" id="p-merge" role="tabpanel" aria-labelledby="t-merge">
@@ -498,6 +504,19 @@ button:disabled.go2{opacity:.45;cursor:default}
       </div>
     </div>
   </div>
+
+  <div class="panel" id="p-sign" role="tabpanel" aria-labelledby="t-sign" hidden>
+    <section class="soon">
+      <span class="soon-tag">בקרוב</span>
+      <h2>עריכת מסמכים וחתימה</h2>
+      <p>כאן אפשר יהיה לפתוח PDF או תמונה, לכתוב עליו ולהוסיף חתימה, ולשמור קובץ חדש. הכול בדפדפן, בלי לשלוח את המסמך לשום מקום.</p>
+      <ul>
+        <li>חתימה: לצייר בעכבר או באצבע, או להעלות תמונה של החתימה</li>
+        <li>הוספת טקסט, תאריך וחותמת על העמוד</li>
+        <li>מיקום ושינוי גודל בגרירה, על כל עמוד</li>
+      </ul>
+    </section>
+  </div>
   <div class="modal" id="vmodal" hidden role="dialog" aria-modal="true" aria-labelledby="vTitle">
     <div class="modal-in">
       <div class="vhead">
@@ -542,7 +561,7 @@ button:disabled.go2{opacity:.45;cursor:default}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver">מהדק · גרסה 3.4 · עודכן 18.11.2026</footer>
+  <footer class="ver">מהדק · גרסה 3.5 · עודכן 18.11.2026</footer>
 </div>
 
 <script>
@@ -870,12 +889,13 @@ window.__nf=normalizeFile;
 
   /* Tabs */
   function show(t){
-    const key=t==='files'||t==='convert'?'convert':t==='pages'?'edit':'merge';
-    ['merge','convert','edit'].forEach(k=>{$('p-'+k).hidden=k!==key;$('t-'+k).setAttribute('aria-selected',String(k===key));});
+    const key=t==='files'||t==='convert'?'convert':t==='pages'?'edit':t==='sign'?'sign':'merge';
+    ['merge','convert','edit','sign'].forEach(k=>{$('p-'+k).hidden=k!==key;$('t-'+k).setAttribute('aria-selected',String(k===key));});
   }
   $('t-merge').addEventListener('click',()=>{location.hash='join';show('join');});
   $('t-convert').addEventListener('click',()=>{location.hash='files';show('files');});
   $('t-edit').addEventListener('click',()=>{location.hash='pages';show('pages');});
+  $('t-sign').addEventListener('click',()=>{location.hash='sign';show('sign');});
   window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
   show(location.hash.slice(1));
 
