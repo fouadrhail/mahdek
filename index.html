@@ -3873,9 +3873,10 @@ window.__nf=normalizeFile;
     const M=window.__mhMail; if(!M||!M.hasToken()||loading) return; if(!force&&Date.now()-lastLoad<120000) return;
     loading=true;
     try{
-      const [b,bd,...rest]=await Promise.all([M.get('agent/brief.json',true).catch(()=>null),M.get('team/board.json',true).catch(()=>null),...TEAM.map(t=>M.get(`agents/${t.id}.json`,true).catch(()=>null))]);
+      const [b,bd,lb,...rest]=await Promise.all([M.get('agent/brief.json',true).catch(()=>null),M.get('team/board.json',true).catch(()=>null),M.get('agents/lab.json',true).catch(()=>null),...TEAM.map(t=>M.get(`agents/${t.id}.json`,true).catch(()=>null))]);
       lastLoad=Date.now();
       if(b&&b.kind==='agent-brief'){ brief=b; window.__mhBrief=b; try{ localStorage.setItem(BK,JSON.stringify(b)); }catch(_){} }
+      if(lb&&lb.kind==='agent-status'){ agents.lab=lb; }
       if(bd&&bd.kind==='team-board'){ board=bd; try{ localStorage.setItem(BDK,JSON.stringify(bd)); }catch(_){} }
       TEAM.forEach((t,i)=>{ const a=rest[i]; if(a&&a.kind==='agent-status') agents[t.id]=a; });
       try{ localStorage.setItem(AK,JSON.stringify(agents)); }catch(_){}
@@ -3994,6 +3995,7 @@ window.__nf=normalizeFile;
       ul.appendChild(li); }); box.appendChild(ul); }
     else if(t.id!=='manager') box.appendChild(el('p','hm-hint',`עוד אין דוח מ${t.name}. הריצה הקבועה: ראשון–חמישי ב־${t.run}.`));
     if(a&&a.tip&&a.tip.text) box.appendChild(el('p','hm-hint','💡 '+a.tip.text+(a.tip.source?' ('+a.tip.source+')':'')));
+    const lab=agents.lab; if(t.id==='files'){ const lp=el('p','hm-hint'); lp.textContent=lab&&lab.summary?'🔬 מעבדת זיהוי ('+fmt(new Date(lab.at),{day:'numeric',month:'numeric'})+'): '+lab.summary:'🔬 מעבדת זיהוי: בימי שני וחמישי איתי בודק כמה טוב מהדק מזהה מסמכים ומחפש שיפורים. הדוח הראשון יגיע ביום חמישי.'; box.appendChild(lp); }
     const mine=((board&&board.items)||[]).filter(x=>x.to===t.id&&x.status!=='done');
     if(mine.length){ box.appendChild(el('p','hm-hint','ממתין לו מהצוות:')); const ul=el('ul'); mine.slice(0,5).forEach(x=>{ const li=el('li'); li.appendChild(el('span',null,`${nameOf(x.from)}: ${x.title}`)); li.appendChild(el('i')); ul.appendChild(li); }); box.appendChild(ul); }
     const acts=el('div','of-acts');
