@@ -1280,7 +1280,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <details class="hm-sur" id="hmSurBox" hidden><summary id="surT"></summary><div class="sur-b"><p id="surP"></p><div id="surAct"></div><ul class="sur-wk" id="surWk"></ul></div></details>
     <section class="of" aria-label="הצוות">
       <h3 class="hm-sh">הצוות</h3>
-      <div class="of-scene" id="ofScene"><canvas id="ofCv" role="img" aria-label="המשרד של מהדק: מנהל המשרד וחמישה עובדים בשורות. מי שיש לו עבודה יושב ליד המחשב, מי שאין לו עומד ליד השולחן."></canvas><div id="ofLabs"></div></div>
+      <div class="of-scene" id="ofScene"><canvas id="ofCv" role="img" aria-label="המשרד של מהדק: מנהל המשרד וחמישה עובדים בשורות. מי שיש לו עבודה יושב ליד המחשב, מי שאין לו מסתובב במשרד."></canvas><div id="ofLabs"></div></div>
       <div class="of-strip" id="ofStrip"></div>
       <div class="of-detail" id="ofDetail" hidden></div>
     </section>
@@ -1376,7 +1376,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 6.7 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 6.8 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -3611,7 +3611,7 @@ window.__nf=normalizeFile;
     {id:'reports',name:'דנה',role:'דיווחים',color:'#3a9266',run:'07:34',go:null,g:'f'},
     {id:'payroll',name:'עומר',role:'משכורות',color:'#c58b1f',run:null,go:null,soon:true,g:'m'}];
 
-  /* Pixel office: a still canvas scene. A worker with work sits at the desk with the laptop open; without work, stands beside the desk. */
+  /* Pixel office: a worker with work sits at the desk with the laptop open (still); without work, walks around the office. */
   const OF=(function(){
     const W=400,H=240, off=document.createElement('canvas'); off.width=W; off.height=H; const g=off.getContext('2d');
     const R=(x,y,w,h,c)=>{ g.fillStyle=c; g.fillRect(x,y,w,h); };
@@ -3633,18 +3633,40 @@ window.__nf=normalizeFile;
       prep:{hs:'long',hair:'#d8a648',skin:'#f6d2b6',shirt:'#7a63b0',pants:'#3d4658'},
       reports:{hs:'bun',hair:'#8a4b2a',skin:'#e9b48e',shirt:'#3a9266',pants:'#3d4658'},
       payroll:{hs:'beard',hair:'#1f1a18',skin:'#a8714e',shirt:'#c58b1f',pants:'#3a3f4b'}};
+    /* extra views: back, side, and walking legs */
+    const BACKHEAD={
+      short:["....oooooooo....","...ohhhhhhhho...","..ohhhHHhhhhho..","..ohhhhhhhhhho..","..ohhhhhhhhhho..","..ohhhhhhhhhho..","..ohhhhhhhhhho..","..ohhhhhhhhhho..","..oshhhhhhhhso..","..oshhhhhhhhso..","...oSssssssSo...","....ooSssSoo...."],
+      long:["....oooooooo....","...ohhhhhhhho...","..ohhhHHhhhhho..",".ohhhhhhhhhhhho.",".ohhhhhhhhhhhho.",".ohhhhhhhhhhhho.",".ohhhhhhhhhhhho.",".ohhhhhhhhhhhho.",".ohhhhhhhhhhhho.",".ohhhhhhhhhhhho.",".ohhhhhhhhhhhho.",".ohhhhhhhhhhhho."]};
+    BACKHEAD.bun=BACKHEAD.short; BACKHEAD.beard=BACKHEAD.short;
+    const SIDEHEAD=["......oooooo....",".....ohhhhhho...","....ohhhHHhhho..","....ohhhhhhhho..","....osshhhhhho..","...osssshhhhho..","...oesssshhhho..","...oesssssshho..","...ossssssssho..","...omsssssssho..","....oSsssssSo...",".....ooSSoo....."];
+    const SIDEBODY=[".....occcco.....","....occcccco....","....occCccco....","....occCccco....","....occCccco....","....occCccco....","....occCccco....","....occsccco....",".....oppppo....."];
+    const SLEG=[[".....oppppo.....",".....oppppo.....",".....oppppo.....",".....oPPPPo.....","....obbbbbo.....",".....ooooo......"],
+                ["....oppo.oppo...","...oppo...oppo..","...oppo...oppo..","...oPPo...oPPo..","..obbbo...obbbo.","..oooo.....ooo.."]];
+    const FLEG=[null,["...obbbooPPPo...","...oooo.obbbo...",".........ooo...."],["...oPPPoobbbo...","...obbbo.oooo...","....ooo........."]];
     const cache={};
-    function sprite(id,seated){
-      const k=id+(seated?'s':'t'); if(cache[k]) return cache[k];
+    function sprite(id,mode){
+      if(mode===true) mode='seat'; if(mode===false) mode='d0';
+      const k=id+mode; if(cache[k]) return cache[k];
+      if(mode[0]==='r'){ const src=sprite(id,'l'+mode[1]), cv=document.createElement('canvas'); cv.width=16; cv.height=30; const x=cv.getContext('2d'); x.translate(16,0); x.scale(-1,1); x.drawImage(src,0,0); return cache[k]=cv; }
       const L=LOOK[id], rows=Array.from({length:30},()=>Array(16).fill('.'));
-      const put=(r,str)=>{ [...str].forEach((ch,i)=>{ if(ch!=='.'&&r>=0&&r<30) rows[r][i]=ch; }); };
-      HEAD[L.hs].forEach((s,i)=>put(3+i,s)); BODY.forEach((s,i)=>put(15+i,s));
-      if(L.hs==='bun'){ put(0,".....oooooo....."); put(1,"....ohhHhhho...."); put(2,"....ohhhhhho...."); }
-      if(L.hs==='long'){ put(15,".ohh........hho."); put(16,".ohh........hho."); put(17,".ohh........hho."); put(18,"..oo........oo.."); }
-      if(L.glass){ put(9,"....g.gggg.g...."); put(10,"....ggg..ggg...."); }
-      if(L.tie){ for(let r=16;r<21;r++) put(r,".......tt......."); put(15,"......wwww......"); }
+      const put=(r,str)=>{ [...str].forEach((ch,i)=>{ if(ch!=='.'&&r>=0&&r<30&&i<16) rows[r][i]=ch; }); };
+      const view=mode==='seat'?'d':mode[0], fr=mode==='seat'?0:+mode[1];
+      if(view==='l'){
+        SIDEHEAD.forEach((s,i)=>put(3+i,s)); SIDEBODY.forEach((s,i)=>put(15+i,s)); SLEG[fr?1:0].forEach((s,i)=>put(24+i,s));
+        if(L.hs==='long') for(let r=7;r<19;r++) put(r,"...........hhho.");
+        if(L.hs==='bun'){ put(1,"..........ooo..."); put(2,".........ohhho.."); put(3,".........ohhho.."); }
+        if(L.hs==='beard'){ put(12,"....hhhh........"); put(13,"....hhhhh......."); }
+        if(L.glass){ put(9,"...g.gg........."); put(10,"...ggg.........."); }
+      } else {
+        (view==='u'?BACKHEAD[L.hs]:HEAD[L.hs]).forEach((s,i)=>put(3+i,s)); BODY.forEach((s,i)=>put(15+i,view==='u'?s.replace(/w/g,'c'):s));
+        if(FLEG[fr]) FLEG[fr].forEach((s,i)=>{ for(let c=0;c<16;c++) rows[27+i][c]='.'; put(27+i,s); });
+        if(L.hs==='bun'){ put(0,".....oooooo....."); put(1,"....ohhHhhho...."); put(2,"....ohhhhhho...."); }
+        if(L.hs==='long'){ if(view==='u'){ for(let r=15;r<19;r++) put(r,".ohhhhhhhhhhhho."); put(19,"..oooooooooooo.."); } else { put(15,".ohh........hho."); put(16,".ohh........hho."); put(17,".ohh........hho."); put(18,"..oo........oo.."); } }
+        if(L.glass&&view==='d'){ put(9,"....g.gggg.g...."); put(10,"....ggg..ggg...."); }
+        if(L.tie&&view==='d'){ for(let r=16;r<21;r++) put(r,".......tt......."); put(15,"......wwww......"); }
+      }
       const pal={o:OL,h:L.hair,H:sh(L.hair,.22),s:L.skin,S:sh(L.skin,-.12),e:OL,r:'#ee9f98',m:'#b3533f',c:L.shirt,C:sh(L.shirt,-.2),w:'#f4f4f6',t:L.tie||'#c0463e',p:L.pants,P:sh(L.pants,-.25),b:'#3b3440',g:'#5a5466'};
-      const n=seated?26:30, cv=document.createElement('canvas'); cv.width=16; cv.height=n; const x=cv.getContext('2d');
+      const n=mode==='seat'?26:30, cv=document.createElement('canvas'); cv.width=16; cv.height=n; const x=cv.getContext('2d');
       for(let r=0;r<n;r++) for(let c=0;c<16;c++){ const ch=rows[r][c]; if(ch==='.'||!pal[ch]) continue; x.fillStyle=pal[ch]; x.fillRect(c,r,1,1); }
       return cache[k]=cv;
     }
@@ -3732,26 +3754,74 @@ window.__nf=normalizeFile;
       OB(150,226,36,10,'#8a6a5a','#5d4337');
     }
 
+    /* ---- walking ---- */
+    const NODE=[[136,80],[216,80],[296,80],[382,80],[136,148],[216,148],[296,148],[382,148],[136,226],[216,226],[296,226],[382,226],[136,186],[92,186],[40,188],[92,154],[30,154],[102,141],[216,133],[296,133],[376,133],[216,207],[336,226],[60,232]];
+    const EDGE=[[0,1],[1,2],[2,3],[4,5],[5,6],[6,7],[8,9],[9,10],[10,22],[22,11],[0,4],[1,5],[2,6],[3,7],[4,12],[12,8],[5,21],[21,9],[6,10],[12,13],[13,14],[13,15],[15,16],[15,17],[18,5],[19,6],[20,7],[14,23],[8,23]];
+    const ADJ=NODE.map(()=>[]); EDGE.forEach(([a,b])=>{ ADJ[a].push(b); ADJ[b].push(a); });
+    const STAND={manager:17,mail:18,files:19,prep:20,reports:21};
+    const SPOTS=[[0,'u'],[1,'u'],[2,'u'],[3,'u'],[11,'u'],[22,'u'],[14,'d'],[23,'d'],[5,'d'],[6,'d'],[13,'d'],[9,'d']];
+    const MGR=[[16,'d'],[15,'d'],[17,'d'],[14,'d'],[0,'u']];
+    function near(x,y){ let bi=0,bd=1e9; NODE.forEach(([a,b],i)=>{ const d=Math.abs(a-x)+Math.abs(b-y); if(d<bd){ bd=d; bi=i; } }); return bi; }
+    function route(from,to){ const prev=Array(NODE.length).fill(-1), q=[from], seen=new Set([from]);
+      while(q.length){ const n=q.shift(); if(n===to) break; ADJ[n].forEach(m=>{ if(!seen.has(m)){ seen.add(m); prev[m]=n; q.push(m); } }); }
+      const p=[]; for(let n=to;n!==-1&&n!==from;n=prev[n]) p.unshift(n); return p.map(i=>NODE[i].slice()); }
+
     const cv=document.getElementById('ofCv'), labs=document.getElementById('ofLabs'), box=document.getElementById('ofScene');
-    let base=null, cx2=null, onClick=null, info={}, work={};
+    const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const T0=Date.now();
+    let base=null, cx2=null, onClick=null, info={}, work={}, S={}, running=false, last=0, lastDraw=0, vis=true;
+    const taken=id=>Object.keys(S).filter(k=>k!==id).map(k=>S[k].goal);
+    function pickGoal(id){ const L=id==='manager'?MGR:SPOTS, t=taken(id), free=L.filter(([n])=>!t.includes(n)&&n!==S[id].node); return free.length?free[Math.floor(Math.random()*free.length)]:L[0]; }
+    function goTo(id,n,face){ const s=S[id]; s.path=route(near(s.x,s.y),n); s.goal=n; s.face=face||'d'; }
+    function ensure(id,first){
+      if(S[id]) return S[id];
+      const n=first&&work[id]?STAND[id]:(id==='manager'?MGR:SPOTS)[(TEAMP.indexOf(id)*5)%(id==='manager'?MGR:SPOTS).length][0];
+      S[id]={x:NODE[n][0],y:NODE[n][1],node:n,goal:n,dir:'d',face:'d',ph:0,path:[],wait:1+Math.random()*3,sit:false,go:false};
+      return S[id];
+    }
+    function apply(id,first){
+      const s=ensure(id,first), w=!!work[id];
+      if(w&&!s.sit){ if(first||RM){ s.sit=true; s.path=[]; const n=STAND[id]; s.x=NODE[n][0]; s.y=NODE[n][1]; s.node=n; } else if(!s.go){ s.go=true; goTo(id,STAND[id],'d'); } }
+      if(!w&&(s.sit||s.go)){ if(s.sit){ const n=STAND[id]; s.x=NODE[n][0]; s.y=NODE[n][1]; s.node=n; } s.sit=false; s.go=false; s.path=[]; s.wait=.8+Math.random()*1.5; s.goal=s.node; }
+    }
+    function step(id,dt){
+      const s=S[id]; if(!s||s.sit) return;
+      if(!s.path.length){
+        s.dir=s.face||'d'; s.ph=0;
+        if(s.go){ s.go=false; s.sit=true; return; }
+        s.wait-=dt; if(s.wait<=0){ const [n,f]=pickGoal(id); goTo(id,n,f); s.wait=2.5+Math.random()*5; }
+        return;
+      }
+      const [tx,ty]=s.path[0], dx=tx-s.x, dy=ty-s.y, d=Math.hypot(dx,dy), v=(s.go?46:20)*dt;
+      if(d<=v){ s.x=tx; s.y=ty; s.path.shift(); s.node=near(tx,ty); }
+      else { s.x+=dx/d*v; s.y+=dy/d*v; }
+      s.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'l':'r'):(dy<0?'u':'d'); s.ph+=dt*7;
+    }
+    function walkerSprite(id,s){ const moving=s.path.length>0, f=moving?[1,0,2,0][Math.floor(s.ph)%4]:0;
+      if(s.dir==='l'||s.dir==='r') return sprite(id,s.dir+(moving&&f!==0?1:0)); return sprite(id,s.dir+f); }
+
     function draw(){
       if(!base){ bg(); base=document.createElement('canvas'); base.width=W; base.height=H; base.getContext('2d').drawImage(off,0,0); }
       g.drawImage(base,0,0);
-      const order=TEAMP.slice().sort((a,b)=>SPOT[a].T-SPOT[b].T);
-      order.forEach(id=>{
-        const {c,T}=SPOT[id], inf=info[id], soon=inf&&inf.soon, sit=!!work[id]&&!soon, L=LOOK[id];
-        if(sit) chair(c,T); else { OB(c-9,T-9,18,11,'#5d6b80',OL); R(c-8,T-8,16,2,'#7584a0'); }
-        if(sit) g.drawImage(sprite(id,true),c-8,T-27);
-        deskArt(c,T,id==='manager');
-        laptop(c,T,sit,inf?inf.color:'#888');
-        if(sit) hands(c,T,L.skin);
-        PROPS[id](c,T);
-        if(soon){ OB(c-6,T-6,13,7,'#fff','#8a93a3'); R(c-5,T-5,11,2,inf?inf.color:'#c58b1f'); }
-        if(!sit&&!soon){ const sx=c+(id==='manager'?44:40); g.drawImage(sprite(id,false),sx-8,T+27-29); R(sx-6,T+27,12,2,'rgba(60,40,20,.22)'); }
+      const items=[];
+      TEAMP.forEach(id=>{
+        const {c,T}=SPOT[id], inf=info[id], soon=inf&&inf.soon, s=S[id], sit=!!(s&&s.sit)&&!soon, L=LOOK[id];
+        items.push({y:T+27,f:()=>{
+          if(sit) chair(c,T); else { OB(c-9,T-9,18,11,'#5d6b80',OL); R(c-8,T-8,16,2,'#7584a0'); }
+          if(sit) g.drawImage(sprite(id,'seat'),c-8,T-27);
+          deskArt(c,T,id==='manager'); laptop(c,T,sit,inf?inf.color:'#888'); if(sit) hands(c,T,L.skin); PROPS[id](c,T);
+          if(soon){ OB(c-6,T-6,13,7,'#fff','#8a93a3'); R(c-5,T-5,11,2,inf?inf.color:'#c58b1f'); } }});
+        if(s&&!sit&&!soon){ const x=Math.round(s.x), y=Math.round(s.y); items.push({y:y+.5,f:()=>{ R(x-6,y,12,2,'rgba(60,40,20,.22)'); g.drawImage(walkerSprite(id,s),x-8,y-28); }}); }
       });
+      items.sort((a,b)=>a.y-b.y).forEach(o=>o.f());
       if(cx2){ cx2.imageSmoothingEnabled=false; cx2.clearRect(0,0,cv.width,cv.height); cx2.drawImage(off,0,0,cv.width,cv.height); }
-      labs.childNodes.forEach(b=>{ const s=SPOT[b.dataset.id]; if(!s) return; b.style.left=(s.c/W*100).toFixed(2)+'%'; b.style.top=((s.T+30)/H*100).toFixed(2)+'%'; });
+      labs.childNodes.forEach(b=>{ const id=b.dataset.id, s=S[id], sp=SPOT[id]; const atDesk=!s||s.sit||(info[id]&&info[id].soon);
+        const lx=atDesk?sp.c:Math.min(W-14,Math.max(14,s.x)), ly=atDesk?sp.T+30:Math.min(H-12,s.y+3);
+        const L=(lx/W*100).toFixed(2)+'%', T=(ly/H*100).toFixed(2)+'%'; if(b._l!==L){ b.style.left=L; b._l=L; } if(b._t!==T){ b.style.top=T; b._t=T; } });
     }
+    function frame(ts){ if(!running) return; requestAnimationFrame(frame); if(ts-lastDraw<33) return; const dt=Math.min(.1,(ts-(last||ts))/1000); last=ts; lastDraw=ts; TEAMP.forEach(id=>step(id,dt)); draw(); }
+    function want(){ return !RM&&vis&&!document.hidden&&!document.getElementById('s-home').hidden&&TEAMP.some(id=>S[id]&&!S[id].sit&&!(info[id]&&info[id].soon)); }
+    function ctl(){ const w=want(); if(w&&!running){ running=true; last=0; requestAnimationFrame(frame); } else if(!w&&running) running=false; }
     function size(){ const r=box.getBoundingClientRect(); if(!r.width) return; const dpr=window.devicePixelRatio||1; const sc=Math.min(8,Math.max(1,Math.ceil(r.width*dpr/W))); if(cv.width!==W*sc){ cv.width=W*sc; cv.height=H*sc; } cx2=cv.getContext('2d'); draw(); }
     function buildLabels(team){
       labs.textContent=''; team.forEach(t=>{ const b=document.createElement('button'); b.type='button'; b.className='of-lab'; b.dataset.id=t.id; b.style.setProperty('--c',t.color);
@@ -3759,14 +3829,17 @@ window.__nf=normalizeFile;
     }
     function sync(team,workMap){
       if(labs.childNodes.length!==team.length) buildLabels(team);
-      team.forEach(t=>{ info[t.id]=t; work[t.id]=!!workMap[t.id]&&!t.soon; });
+      const first=!Object.keys(S).length;
+      team.forEach(t=>{ info[t.id]=t; const w=!!workMap[t.id]&&!t.soon, ch=w!==work[t.id]; work[t.id]=w; if(!t.soon) apply(t.id,first||(ch&&Date.now()-T0<5000)); });
       labs.childNodes.forEach(b=>{ const t=team.find(x=>x.id===b.dataset.id); if(!t) return;
         b.firstChild.textContent=t.name; b.lastChild.textContent=t.soon?'בקרוב':work[t.id]?(t.g==='f'?'עובדת':'עובד'):(t.g==='f'?'פנויה':'פנוי'); b.title=t.name+' · '+t.role; });
-      if(!cx2) size(); else draw();
+      if(!cx2) size(); else draw(); ctl();
     }
     window.addEventListener('resize',size);
     if(window.ResizeObserver) new ResizeObserver(()=>size()).observe(box);
-    return {sync,size,click:f=>{ onClick=f; }};
+    if(window.IntersectionObserver) new IntersectionObserver(e=>{ vis=e[0].isIntersecting; ctl(); }).observe(box);
+    document.addEventListener('visibilitychange',ctl); window.addEventListener('hashchange',()=>setTimeout(ctl,50));
+    return {sync,size,click:f=>{ onClick=f; },state:S};
   })();
 
   let brief=null, agents={}, board=null;
