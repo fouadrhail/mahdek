@@ -534,7 +534,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver">מהדק · גרסה 2.8 · עודכן 18.11.2026</footer>
+  <footer class="ver">מהדק · גרסה 2.9 · עודכן 18.11.2026</footer>
 </div>
 
 <script>
@@ -1080,7 +1080,7 @@ window.__nf=normalizeFile;
   const revStr=t=>[...t].reverse().join('');
   const DOC_HINTS=['חשבונית','קבלה','תאריך','לתשלום','מע"מ','סה"כ','סכום','ספק','לקוח'];
   const DOC_TYPES=[
-    [/חשבונית\s*[\-–]?\s*מס\s*[\/\\|\-–,]?\s*קבלה/,'חשבונית מס קבלה'],[/חשבונית\s*זיכוי|זיכוי\s*מס/,'חשבונית זיכוי'],[/ריכוז\s*(?:חשבוניות|תנועות|חיובים|קבלות)?/,'ריכוז'],
+    [/חשבונית\s*[\-–]?\s*מס\s*[\/\\|\-–,]?\s*קבלה/,'חשבונית מס קבלה'],[/חשבונית\s*זיכוי|זיכוי\s*מס/,'חשבונית זיכוי'],[/קבלה\s*זמנית/,'קבלה זמנית'],[/ריכוז\s*(?:חשבוניות|תנועות|חיובים|קבלות)?/,'ריכוז'],
     [/חשבונית\s*מס/,'חשבונית מס'],[/חשבון\s*עסקה/,'חשבון עסקה'],[/תלוש\s*(?:שכר|משכורת)/,'תלוש שכר'],
     [/הצעת\s*מחיר/,'הצעת מחיר'],[/תעודת\s*משלוח/,'תעודת משלוח'],[/דף\s*חשבון|תדפיס\s*חשבון/,'דף חשבון'],
     [/tax\s*invoice\s*[\/&]?\s*receipt/i,'חשבונית מס קבלה'],[/tax\s*invoice/i,'חשבונית מס'],[/חשבונית/,'חשבונית'],[/קבלה|receipt/i,'קבלה']
@@ -1112,7 +1112,8 @@ window.__nf=normalizeFile;
     }finally{ pdf.destroy(); }
   }
   function docType(lines){
-    const top=lines.slice(0,14).join(' '), all=lines.join(' ');
+    const strip=t=>t.replace(/(?:עבור|תאריך|מס['׳]?|מספר)\s*חשבונית/g,' ');
+    const top=strip(lines.slice(0,14).join(' ')), all=strip(lines.join(' '));
     const generic=new Set(['חשבונית','קבלה']);
     for(const src of [top,all]) for(const [re,name] of DOC_TYPES) if(!generic.has(name)&&re.test(src)) return name;
     for(const src of [top,all]) for(const [re,name] of DOC_TYPES) if(re.test(src)) return name;
@@ -1171,7 +1172,7 @@ window.__nf=normalizeFile;
     '6cn':'כביש 6',kvish6:'כביש 6',pazomat:'פז',paz:'פז',yellow:'פז',sonol:'סונול',delek:'דלק',doralon:'דור אלון','dor-alon':'דור אלון',ten:'טן',
     shufersal:'שופרסל',ramilevy:'רמי לוי',victory:'ויקטורי',osherad:'אושר עד',ikea:'איקאה',homecenter:'הום סנטר',ace:'אייס',ksp:'KSP',ivory:'Ivory',bug:'באג',
     superpharm:'סופר פארם','super-pharm':'סופר פארם',aroma:'ארומה',yes:'yes',freetv:'freetv',xfone:'אקספון',wecom:'וי-קום'};
-  const RECIP_CTX=/לכבוד|עבור\s*:|^\s*שם\s*:|^\s*שם\s+\S|שם\s*ה?לקוח|לקוח\s*:|נמען|מרכז\s*עלות|לידי\s*:|ל\s*ק\s*ו\s*ח\s*:/;
+  const RECIP_CTX=/נתקבל\s*מאת|התקבל\s*מאת|קיבלנו\s*מ|שולם\s*(?:ע"י|על\s*ידי)|לכבוד|עבור\s*:|^\s*שם\s*:|^\s*שם\s+\S|שם\s*ה?לקוח|לקוח\s*:|נמען|מרכז\s*עלות|לידי\s*:|ל\s*ק\s*ו\s*ח\s*:/;
   const ID_LABEL=/(עוסק\s*מורשה|מס['׳]?\s*עוסק|מספר\s*עוסק|עוסק|ע\s*\.?\s*מ\s*\.?|ע-מ|ח\s*\.?\s*פ\s*\.?|ח-פ|ת\s*\.?\s*ז\s*\.?|ת-ז|תיק\s*(?:ב|ל)?מע"?מ|תיק)/;
   const PHONE_WORD=/טל|פקס|נייד|טלפון|פלאפון|וואטסאפ|סלולרי|טלפקס|fax|tel|phone/i;
   const nk=s=>(s||'').replace(/["'`׳״.\-\s_:,]/g,'').replace(/בעמ$/,'');
@@ -1190,11 +1191,17 @@ window.__nf=normalizeFile;
     const ctrl=(t.match(/[\x00-\x08\x0B-\x1F�]/g)||[]).length, all=(t.match(/\S/g)||[]).length;
     return (heb<20&&lat<40)||(all>0&&ctrl/all>0.08)||(heb<20&&all>200);
   }
+  /* Israeli business and ID numbers carry a check digit; invoice numbers and phone numbers almost never pass it */
+  function validId(id){
+    if(!/^\d{9}$/.test(id)||/^(\d)\1{8}$/.test(id)) return false;
+    let sum=0; for(let i=0;i<9;i++){ const d=+id[i]*((i%2)+1); sum+=d>9?d-9:d; }
+    return sum%10===0;
+  }
   function findIds(line){
     const out=[]; const re=/(\d[\d\- ]{7,13}\d)/g; let m;
     while((m=re.exec(line))){
       const raw=m[1], digits=raw.replace(/\D/g,'');
-      if(digits.length!==9) continue;
+      if(digits.length!==9||!validId(digits)) continue;
       const before=line.slice(Math.max(0,m.index-28),m.index), after=line.slice(m.index+raw.length,m.index+raw.length+18);
       const labelled=ID_LABEL.test(before)||ID_LABEL.test(after);
       if(!labelled){
@@ -1225,7 +1232,9 @@ window.__nf=normalizeFile;
     if(/^[א-ת]/.test(n)){ const w=n.split(' '); const k=w.findIndex(x=>/^[A-Za-z]/.test(x)); if(k>0) n=w.slice(0,k).join(' '); }
     return n.replace(/[\s\-,]+$/,'');
   }
+  const FORM_WORDS=/(?:^|\s)(?:נתקבל|התקבל|מאת|עבור|לכבוד|תאריך|סכום|שיק|סניף|בנק|משלם|חתימה|אסמכתא)(?=\s|$)/;
   function nameOk(n){
+    if(FORM_WORDS.test(n||'')) return false;
     if(!n||!goodName(n)||ADDR.test(n)||/\d{4,}/.test(n)||DESC.test(' '+n.split(' ')[0])) return false;
     if((n.match(/[א-ת]/g)||[]).length<4) return false;
     const w=n.split(' ').filter(Boolean);
@@ -1262,8 +1271,10 @@ window.__nf=normalizeFile;
     const names=[];
     L.forEach((l,i)=>{ if(/בע"מ/.test(l)){ const m=l.match(/(.{2,60}?)\s*בע"מ/); const c=m&&cleanCompany(m[1].replace(RECIP_CTX,' ')); if(c&&goodName(c)) names.push({name:c,line:i,recip:recip.has(i)}); } });
     top.forEach((l,i)=>{ if(/בע"מ/.test(l)){ const m=l.match(/(.{2,60}?)\s*בע"מ/); const c=m&&cleanCompany(m[1]); if(c&&goodName(c)) names.push({name:c,line:-1-i,recip:false,top:true}); } });
+    const latin=[];
+    L.concat(top).forEach(l=>{ const m=l.match(/([A-Z][A-Z0-9&'\-. ]{2,40}?)[\s,]*(?:LTD|Ltd|L\.T\.D|INC|Inc|LLC|CO\.)(?![A-Za-z])/); if(m){ const n=m[1].replace(/[\s.\-]+$/,'').replace(/\s+/g,' ').trim(); if((n.match(/[A-Za-z]/g)||[]).length>=3) latin.push(n); } });
     const transfer=(all.match(/(?:שם\s*(?:ה)?חשבון(?:\s*להעברות)?|שם\s*המוטב|לפקודת)\s*:?\s*([^\n]{3,60})/)||[])[1]||'';
-    return {lines:L,top,ids,recip,recipNames:[...recipNames],names,fileId,ocr:!!opts.ocr,
+    return {lines:L,top,ids,recip,recipNames:[...recipNames],names,latin,fileId,ocr:!!opts.ocr,
       domains:domainsOf(all),header:opts.header||'',topHeader:opts.topHeader||'',
       transfer:transfer?companyOf(transfer):'',text:all};
   }
@@ -1305,6 +1316,8 @@ window.__nf=normalizeFile;
     const pos=x=>x.line>=0?x.line:-1-x.line, side=x=>x.line>=0;
     const headers=[ev.topHeader,ev.header].map(cleanSupplierName).filter(h=>nameOk(h)&&!isRecipName(h)).sort((a,b)=>heb(b)-heb(a));
     if(ev.ocr){ const tn=ev.names.find(x=>x.top&&!isRecipName(x.name)&&nameOk(cleanSupplierName(x.name))); if(tn) return {name:cleanSupplierName(tn.name),how:'top',id:idx?idx.id:''}; }
+    const latinName=(ev.latin||[]).find(n=>!isRecipName(n));
+    if(ev.ocr&&latinName) return {name:latinName,how:'english',id:idx?idx.id:''};
     if(ev.ocr&&headers.length) return {name:headers[0],how:'header',id:idx?idx.id:''};
     if(ev.ocr) for(const l of ev.top.concat(ev.lines.slice(0,6))){ if(RECIP_CTX.test(l)) break; const v=companyOf(l); if(v&&!isRecipName(v)) return {name:v,how:'top',id:idx?idx.id:''}; }
     if(idx){
@@ -1327,6 +1340,7 @@ window.__nf=normalizeFile;
     const nm=ev.names.filter(x=>!x.recip&&!isRecipName(x.name)).sort((a,b)=>(a.top?0:1)-(b.top?0:1));
     const nmOk=nm.map(x=>cleanSupplierName(x.name)).filter(nameOk);
     if(nmOk.length) return {name:nmOk[0],how:'company',id:idx?idx.id:''};
+    if(latinName) return {name:latinName,how:'english',id:idx?idx.id:''};
     // 6. the big title at the top of the page
     if(headers.length) return {name:headers[0],how:'header',id:idx?idx.id:''};
     // 7. a known brand mentioned at the top
