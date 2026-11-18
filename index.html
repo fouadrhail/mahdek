@@ -777,90 +777,119 @@ body[data-tab="convert"]{--sec:var(--sage)} body[data-tab="edit"]{--sec:var(--bl
 .card.mkt .mkt-src{margin:8px 0 0;font-size:.72rem;color:var(--muted);line-height:1.4}
 .card.mkt iframe{display:block}
 /* dashboard */
-#s-home{display:flex;flex-direction:column;gap:16px}
+#s-home{display:flex;flex-direction:column;gap:18px}
 #s-home[hidden]{display:none}
 .hm-top h2{margin:0;font-weight:500;font-size:1.45rem;color:var(--ink)}
 .hm-date{margin:2px 0 0;color:var(--muted);font-size:.92rem}
-.hm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;align-items:start}
+.hm-msg{margin:-6px 0 0;font-size:.98rem;line-height:1.55;color:var(--ink)}
+.hm-sh{margin:0 0 -4px;font-size:.78rem;font-weight:600;letter-spacing:.06em;color:var(--muted)}
 .hm-card{background:var(--paper);border:1px solid var(--rule);border-radius:16px;padding:14px 16px;min-width:0}
-.hm-card h3{margin:0 0 8px;font-size:.98rem;font-weight:600;color:var(--ink)}
-.hm-hint{margin:-4px 0 8px;font-size:.78rem;color:var(--muted)}
-.hm-sug,.hm-health{list-style:none;margin:0;padding:0}
-.hm-sug li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--rule)}
-.hm-sug li:first-child,.hm-health li:first-child{border-top:0}
-.hm-sug .t{font-size:.9rem;color:var(--ink);overflow-wrap:anywhere}
-.hm-sug .c{display:block;font-size:.76rem;color:var(--muted)}
-.hm-add{font:inherit;font-size:.8rem;border-radius:8px;padding:5px 11px;cursor:pointer;background:var(--ink);color:var(--paper);border:1px solid var(--ink);white-space:nowrap}
-.hm-add[disabled]{background:transparent;color:var(--ml-ok);border-color:transparent;cursor:default}
-.hm-dr{border-top:1px solid var(--rule);padding:8px 0}
-.hm-dr:first-child{border-top:0}
-.hm-dr summary{cursor:pointer;list-style:none;font-size:.9rem;color:var(--ink)}
-.hm-dr summary::-webkit-details-marker{display:none}
-.hm-dr summary small{display:block;font-size:.76rem;color:var(--muted);direction:ltr;text-align:right}
-.hm-dr pre{white-space:pre-wrap;font:inherit;font-size:.88rem;line-height:1.55;background:var(--soft);border-radius:10px;padding:10px 12px;margin:8px 0 6px;color:var(--ink)}
-.hm-health li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:8px;padding:6px 0;border-top:1px solid var(--rule);font-size:.88rem;color:var(--ink)}
-.hm-health li i{font-style:normal;font-weight:700}
-.hm-health li.ok i{color:var(--ml-ok)}.hm-health li.bad i{color:var(--ml-flag)}.hm-health li.na i{color:var(--muted)}
-.hm-health small{display:block;color:var(--muted);font-size:.76rem}
-.hm-empty{font-size:.86rem;color:var(--muted);padding:6px 0;margin:0}
-
-.hm-link{font:inherit;font-size:.8rem;color:var(--muted);background:none;border:1px solid var(--rule);border-radius:8px;padding:3px 9px;cursor:pointer;white-space:nowrap}
-.hm-link:hover{color:var(--ink);border-color:var(--ink)}
-/* office plan */
+.hm-card h3{margin:0;font-size:1rem;font-weight:600;color:var(--ink)}
+.hm-hint{margin:0 0 8px;font-size:.78rem;color:var(--muted)}
+.hm-empty{font-size:.88rem;color:var(--muted);padding:6px 0;margin:0}
+.hm-link{font:inherit;font-size:.8rem;color:var(--ink);background:none;border:1px solid var(--rule);border-radius:8px;padding:4px 10px;cursor:pointer;white-space:nowrap}
+.hm-link:hover{border-color:var(--ink)}
+.hm-link.pri{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.hm-link[disabled]{opacity:.5;cursor:default}
+/* today */
+.hm-today{padding:16px 18px 8px}
+.hm-th{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}
+.hm-n{font-size:.8rem;color:var(--muted)}
+.td-list{list-style:none;margin:0;padding:0}
+.td{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:start;padding:12px 0;border-top:1px solid var(--rule)}
+.td:first-child{border-top:0}
+.td-ck{width:22px;height:22px;margin-top:1px;border-radius:50%;border:1.6px solid var(--muted);background:transparent;cursor:pointer;padding:0;display:grid;place-items:center;color:#fff;font-size:.8rem;line-height:1}
+.td-ck:hover{border-color:var(--ink)}
+.td.done .td-ck{background:#3a9266;border-color:#3a9266}
+.td.done .td-t{text-decoration:line-through;color:var(--muted)}
+.td-t{font-size:.98rem;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
+.td-m{margin-top:2px;font-size:.78rem;color:var(--muted)}
+.td-m .tag{display:inline-block;margin-inline-end:6px;padding:1px 8px;border-radius:7px;background:var(--soft);color:var(--ink);font-size:.74rem}
+.td-a{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.td-dr{grid-column:2/-1;margin-top:2px}
+.td-dr pre{white-space:pre-wrap;font:inherit;font-size:.88rem;line-height:1.55;background:var(--soft);border-radius:10px;padding:10px 12px;margin:0 0 6px;color:var(--ink)}
+.td-dr .to{display:block;font-size:.76rem;color:var(--muted);margin-bottom:4px;direction:ltr;text-align:right}
+/* surprise */
+.hm-sur{border:1px solid var(--rule);border-radius:14px;background:var(--paper);padding:0 16px}
+.hm-sur summary{cursor:pointer;list-style:none;padding:11px 0;font-size:.92rem;color:var(--ink)}
+.hm-sur summary::-webkit-details-marker{display:none}
+.hm-sur summary::after{content:"‹";float:left;color:var(--muted);transition:transform .15s}
+.hm-sur[open] summary::after{transform:rotate(-90deg)}
+.sur-b{padding:0 0 12px}.sur-b p{margin:0;font-size:.92rem;line-height:1.6}
+.sur-wk{margin:10px 0 0;padding:0;list-style:none;border-top:1px solid var(--rule)}.sur-wk li{padding:5px 0;font-size:.88rem}
+/* team */
 .of{display:flex;flex-direction:column;gap:12px}
-.of-scene{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--rule);background:#cfa97f;aspect-ratio:288/168;line-height:0;box-shadow:0 14px 30px -24px rgba(0,0,0,.5)}
+.of-scene{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--rule);background:#cfa97f;aspect-ratio:288/168;line-height:0}
 .of-scene canvas{display:block;width:100%;height:100%}
-.of-lab{position:absolute;transform:translateX(-50%);font:inherit;line-height:1.15;text-align:center;background:rgba(255,255,255,.94);border:1px solid rgba(0,0,0,.14);border-bottom:2px solid var(--c,#999);border-radius:7px;padding:1px 6px 2px;font-size:clamp(9px,1.7vw,13px);color:#2b303b;cursor:pointer;white-space:nowrap}
+.of-lab{position:absolute;transform:translateX(-50%);font:inherit;line-height:1.15;text-align:center;background:rgba(255,255,255,.94);border:1px solid rgba(0,0,0,.14);border-bottom:2px solid var(--c,#999);border-radius:7px;padding:1px 5px 2px;font-size:clamp(9px,1.6vw,12px);color:#2b303b;cursor:pointer;white-space:nowrap}
 .of-lab b{display:block;font-weight:700}
 .of-lab small{display:block;font-size:.8em;color:#6b7280}
 .of-lab:hover{background:#fff;border-color:#2b303b}
-.of-room{display:block}
-.of-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.of-desk{font:inherit;text-align:start;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:8px;min-width:0;transition:border-color .15s,box-shadow .15s}
-.of-desk:hover{border-color:var(--ink)}
-.of-desk.on{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink) inset}
-.of-desk.soon{opacity:.6;border-style:dashed}
-.of-mgr{cursor:default;gap:8px}
-.of-mgr:hover{border-color:var(--rule)}
-.of-who{display:flex;align-items:center;gap:10px;min-width:0}
-.of-av{position:relative;flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:1rem;font-weight:600}
-.of-dot{position:absolute;right:-3px;bottom:-3px;width:11px;height:11px;border-radius:50%;border:2px solid var(--paper);background:#9aa3ad}
-.of-dot.ok{background:#3a9266}.of-dot.run{background:#d39b2a}.of-dot.err{background:#d0574a}
-.of-nm{min-width:0}
-.of-nm b{display:block;font-size:.98rem;line-height:1.25}
-.of-nm span{display:block;font-size:.76rem;color:var(--muted)}
-.of-sum{font-size:.84rem;line-height:1.45;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.9em}
-.of-mgr .of-sum{-webkit-line-clamp:4;min-height:0;font-size:.95rem}
-.of-st{display:flex;gap:6px;flex-wrap:wrap}
-.of-st span{font-size:.74rem;background:var(--soft);border-radius:7px;padding:2px 8px;color:var(--muted);white-space:nowrap}
-.of-st b{color:var(--ink);font-weight:600}
-.of-st .bad b{color:var(--ml-flag)}
-.of-when{font-size:.72rem;color:var(--muted)}
-.of-today{margin:2px 0 0;padding:0;list-style:none;counter-reset:t;display:flex;flex-direction:column}
-.of-today li{counter-increment:t;display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:start;padding:6px 0;border-top:1px solid var(--rule);font-size:.88rem;line-height:1.45}
-.of-today li::before{content:counter(t);width:20px;height:20px;border-radius:50%;background:var(--soft);color:var(--muted);display:grid;place-items:center;font-size:.72rem;font-weight:600}
-.hm-sur{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start;background:linear-gradient(135deg,var(--soft),var(--paper))}
-.sur-em{font-size:2rem;line-height:1;width:52px;height:52px;border-radius:14px;background:var(--paper);border:1px solid var(--rule);display:grid;place-items:center}
-.hm-sur h3{margin:0 0 4px;font-size:1.02rem}.hm-sur p{margin:0;font-size:.92rem;line-height:1.55}
-.sur-wk{margin:10px 0 0;padding:0;list-style:none;border-top:1px solid var(--rule)}.sur-wk li{padding:5px 0;font-size:.88rem}
-.hm-bo{list-style:none;margin:0;padding:0}
-.hm-bo li{display:grid;grid-template-columns:10px minmax(0,1fr);gap:8px;padding:8px 0;border-top:1px solid var(--rule);font-size:.88rem;line-height:1.45}
-.hm-bo li:first-child{border-top:0}
-.hm-bo i{width:9px;height:9px;border-radius:50%;margin-top:6px;background:#d39b2a}.hm-bo li.done i{background:#3a9266}
-.hm-bo small{display:block;color:var(--muted);font-size:.76rem}
+.of-strip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.of-chip{font:inherit;text-align:start;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:12px;padding:8px 10px;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:0}
+.of-chip:hover{border-color:var(--ink)}
+.of-chip.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink) inset}
+.of-chip.soon{opacity:.6}
+.of-chip b{display:flex;align-items:center;gap:6px;font-size:.92rem}
+.of-chip b i{width:9px;height:9px;border-radius:50%;background:#9aa3ad;flex:none}
+.of-chip b i.ok{background:#3a9266}.of-chip b i.err{background:#d0574a}
+.of-chip span{font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .of-detail{background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .of-detail h3{margin:0;font-size:1rem;font-weight:600}
 .of-detail p{margin:0;font-size:.9rem;line-height:1.55}
 .of-detail ul{margin:0;padding:0;list-style:none}
 .of-detail li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:7px 0;border-top:1px solid var(--rule);font-size:.88rem;line-height:1.45}
 .of-detail li:first-child{border-top:0}
+.of-detail .of-st{display:flex;gap:6px;flex-wrap:wrap}
+.of-detail .of-st span{font-size:.76rem;background:var(--soft);border-radius:7px;padding:2px 8px;color:var(--muted)}
+.of-detail .of-st b{color:var(--ink)}
+.of-detail .of-st .bad b{color:var(--ml-flag)}
 .of-detail .of-acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-start}
+@keyframes ofTy{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+/* accordions */
+.hm-acc{display:flex;flex-direction:column;gap:8px}
+.hm-ac{border:1px solid var(--rule);border-radius:14px;background:var(--paper);padding:0 16px}
+.hm-ac summary{cursor:pointer;list-style:none;padding:12px 0;font-size:.95rem;color:var(--ink);display:flex;align-items:center;gap:8px}
+.hm-ac summary::-webkit-details-marker{display:none}
+.hm-ac summary b{font-weight:600;font-size:.76rem;background:var(--soft);border-radius:999px;padding:1px 9px;color:var(--muted)}
+.hm-ac summary b.bad{color:var(--ml-flag)}
+.hm-ac summary::after{content:"‹";margin-inline-start:auto;color:var(--muted);transition:transform .15s}
+.hm-ac[open] summary::after{transform:rotate(-90deg)}
+.hm-acb{padding:0 0 12px}
+.hm-sug,.hm-health,.hm-bo{list-style:none;margin:0;padding:0}
+.hm-sug li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--rule)}
+.hm-sug li:first-child,.hm-health li:first-child,.hm-bo li:first-child{border-top:0}
+.hm-sug .t{font-size:.9rem;color:var(--ink);overflow-wrap:anywhere}
+.hm-sug .c{display:block;font-size:.76rem;color:var(--muted)}
+.hm-add{font:inherit;font-size:.8rem;border-radius:8px;padding:5px 11px;cursor:pointer;background:var(--ink);color:var(--paper);border:1px solid var(--ink);white-space:nowrap}
+.hm-add[disabled]{background:transparent;color:var(--ml-ok);border-color:transparent;cursor:default}
+.hm-dr{border-top:1px solid var(--rule);padding:8px 0}
+.hm-dr:first-child{border-top:0}
+.hm-dr summary{cursor:pointer;list-style:none;font-size:.9rem;color:var(--ink);display:block;padding:0}
+.hm-dr summary::after{display:none}
+.hm-dr summary small{display:block;font-size:.76rem;color:var(--muted);direction:ltr;text-align:right}
+.hm-dr pre{white-space:pre-wrap;font:inherit;font-size:.88rem;line-height:1.55;background:var(--soft);border-radius:10px;padding:10px 12px;margin:8px 0 6px;color:var(--ink)}
+.hm-health li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:8px;padding:6px 0;border-top:1px solid var(--rule);font-size:.88rem;color:var(--ink)}
+.hm-health li i{font-style:normal;font-weight:700}
+.hm-health li.ok i{color:var(--ml-ok)}.hm-health li.bad i{color:var(--ml-flag)}.hm-health li.na i{color:var(--muted)}
+.hm-health small{display:block;color:var(--muted);font-size:.76rem}
+.hm-bo li{display:grid;grid-template-columns:10px minmax(0,1fr);gap:8px;padding:8px 0;border-top:1px solid var(--rule);font-size:.88rem;line-height:1.45}
+.hm-bo i{width:9px;height:9px;border-radius:50%;margin-top:6px;background:#d39b2a}.hm-bo li.done i{background:#3a9266}
+.hm-bo small{display:block;color:var(--muted);font-size:.76rem}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .of-scene canvas{filter:brightness(.78) saturate(.9)}}
 :root[data-theme="dark"] .of-scene canvas{filter:brightness(.78) saturate(.9)}
-@media (max-width:860px){.of-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:340px){.of-row{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:860px){.of-strip{grid-template-columns:repeat(3,minmax(0,1fr))}.td{grid-template-columns:26px minmax(0,1fr)}.td-a{grid-column:2;justify-content:flex-start}}
+@media (max-width:380px){.of-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* email analysis */
+.ml-act{border:1px solid var(--rule);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:var(--soft)}
+.ml-act>small{display:block;font-size:.72rem;letter-spacing:.05em;color:var(--muted);margin-bottom:2px}
+.ml-act-t{font-weight:600;font-size:1rem;line-height:1.5}
+.ml-act-s{margin:6px 0 0;padding-inline-start:20px;font-size:.88rem;line-height:1.55}
+.ml-act-r{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ml-act-n{margin:8px 0 0;font-size:.8rem;color:var(--muted)}
+.ml-draft{white-space:pre-wrap;font:inherit;font-size:.88rem;line-height:1.55;margin:0 0 8px}
+.ml-r3 .ac{font-weight:600;color:var(--ink)}
 :root{--ml-flag:#b4373a;--ml-flag-bg:#fbeaea;--ml-ok:#2f7a52;--ml-ok-bg:#e8f3ec;--ml-tab:#e8dcc4;--ml-folder:#f6efe1}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ml-flag:#ff9496;--ml-flag-bg:#3a1d1f;--ml-ok:#86d3a6;--ml-ok-bg:#183126;--ml-tab:#4a4232;--ml-folder:#2a261e}}
 :root[data-theme="dark"]{--ml-flag:#ff9496;--ml-flag-bg:#3a1d1f;--ml-ok:#86d3a6;--ml-ok-bg:#183126;--ml-tab:#4a4232;--ml-folder:#2a261e}
@@ -1242,18 +1271,24 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <div class="hm-top">
       <div><h2 id="hmHello">שלום פואד</h2><p class="hm-date" id="hmDate"></p></div>
     </div>
-    <section class="of" aria-label="המשרד">
-      <div class="of-scene" id="ofScene"><canvas id="ofCv" role="img" aria-label="המשרד של מהדק: מנהל המשרד וארבעה עובדים. מי שיש לו עבודה יושב ליד השולחן, האחרים בהפסקה."></canvas><div id="ofLabs"></div></div>
-      <div class="of-room"><div class="of-desk of-mgr" data-ag="manager" id="ofMgr"></div></div>
-      <div class="of-row" id="ofRow"></div>
+    <p class="hm-msg" id="hmMsg" hidden></p>
+    <section class="hm-card hm-today" id="hmTodayBox" aria-labelledby="hmTodayH">
+      <div class="hm-th"><h3 id="hmTodayH">מה לעשות היום</h3><span class="hm-n" id="hmTodayN"></span></div>
+      <ol class="td-list" id="hmToday"></ol>
+      <p class="hm-empty" id="hmTodayEmpty" hidden></p>
+    </section>
+    <details class="hm-sur" id="hmSurBox" hidden><summary id="surT"></summary><div class="sur-b"><p id="surP"></p><div id="surAct"></div><ul class="sur-wk" id="surWk"></ul></div></details>
+    <section class="of" aria-label="הצוות">
+      <h3 class="hm-sh">הצוות</h3>
+      <div class="of-scene" id="ofScene"><canvas id="ofCv" role="img" aria-label="המשרד של מהדק: מנהל המשרד וחמישה עובדים. מי שיש לו עבודה יושב ליד השולחן, האחרים בהפסקה."></canvas><div id="ofLabs"></div></div>
+      <div class="of-strip" id="ofStrip"></div>
       <div class="of-detail" id="ofDetail" hidden></div>
     </section>
-    <section class="hm-card hm-sur" id="hmSurBox" hidden><div class="sur-em" id="surEm"></div><div class="sur-b"><h3 id="surT"></h3><p id="surP"></p><div id="surAct"></div><ul class="sur-wk" id="surWk"></ul></div></section>
-    <div class="hm-grid">
-      <section class="hm-card" id="hmBoBox"><h3>לוח המשימות של הצוות</h3><p class="hm-hint">מה העובדים מבקשים זה מזה.</p><ul class="hm-bo" id="hmBo"></ul></section>
-      <section class="hm-card" id="hmSugBox"><h3>משימות שהצוות מציע</h3><ul class="hm-sug" id="hmSug"></ul></section>
-      <section class="hm-card" id="hmDrBox"><h3>טיוטות תשובה</h3><p class="hm-hint">הצוות לא שולח כלום. מעתיקים, עוברים על הנוסח ושולחים מהמייל.</p><div id="hmDrafts"></div></section>
-      <section class="hm-card" id="hmHeBox"><h3>בדיקות מערכת</h3><ul class="hm-health" id="hmHealth"></ul></section>
+    <div class="hm-acc">
+      <details class="hm-ac" id="hmDrBox"><summary>טיוטות תשובה <b id="hmDrN"></b></summary><div class="hm-acb"><p class="hm-hint">הצוות לא שולח כלום. מעתיקים, עוברים על הנוסח ושולחים מהמייל.</p><div id="hmDrafts"></div></div></details>
+      <details class="hm-ac" id="hmSugBox"><summary>משימות שהצוות מציע <b id="hmSugN"></b></summary><div class="hm-acb"><ul class="hm-sug" id="hmSug"></ul></div></details>
+      <details class="hm-ac" id="hmBoBox"><summary>מה העובדים מבקשים זה מזה <b id="hmBoN"></b></summary><div class="hm-acb"><ul class="hm-bo" id="hmBo"></ul></div></details>
+      <details class="hm-ac" id="hmHeBox"><summary>בדיקות מערכת <b id="hmHeN"></b></summary><div class="hm-acb"><ul class="hm-health" id="hmHealth"></ul></div></details>
     </div>
   </section>
   <section class="section tk" id="s-tasks" role="tabpanel" aria-labelledby="m-tasks" hidden>
@@ -1341,7 +1376,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 6.5 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 6.6 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -3339,6 +3374,10 @@ window.__nf=normalizeFile;
           await put({day:d.day,range:a.range||'',mailbox:a.mailbox||'',mails:a.mails,files:{},updated:d.updated||'',loaded:Date.now()});
           if(!newest||d.day>newest) newest=d.day;
         }
+        try{ const recs=(await getAll()).sort((x,y)=>y.day.localeCompare(x.day)).slice(0,3);
+          for(const r of recs){ const a=await gh(`days/${r.day}/actions.json`,true);
+            if(a&&Array.isArray(a.actions)&&(a.at||'')!==(r.actAt||'')){ r.actions=Object.fromEntries(a.actions.filter(x=>x&&x.id).map(x=>[x.id,x])); r.actAt=a.at||''; await put(r); newest=newest||r.day; } }
+        }catch(e){ if(e.auth) throw e; }
         if(newest){ await refresh(newest); status(''); } else if(!days.length) await refresh();
       }
       $('mlSync').textContent=`עודכן ${hhmm(lastSync)}`;
@@ -3366,7 +3405,7 @@ window.__nf=normalizeFile;
     sel.hidden=true;
     cur=days.find(d=>d.day===pick)||days[0]||null; if(cur) sel.value=cur.day;
     const seen=new Set(); all=[];
-    days.forEach(d=>(d.mails||[]).forEach(m=>{ if(!m||!m.id||seen.has(m.id)) return; seen.add(m.id); dayOf.set(m,d); all.push(m); }));
+    days.forEach(d=>(d.mails||[]).forEach(m=>{ if(!m||!m.id||seen.has(m.id)) return; seen.add(m.id); dayOf.set(m,d); m.act=(d.actions&&d.actions[m.id])||null; all.push(m); }));
     all.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.time||'').localeCompare(String(a.time||'')));
     if(!keep) openId=null; render();
   }
@@ -3378,6 +3417,7 @@ window.__nf=normalizeFile;
   const initial=m=>[...(m.client||m.sender||'?').replace(/^[^\p{L}\p{N}]+/u,'')][0]||'?';
   const hue=m=>{ let h=0; for(const ch of (m.client||m.id||'')) h=(h*31+ch.charCodeAt(0))%360; return h; };
   const brief=m=>{ if(m.brief) return m.brief; const w=typeof m.want==='string'?m.want:''; const t=w.replace(/\s+/g,' ').trim(); return t.length>110?t.slice(0,107).trimEnd()+'…':t; };
+  const ACTL={reply:'לענות','ask-client':'לבקש מהלקוח',print:'להדפסה',report:'לדוח',check:'לבדיקה',wait:'ממתין'};
   const CLIP='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5l-8 8a5 5 0 0 1-7-7l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7L9.7 17.2a1.7 1.7 0 0 1-2.4-2.4L15 7"/></svg>';
   function render(){ renderInner(); try{ window.dispatchEvent(new Event('mh:mail')); }catch(_){} }
   function renderInner(){
@@ -3400,8 +3440,8 @@ window.__nf=normalizeFile;
       const rb=el('span','ml-rb'), r1=el('span','ml-r1');
       r1.appendChild(el('span','ml-who',m.client||m.sender||'ללא שם')); r1.appendChild(el('span','ml-when',whenOf(m))); rb.appendChild(r1);
       rb.appendChild(el('span','ml-sj',m.subject||'')); rb.appendChild(el('span','ml-sn',brief(m)));
-      const nf=(m.files||[]).length, fl=flagCount(m);
-      if(nf||fl||d){ const r3=el('span','ml-r3'); if(nf){ const f=el('span'); f.innerHTML=CLIP+' '+nf; r3.appendChild(f); } if(fl) r3.appendChild(el('span','fl',`${fl} לבדיקה`)); if(d) r3.appendChild(el('span','t-ok','טופל ✓')); rb.appendChild(r3); }
+      const nf=(m.files||[]).length, fl=flagCount(m), al=m.act&&ACTL[m.act.do];
+      if(nf||fl||d||al){ const r3=el('span','ml-r3'); if(al&&!d) r3.appendChild(el('span','ac',al)); if(nf){ const f=el('span'); f.innerHTML=CLIP+' '+nf; r3.appendChild(f); } if(fl) r3.appendChild(el('span','fl',`${fl} לבדיקה`)); if(d) r3.appendChild(el('span','t-ok','טופל ✓')); rb.appendChild(r3); }
       b.appendChild(rb);
       b.addEventListener('click',()=>{ openId=m.id; render(); if(!wide()) $('s-mail').scrollIntoView({block:'start'}); });
       list.appendChild(b);
@@ -3415,6 +3455,20 @@ window.__nf=normalizeFile;
   async function fileObjs(m,all){ const out=[];
     for(const x of (m.files||[])){ if(!x.path||(!all&&isDup(x))) continue; const b=await getBlob(x,m); if(b) out.push(new File([b],x.name,{type:b.type||mime(x.name)})); }
     return out; }
+
+  function actionCard(m){
+    const a=m.act, c=el('div','ml-act'); c.appendChild(el('small',null,'מה לעשות'));
+    c.appendChild(el('div','ml-act-t',a.title||ACTL[a.do]||''));
+    if(Array.isArray(a.steps)&&a.steps.length){ const ol=el('ol','ml-act-s'); a.steps.slice(0,5).forEach(s=>ol.appendChild(el('li',null,s))); c.appendChild(ol); }
+    const row=el('div','ml-act-r'), nf=(m.files||[]).filter(x=>x.path).length;
+    if(a.print&&a.print.ready&&nf){ const b=el('button','go'); b.type='button'; b.innerHTML=ICON.merge; b.appendChild(document.createTextNode('הידוק להדפסה')); b.addEventListener('click',()=>toMerge(m,false,true,b)); row.appendChild(b); }
+    if(row.childNodes.length) c.appendChild(row);
+    if(a.print&&a.print.note) c.appendChild(el('p','ml-act-n',a.print.note));
+    if(a.reply&&a.reply.body){ const d=el('details','ml-det'); d.appendChild(el('summary',null,'טיוטת תשובה'+(a.reply.to?' ל־'+a.reply.to:''))); const inn=el('div','inner'); const pre=el('pre','ml-draft',a.reply.body); inn.appendChild(pre);
+      const cb=el('button','ml-btn','העתקת הנוסח'); cb.type='button'; cb.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(a.reply.body); cb.textContent='הועתק ✓'; }catch(_){ const r=document.createRange(); r.selectNodeContents(pre); const s=getSelection(); s.removeAllRanges(); s.addRange(r); cb.textContent='סמנתי, אפשר להעתיק'; } setTimeout(()=>{ cb.textContent='העתקת הנוסח'; },2500); });
+      inn.appendChild(cb); d.appendChild(inn); c.appendChild(d); }
+    return c;
+  }
 
   function detail(m){
     const v=$('mlView'); v.textContent='';
@@ -3436,6 +3490,7 @@ window.__nf=normalizeFile;
     const fr=el('div','ml-from'), av=el('span','ml-av',initial(m)); av.style.background=`hsl(${hue(m)} 38% 42%)`; fr.appendChild(av);
     const fx=el('div'); fx.appendChild(el('b',null,m.client||m.sender||'')); fx.appendChild(el('span',null,[m.sender&&m.sender!==m.client?m.sender:'',fmtDay(m.date)+(m.time?' '+m.time:'')].filter(Boolean).join(' · '))); fr.appendChild(fx); body.appendChild(fr);
 
+    if(m.act&&m.act.do&&m.act.do!=='none') body.appendChild(actionCard(m));
     const br=brief(m); if(br){ const bx=el('div','ml-brief'); bx.appendChild(el('small',null,'בקצרה')); bx.appendChild(document.createTextNode(br)); body.appendChild(bx); }
     const pts=el('ul','ml-pts');
     (m.facts||[]).forEach(f=>{ const li=el('li',hasFlag(f[1])?'f':''); const sp=el('span'); sp.appendChild(el('b',null,String(f[0]??'')+': ')); sp.appendChild(rich(f[1])); li.appendChild(sp); pts.appendChild(li); });
@@ -3492,7 +3547,9 @@ window.__nf=normalizeFile;
   /* for the dashboard */
   window.__mhMail={ get:(p,j)=>gh(p,j), hasToken:()=>!!tok(), mails:()=>all, lastSync:()=>lastSync,
     isDone:m=>{ const d=dayOf.get(m); return !!d&&doneSet().has(d.day+'/'+m.id); }, flags:m=>flagCount(m),
-    open:id=>{ openId=id; location.hash='mail'; render(); } };
+    open:id=>{ openId=id; location.hash='mail'; render(); },
+    print:id=>{ const m=all.find(x=>x.id===id); if(m) return toMerge(m,false,true,document.createElement('button')); },
+    setDone:(m,on)=>{ const d=dayOf.get(m); if(d){ setDone(d.day+'/'+m.id,on); render(); } } };
   const ping=()=>{ try{ window.dispatchEvent(new Event('mh:mail')); }catch(_){} };
 
   /* wiring */
@@ -3536,22 +3593,24 @@ window.__nf=normalizeFile;
 </script>
 <script>
 (function(){
-  /* Dashboard: the office team. Each worker writes agents/<id>.json to the private repo; the manager also writes agent/brief.json.
-     Until a worker has run, its desk shows live numbers from the other Mahdek screens. */
+  /* Dashboard: today's list (built by the manager from the team's work) + the team. Workers write agents/<id>.json to the private repo;
+     the manager also writes agent/brief.json and the prep clerk days/<day>/actions.json. Until they have run, numbers come live from the other Mahdek screens. */
   const $=id=>document.getElementById(id);
   const el=(t,c,x)=>{ const e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; };
-  const TZ='Asia/Jerusalem', BK='mahdek.agent.brief.v1', AK='mahdek.agents.v1', BDK='mahdek.agent.board.v1';
+  const TZ='Asia/Jerusalem', BK='mahdek.agent.brief.v1', AK='mahdek.agents.v1', BDK='mahdek.agent.board.v1', TDK='mahdek.today.done.v1';
   const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date());
   const dmy=iso=>{ const [y,m,d]=String(iso).slice(0,10).split('-'); return `${+d}.${+m}`+(y!==today().slice(0,4)?'.'+y:''); };
   const days=iso=>Math.round((Date.parse(iso+'T12:00:00Z')-Date.parse(today()+'T12:00:00Z'))/864e5);
   const fmt=(d,o)=>new Intl.DateTimeFormat('he-IL',{timeZone:TZ,...o}).format(d);
 
   const TEAM=[
-    {id:'manager',name:'נועם',g:'m',role:'מנהל המשרד',color:'#2c3a57',run:'07:48',go:null},
-    {id:'mail',name:'מאיה',g:'f',role:'אחראית מיילים',color:'#3f6fb5',run:'07:06',go:'mail'},
-    {id:'files',name:'איתי',g:'m',role:'אחראי קבצים',color:'#c0576a',run:'07:20',go:'join'},
-    {id:'reports',name:'דנה',g:'f',role:'אחראית דיווחים',color:'#3a9266',run:'07:34',go:null},
-    {id:'payroll',name:'עומר',g:'m',role:'אחראי משכורות',color:'#c58b1f',run:null,go:null,soon:true}];
+    {id:'manager',name:'נועם',role:'מנהל המשרד',color:'#2c3a57',run:'07:48',go:null,g:'m'},
+    {id:'mail',name:'מאיה',role:'קליטת מיילים',color:'#3f6fb5',run:'07:06',go:'mail',g:'f'},
+    {id:'files',name:'איתי',role:'בדיקת קבצים',color:'#c0576a',run:'07:20',go:'join',g:'m'},
+    {id:'prep',name:'יעל',role:'הכנה לפעולה',color:'#7a63b0',run:'07:27',go:'mail',g:'f'},
+    {id:'reports',name:'דנה',role:'דיווחים',color:'#3a9266',run:'07:34',go:null,g:'f'},
+    {id:'payroll',name:'עומר',role:'משכורות',color:'#c58b1f',run:null,go:null,soon:true,g:'m'}];
+
   /* Pixel office: a small canvas scene. Workers sit at their desks when they have work, otherwise they wander the lounge. */
   const OF=(function(){
     const W=288,H=168, off=document.createElement('canvas'); off.width=W; off.height=H; const g=off.getContext('2d');
@@ -3559,13 +3618,14 @@ window.__nf=normalizeFile;
     const BOX=(x,y,w,h,c)=>{ R(x,y,w,1,c); R(x,y+h-1,w,1,c); R(x,y,1,h,c); R(x+w-1,y,1,h,c); };
     const PAL={manager:{skin:'#e9b894',hair:'#7b7f8a',shirt:'#2c3a57',pants:'#3a3f4b',hs:'short',glass:1,tie:'#c0463e'},
       mail:{skin:'#f1c6a3',hair:'#5a3524',shirt:'#3f6fb5',pants:'#4a5468',hs:'long'},
+      prep:{skin:'#f3cdb0',hair:'#c9962f',shirt:'#7a63b0',pants:'#4a5468',hs:'long'},
       files:{skin:'#c98e67',hair:'#2b2522',shirt:'#c0576a',pants:'#3f4350',hs:'short',glass:1},
       reports:{skin:'#e7b08a',hair:'#8a4b2a',shirt:'#3a9266',pants:'#4a5468',hs:'bun'},
       payroll:{skin:'#a8714e',hair:'#1f1a18',shirt:'#c58b1f',pants:'#3a3f4b',hs:'beard'}};
-    const DESK={mail:108,files:150,reports:192,payroll:234}, SEATX={manager:49,mail:125,files:167,reports:209,payroll:251}, SEATY=96;
+    const DESK={mail:100,files:138,prep:176,reports:214,payroll:252}, SEATX={manager:49,mail:117,files:155,prep:193,reports:231,payroll:269}, SEATY=96;
     const IDLE={manager:[[30,90],[66,90],[42,94],[58,92],[24,84]],
       lounge:[[140,124],[172,122],[200,132],[226,124],[240,134],[114,132],[192,150],[222,148],[262,138],[118,150],[152,128]]};
-    const TEAMP=['manager','mail','files','reports','payroll'];
+    const TEAMP=['manager','mail','files','prep','reports','payroll'];
 
     function plant(x,y){ R(x+1,y+9,8,6,'#b5724a'); R(x+1,y+9,8,1,'#cf8a5e'); R(x+4,y+2,2,8,'#3f8a5a'); R(x+1,y+4,3,4,'#4f9a6a'); R(x+6,y+3,3,5,'#4f9a6a'); R(x+3,y,4,4,'#5fae78'); }
     function deskArt(x0,w){
@@ -3603,6 +3663,7 @@ window.__nf=normalizeFile;
       x=DESK.files; R(x,6,34,22,'#f6f3ea'); BOX(x,6,34,22,'#c8bca6'); R(x+2,16,30,1,'#a98059'); R(x+2,26,30,1,'#a98059');
       [['#c0576a',4,8],['#3f6fb5',3,6],['#e0b04a',4,8],['#3a9266',3,7],['#c0576a',4,6],['#7a63b0',3,8],['#3f6fb5',4,7],['#e0b04a',3,8]].reduce((a,[c,w,h])=>{ R(x+3+a,16-h,w,h,c); return a+w+0; },0);
       [['#3a9266',4,7],['#c0576a',3,8],['#3f6fb5',4,7],['#7a63b0',3,6],['#e0b04a',4,8],['#c0576a',3,7],['#3a9266',4,6]].reduce((a,[c,w,h])=>{ R(x+3+a,26-h,w,h,c); return a+w; },0);
+      x=DESK.prep; R(x,6,34,22,'#f6f3ea'); BOX(x,6,34,22,'#c8bca6'); for(let i=0;i<3;i++){ R(x+4,10+i*6,4,4,'#fff'); BOX(x+4,10+i*6,4,4,'#7a63b0'); R(x+5,11+i*6,2,2,'#7a63b0'); R(x+11,11+i*6,19,2,'#c9c0de'); }
       x=DESK.reports; R(x,6,34,22,'#f6f3ea'); BOX(x,6,34,22,'#c8bca6');
       R(x+3,9,13,16,'#fff'); R(x+3,9,13,4,'#d0574a'); for(let r=0;r<3;r++) for(let c=0;c<3;c++) R(x+5+c*4,15+r*3,2,2,(r===1&&c===1)?'#d0574a':'#b7d3c1');
       R(x+20,11,11,14,'#fff'); BOX(x+20,11,11,14,'#b7d3c1'); R(x+22,19,2,5,'#6fb18a'); R(x+25,16,2,8,'#6fb18a'); R(x+28,13,2,11,'#6fb18a');
@@ -3617,9 +3678,9 @@ window.__nf=normalizeFile;
       R(132,142,48,16,'#5d7f8c'); R(132,138,48,6,'#4f6f7b'); R(134,144,44,12,'#7ea3b1'); R(130,140,4,16,'#4f6f7b'); R(178,140,4,16,'#4f6f7b'); R(132,157,48,2,'rgba(60,40,20,.2)');
       R(194,134,18,10,'#b58c62'); R(194,134,18,2,'#dbb78d'); R(196,144,2,6,'#8f6c4a'); R(208,144,2,6,'#8f6c4a'); R(199,131,4,4,'#fff'); R(205,132,3,3,'#e0b04a');
       R(252,114,30,12,'#a98059'); R(252,114,30,2,'#dbb78d'); R(256,101,11,14,'#3a3f4b'); R(258,103,7,3,'#cfe6f7'); R(261,109,1,1,'#d0574a'); R(271,110,4,4,'#fff'); R(254,126,2,4,'#8f6c4a'); R(278,126,2,4,'#8f6c4a');
-      R(274,86,9,22,'#e8ecf2'); R(275,76,7,11,'#9fd0ee'); R(276,77,2,8,'#d5ecf8'); R(273,108,11,2,'rgba(60,40,20,.2)');
+      R(97,92,9,22,'#e8ecf2'); R(98,82,7,11,'#9fd0ee'); R(99,83,2,8,'#d5ecf8'); R(96,114,11,2,'rgba(60,40,20,.2)');
       R(262,34,22,8,'#e8ecf2'); R(262,40,22,2,'#b8c0cc'); R(264,36,18,2,'#fff');
-      plant(102,142); plant(274,146); plant(98,54);
+      plant(102,142); plant(274,148); plant(94,32);
       R(24,158,26,6,'#8a6a5a'); R(26,160,22,2,'#7a5c4d');
     }
     bg();
@@ -3744,11 +3805,13 @@ window.__nf=normalizeFile;
   })();
 
   let brief=null, agents={}, board=null;
-  try{ board=JSON.parse(localStorage.getItem(BDK)||'null'); }catch(_){}
   try{ brief=JSON.parse(localStorage.getItem(BK)||'null'); }catch(_){}
   try{ agents=JSON.parse(localStorage.getItem(AK)||'{}')||{}; }catch(_){ agents={}; }
+  try{ board=JSON.parse(localStorage.getItem(BDK)||'null'); }catch(_){}
   window.__mhBrief=brief;
   let loading=false, lastLoad=0, openAg=null;
+  const nameOf=id=>(TEAM.find(t=>t.id===id)||{name:id}).name;
+  const ACTL={reply:'לענות','ask-client':'לבקש מהלקוח',print:'להדפסה',report:'לדוח',check:'לבדיקה',wait:'ממתין'};
 
   function hello(){
     const h=+fmt(new Date(),{hour:'numeric',hour12:false});
@@ -3761,9 +3824,9 @@ window.__nf=normalizeFile;
     loading=true;
     try{
       const [b,bd,...rest]=await Promise.all([M.get('agent/brief.json',true).catch(()=>null),M.get('team/board.json',true).catch(()=>null),...TEAM.map(t=>M.get(`agents/${t.id}.json`,true).catch(()=>null))]);
-      if(bd&&bd.kind==='team-board'){ board=bd; try{ localStorage.setItem(BDK,JSON.stringify(bd)); }catch(_){} }
       lastLoad=Date.now();
       if(b&&b.kind==='agent-brief'){ brief=b; window.__mhBrief=b; try{ localStorage.setItem(BK,JSON.stringify(b)); }catch(_){} }
+      if(bd&&bd.kind==='team-board'){ board=bd; try{ localStorage.setItem(BDK,JSON.stringify(bd)); }catch(_){} }
       TEAM.forEach((t,i)=>{ const a=rest[i]; if(a&&a.kind==='agent-status') agents[t.id]=a; });
       try{ localStorage.setItem(AK,JSON.stringify(agents)); }catch(_){}
     }catch(_){}
@@ -3771,14 +3834,19 @@ window.__nf=normalizeFile;
   }
 
   /* live numbers from Mahdek itself */
+  const openMails=()=>{ const M=window.__mhMail; return M&&M.hasToken()?M.mails().filter(m=>!M.isDone(m)):[]; };
+  const needsAct=m=>m.act&&m.act.do&&m.act.do!=='none'&&m.act.do!=='wait';
   function live(id){
     const M=window.__mhMail, T=window.__mhTasks, conn=!!(M&&M.hasToken());
     if(id==='mail'){ if(!conn) return {sum:'תיבת הדואר עוד לא מחוברת במחשב הזה.',st:[]};
-      const all=M.mails(), open=all.filter(m=>!M.isDone(m)), fl=open.filter(m=>M.flags(m)>0).length, t=all.filter(m=>m.date===today()).length;
-      return {sum:`${all.length} מיילים בתיבה, ${open.length} עוד לא טופלו.`,st:[['לא טופלו',open.length],['לבדיקה',fl,fl>0],['היום',t]]}; }
+      const all=M.mails(), open=all.filter(m=>!M.isDone(m)), t=all.filter(m=>m.date===today()).length;
+      return {sum:`${all.length} מיילים בתיבה, ${open.length} עוד לא טופלו.`,st:[['לא טופלו',open.length],['היום',t]]}; }
     if(id==='files'){ if(!conn) return {sum:'מחכה לקבצים מתיבת הדואר.',st:[]};
       const all=M.mails(); let n=0,bad=0,mails=0; all.forEach(m=>{ const f=(m.files||[]).filter(x=>x.path); if(f.length) mails++; n+=f.length; bad+=f.filter(x=>x.flag).length; });
-      return {sum:`${n} קבצים מצורפים ב־${mails} מיילים, מוכנים להידוק.`,st:[['קבצים',n],['עם הערה',bad,bad>0]]}; }
+      return {sum:`${n} קבצים מצורפים ב־${mails} מיילים.`,st:[['קבצים',n],['עם הערה',bad,bad>0]]}; }
+    if(id==='prep'){ if(!conn) return {sum:'מחכה למיילים מהתיבה.',st:[]};
+      const o=openMails().filter(needsAct), pr=o.filter(m=>m.act.print&&m.act.print.ready).length, dr=o.filter(m=>m.act.reply&&m.act.reply.body).length;
+      return {sum:o.length?`${o.length} מיילים מחכים לפעולה, ${pr} מוכנים להדפסה, ${dr} עם טיוטת תשובה.`:'אין עוד פעולות מוכנות.',st:o.length?[['לפעולה',o.length],['להדפסה',pr],['טיוטות',dr]]:[]}; }
     if(id==='reports'){ const up=(window.__mhUpcoming||[]).filter(x=>x.date>=today());
       if(!up.length) return {sum:'אין מועדים קרובים ברשימה.',st:[]};
       const d=up[0].date, n=days(d), same=up.filter(x=>x.date===d).map(x=>String(x.what).split(' · ')[0]);
@@ -3793,76 +3861,101 @@ window.__nf=normalizeFile;
   function statusOf(t){
     if(t.soon) return {cls:'',txt:'מצטרף בקרוב'};
     const a=t.id==='manager'?(agents.manager||(brief&&{at:brief.at,status:'ok'})):agents[t.id];
-    if(!a||!a.at) return {cls:'',txt:`עוד לא עבד · מתחיל ב־${t.run}`};
+    if(!a||!a.at) return {cls:'',txt:`עוד לא עבד · ${t.run}`};
     const at=new Date(a.at), same=fmt(at,{year:'numeric',month:'2-digit',day:'2-digit'})===fmt(new Date(),{year:'numeric',month:'2-digit',day:'2-digit'});
     if(a.status==='error') return {cls:'err',txt:'נתקל בבעיה · '+fmt(at,{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})};
     return {cls:same?'ok':'',txt:(same?'סיים היום ב־':'עבד לאחרונה ')+fmt(at,same?{hour:'2-digit',minute:'2-digit'}:{weekday:'short',hour:'2-digit',minute:'2-digit'})};
   }
 
+  /* who is sitting: has work */
   function working(id){
-    const M=window.__mhMail, T=window.__mhTasks, conn=!!(M&&M.hasToken());
-    if(id==='mail') return conn&&M.mails().some(m=>!M.isDone(m));
-    if(id==='files'){ if(!conn) return false; return M.mails().some(m=>!M.isDone(m)&&(m.files||[]).some(f=>f.path)); }
+    const M=window.__mhMail, T=window.__mhTasks, conn=!!(M&&M.hasToken()), open=openMails();
+    if(id==='mail') return conn&&open.length>0;
+    if(id==='files') return open.some(m=>(m.files||[]).some(f=>f.path));
+    if(id==='prep') return open.some(needsAct)||(conn&&open.length>0&&!M.mails().some(m=>m.act));
     if(id==='reports'){ const up=(window.__mhUpcoming||[]).filter(x=>x.date>=today()); return !!up.length&&days(up[0].date)<=10; }
-    if(id==='manager'){ const c=T&&T.counts?T.counts().day:null; return !!(c&&c.open>0)||!!(brief&&brief.today&&brief.today.length); }
+    if(id==='manager'){ const c=T&&T.counts?T.counts().day:null; return !!(c&&c.open>0)||todayItems().some(x=>!x.done); }
     return false;
   }
   function syncOffice(){
     const map={}; TEAM.forEach(t=>{ map[t.id]=working(t.id); });
     OF.sync(TEAM.map(t=>({id:t.id,name:t.name,role:t.role,color:t.color,soon:!!t.soon,g:t.g})),map);
   }
-  function desk(t,btn){
-    const mg=t.id==='manager';
-    btn.className='of-desk'+(mg?' of-mgr':'')+(t.soon?' soon':'')+(openAg===t.id?' on':''); btn.dataset.ag=t.id; btn.textContent='';
-    const a=agents[t.id], L=live(t.id), S=statusOf(t);
-    const who=el('div','of-who'), av=el('span','of-av',t.name[0]); av.style.background=t.color; av.appendChild(el('i','of-dot '+S.cls)); who.appendChild(av);
-    const nm=el('div','of-nm'); nm.appendChild(el('b',null,t.name)); nm.appendChild(el('span',null,t.role)); who.appendChild(nm); btn.appendChild(who);
-    btn.appendChild(el('div','of-sum',t.soon?'יטפל בקבצי השכר, שעות נוספות ושידור לקופות.':(a&&a.summary&&!mg?a.summary:L.sum)));
-    const st=(a&&Array.isArray(a.stats)&&a.stats.length?a.stats.map(x=>[x.label,x.value,!!x.bad]):L.st);
-    if(st.length){ const box=el('div','of-st'); st.slice(0,3).forEach(([k,v,bad])=>{ const s=el('span',bad?'bad':''); s.appendChild(document.createTextNode(k+' ')); s.appendChild(el('b',null,String(v))); box.appendChild(s); }); btn.appendChild(box); }
-    btn.appendChild(el('div','of-when',S.txt));
-    if(mg&&brief&&brief.today&&brief.today.length){
-      const ol=el('ol','of-today'), M=window.__mhMail;
-      brief.today.slice(0,5).forEach(x=>{ const li=el('li'); li.appendChild(el('span',null,x.text||''));
-        if(x.mail&&M&&M.mails().some(m=>m.id===x.mail)){ const b=el('button','hm-link','למייל'); b.type='button'; b.onclick=()=>M.open(x.mail); li.appendChild(b); } else li.appendChild(el('i'));
-        ol.appendChild(li); });
-      btn.appendChild(ol);
-    }
+
+  /* today list */
+  function tdDone(){ try{ return new Set(JSON.parse(localStorage.getItem(TDK)||'[]')); }catch(_){ return new Set(); } }
+  function tdSet(k,on){ const s=tdDone(); on?s.add(k):s.delete(k); try{ localStorage.setItem(TDK,JSON.stringify([...s].slice(-300))); }catch(_){} }
+  function todayItems(){
+    const M=window.__mhMail, all=M?M.mails():[], byId=new Map(all.map(m=>[m.id,m]));
+    let list=[];
+    const fresh=brief&&brief.at&&fmt(new Date(brief.at),{year:'numeric',month:'2-digit',day:'2-digit'})===fmt(new Date(),{year:'numeric',month:'2-digit',day:'2-digit'});
+    if(brief&&Array.isArray(brief.today)&&brief.today.length) list=brief.today.map(x=>({text:x.text||'',mail:x.mail||''}));
+    else list=all.filter(m=>!M.isDone(m)&&needsAct(m)).sort((a,b)=>(a.act.rank||99)-(b.act.rank||99)).map(m=>({text:`${m.client||m.sender||''} – ${m.act.title||m.brief||m.subject}`,mail:m.id}));
+    return list.slice(0,8).map(x=>{ const m=x.mail?byId.get(x.mail):null, key=m?null:today()+'|'+x.text, done=m?M.isDone(m):tdDone().has(key); return {...x,m,key,done,stale:!fresh&&brief&&brief.today&&brief.today.length>0}; });
+  }
+  function copyBtn(b,text,pre){ b.onclick=async()=>{ try{ await navigator.clipboard.writeText(text||''); b.textContent='הועתק ✓'; }catch(_){ const r=document.createRange(); r.selectNodeContents(pre); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent='סמנתי, אפשר להעתיק'; } setTimeout(()=>{ b.textContent='העתקת הנוסח'; },2500); }; }
+  const openDr=new Set();
+  function todayRender(){
+    const ul=$('hmToday'), M=window.__mhMail; ul.textContent=''; const items=todayItems(); const none=!items.length;
+    const nDone=items.filter(x=>x.done).length;
+    $('hmTodayN').textContent=none?'':`${nDone} מתוך ${items.length}`;
+    const e=$('hmTodayEmpty'); e.hidden=!none;
+    if(none) e.textContent=M&&M.hasToken()?'אין עכשיו פעולות מוכנות. הרשימה נבנית בכל בוקר אחרי עבודת הצוות.':'כדי לראות כאן את הרשימה צריך לחבר את תיבת הדואר במסך "תיבת דואר".';
+    items.forEach((x,i)=>{
+      const li=el('li','td'+(x.done?' done':'')), ck=el('button','td-ck',x.done?'✓':''); ck.type='button'; ck.setAttribute('aria-label',x.done?'לבטל סימון':'סימון כטופל'); ck.setAttribute('aria-pressed',String(x.done));
+      ck.onclick=()=>{ if(x.m) M.setDone(x.m,!x.done); else { tdSet(x.key,!x.done); } render(); };
+      li.appendChild(ck);
+      const b=el('div','td-b'); b.appendChild(el('div','td-t',x.text));
+      const act=x.m&&x.m.act, meta=el('div','td-m');
+      if(act&&ACTL[act.do]) meta.appendChild(el('span','tag',ACTL[act.do]));
+      if(act&&act.steps&&act.steps.length) meta.appendChild(document.createTextNode(act.steps[0]));
+      if(meta.childNodes.length) b.appendChild(meta);
+      li.appendChild(b);
+      const a=el('div','td-a');
+      if(x.m){ const o=el('button','hm-link','פתיחה'); o.type='button'; o.onclick=()=>M.open(x.m.id); a.appendChild(o); }
+      if(act&&act.print&&act.print.ready&&(x.m.files||[]).some(f=>f.path)){ const p=el('button','hm-link pri','הדפסה'); p.type='button'; p.title=act.print.note||'כל הקבצים של המייל בקובץ אחד'; p.onclick=()=>M.print(x.m.id); a.appendChild(p); }
+      if(act&&act.reply&&act.reply.body){ const r=el('button','hm-link'+(openDr.has(x.m.id)?'':' pri'),openDr.has(x.m.id)?'הסתרת טיוטה':'טיוטת תשובה'); r.type='button'; r.onclick=()=>{ openDr.has(x.m.id)?openDr.delete(x.m.id):openDr.add(x.m.id); todayRender(); }; a.appendChild(r); }
+      li.appendChild(a);
+      if(act&&act.reply&&act.reply.body&&openDr.has(x.m.id)){ const d=el('div','td-dr'); d.appendChild(el('span','to',act.reply.to||'')); const pre=el('pre',null,act.reply.body); d.appendChild(pre); const c=el('button','hm-link','העתקת הנוסח'); c.type='button'; copyBtn(c,act.reply.body,pre); d.appendChild(c); li.appendChild(d); }
+      ul.appendChild(li);
+    });
+    const msg=$('hmMsg'), txt=brief&&brief.message; msg.hidden=!txt; msg.textContent=txt||'';
   }
 
+  /* strip + detail */
   function plan(){
-    desk(TEAM[0],$('ofMgr'));
-    const row=$('ofRow');
-    if(row.children.length!==TEAM.length-1){ row.textContent=''; TEAM.slice(1).forEach(t=>{ const b=el('button','of-desk'); b.type='button'; b.addEventListener('click',()=>{ openAg=openAg===t.id?null:t.id; render(); }); row.appendChild(b); }); }
-    TEAM.slice(1).forEach((t,i)=>desk(t,row.children[i]));
+    const strip=$('ofStrip');
+    if(strip.children.length!==TEAM.length){ strip.textContent=''; TEAM.forEach(t=>{ const b=el('button','of-chip'); b.type='button'; b.dataset.ag=t.id; b.addEventListener('click',()=>{ openAg=openAg===t.id?null:t.id; render(); }); strip.appendChild(b); }); }
+    TEAM.forEach((t,i)=>{ const b=strip.children[i], S=statusOf(t); b.className='of-chip'+(t.soon?' soon':'')+(openAg===t.id?' on':''); b.textContent='';
+      const n=el('b'); n.appendChild(el('i',S.cls)); n.appendChild(document.createTextNode(t.name)); b.appendChild(n); b.appendChild(el('span',null,t.role)); b.appendChild(el('span',null,S.txt)); });
     detail(); syncOffice();
   }
-
   function detail(){
     const box=$('ofDetail'), t=TEAM.find(x=>x.id===openAg); box.hidden=!t; box.textContent=''; if(!t) return;
     const a=agents[t.id], L=live(t.id);
     box.appendChild(el('h3',null,`${t.name} · ${t.role}`));
     if(t.soon){ box.appendChild(el('p',null,'עומר יצטרף כשנבנה את מסך השכר: בדיקת שעות רגילות ונוספות, תלושים ותזכורות לשידור קבצי XML לקופות.')); return; }
-    box.appendChild(el('p',null,(a&&a.summary)||L.sum));
+    box.appendChild(el('p',null,(a&&a.summary&&t.id!=='manager')?a.summary:L.sum));
+    const st=(a&&Array.isArray(a.stats)&&a.stats.length?a.stats.map(x=>[x.label,x.value,!!x.bad]):L.st);
+    if(st.length){ const sb=el('div','of-st'); st.slice(0,4).forEach(([k,v,bad])=>{ const s=el('span',bad?'bad':''); s.appendChild(document.createTextNode(k+' ')); s.appendChild(el('b',null,String(v))); sb.appendChild(s); }); box.appendChild(sb); }
     const items=(a&&a.items)||[];
     if(items.length){ const ul=el('ul'), M=window.__mhMail; items.slice(0,8).forEach(x=>{ const li=el('li'); li.appendChild(el('span',null,x.text||''));
       if(x.mail&&M&&M.mails().some(m=>m.id===x.mail)){ const b=el('button','hm-link','למייל'); b.type='button'; b.onclick=()=>M.open(x.mail); li.appendChild(b); } else li.appendChild(el('i'));
       ul.appendChild(li); }); box.appendChild(ul); }
-    else box.appendChild(el('p','hm-hint',`עוד אין דוח מ${t.name}. הריצה הקבועה: ראשון–חמישי ב־${t.run}.`));
-    if(a&&a.tip&&a.tip.text){ const p=el('p','hm-hint','💡 '+a.tip.text+(a.tip.source?' ('+a.tip.source+')':'')); box.appendChild(p); }
+    else if(t.id!=='manager') box.appendChild(el('p','hm-hint',`עוד אין דוח מ${t.name}. הריצה הקבועה: ראשון–חמישי ב־${t.run}.`));
+    if(a&&a.tip&&a.tip.text) box.appendChild(el('p','hm-hint','💡 '+a.tip.text+(a.tip.source?' ('+a.tip.source+')':'')));
     const mine=((board&&board.items)||[]).filter(x=>x.to===t.id&&x.status!=='done');
     if(mine.length){ box.appendChild(el('p','hm-hint','ממתין לו מהצוות:')); const ul=el('ul'); mine.slice(0,5).forEach(x=>{ const li=el('li'); li.appendChild(el('span',null,`${nameOf(x.from)}: ${x.title}`)); li.appendChild(el('i')); ul.appendChild(li); }); box.appendChild(ul); }
     const acts=el('div','of-acts');
-    if(t.go){ const b=el('button','hm-link',t.id==='mail'?'לתיבת הדואר':'למסך ההידוק'); b.type='button'; b.onclick=()=>{ location.hash=t.go; }; acts.appendChild(b); }
+    if(t.go){ const b=el('button','hm-link',t.id==='files'?'למסך ההידוק':'לתיבת הדואר'); b.type='button'; b.onclick=()=>{ location.hash=t.go; }; acts.appendChild(b); }
     if(t.id==='reports'){ const b=el('button','hm-link','ליומן המועדים'); b.type='button'; b.onclick=()=>{ const c=$('calBtn'); if(c) c.click(); }; acts.appendChild(b); }
     if(acts.childNodes.length) box.appendChild(acts);
   }
 
-  const nameOf=id=>(TEAM.find(t=>t.id===id)||{name:id}).name;
   function surprise(){
     const s=brief&&brief.surprise, w=brief&&brief.weekly, box=$('hmSurBox'); const ok=!!(s&&s.title)||!!(w&&w.lines&&w.lines.length);
     box.hidden=!ok; if(!ok) return;
-    $('surEm').textContent=(s&&s.emoji)||'📋'; $('surT').textContent=s&&s.title?'הפתעת היום: '+s.title:(w&&w.title)||''; $('surP').textContent=(s&&s.text)||'';
+    $('surT').textContent=((s&&s.emoji)||'📋')+' '+(s&&s.title?'הפתעת היום: '+s.title:(w&&w.title)||''); $('surP').textContent=(s&&s.text)||'';
     const act=$('surAct'); act.textContent=''; const M=window.__mhMail;
     if(s&&s.mail&&M&&M.mails().some(m=>m.id===s.mail)){ const b=el('button','hm-link','למייל'); b.type='button'; b.style.marginTop='8px'; b.onclick=()=>M.open(s.mail); act.appendChild(b); }
     const wk=$('surWk'); wk.textContent=''; wk.hidden=!(w&&w.lines&&w.lines.length);
@@ -3870,10 +3963,11 @@ window.__nf=normalizeFile;
   }
   function boardRender(){
     const ul=$('hmBo'); ul.textContent=''; const list=((board&&board.items)||[]).slice().sort((a,b)=>(a.status==='done')-(b.status==='done')||String(b.day).localeCompare(String(a.day)));
-    $('hmBoBox').hidden=!list.length;
-    list.slice(0,8).forEach(x=>{ const li=el('li',x.status==='done'?'done':''); li.appendChild(el('i')); const d=el('div',null,x.title||''); d.appendChild(el('small',null,`${nameOf(x.from)} ← ${nameOf(x.to)}`.replace(/(.+) ← (.+)/,'$1 ביקש/ה מ$2')+(x.status==='done'&&x.result?' · '+x.result:'')));
+    $('hmBoBox').hidden=!list.length; $('hmBoN').textContent=list.filter(x=>x.status!=='done').length||'';
+    list.slice(0,8).forEach(x=>{ const li=el('li',x.status==='done'?'done':''); li.appendChild(el('i')); const d=el('div',null,x.title||''); d.appendChild(el('small',null,`${nameOf(x.from)} ביקש/ה מ${nameOf(x.to)}`+(x.status==='done'&&x.result?' · '+x.result:'')));
       li.appendChild(d); ul.appendChild(li); });
   }
+
   function health(){
     const ul=$('hmHealth'); ul.textContent=''; const items=[]; const M=window.__mhMail;
     const ra=window.__mhRatesAt?new Date(window.__mhRatesAt):null;
@@ -3885,32 +3979,32 @@ window.__nf=normalizeFile;
       items.push({ok:a.status==='error'?0:fresh?1:0,name:`הריצה של ${t.name}`,detail:'אחרונה '+fmt(new Date(a.at),{weekday:'short',hour:'2-digit',minute:'2-digit'})}); });
     (brief&&brief.health||[]).forEach(x=>items.push({ok:x.ok?1:0,name:x.name,detail:x.detail}));
     const bad=items.filter(x=>x.ok===0).length; window.__mhHealth={bad,total:items.length};
+    const n=$('hmHeN'); n.textContent=bad?`${bad} תקלות`:'הכול תקין'; n.className=bad?'bad':'';
     items.forEach(x=>{ const li=el('li',x.ok===1?'ok':x.ok===0?'bad':'na'); li.appendChild(el('i',null,x.ok===1?'✓':x.ok===0?'!':'–')); const d=el('div',null,x.name); if(x.detail) d.appendChild(el('small',null,x.detail)); li.appendChild(d); ul.appendChild(li); });
   }
 
   function sugs(){
     const ul=$('hmSug'); ul.textContent=''; const Tk=window.__mhTasks;
     const list=[...((brief&&brief.tasks)||[])]; TEAM.slice(1).forEach(t=>{ const a=agents[t.id]; if(a&&Array.isArray(a.tasks)) a.tasks.forEach(x=>{ if(!list.some(y=>y.title===x.title)) list.push({...x,by:t.name}); }); });
-    $('hmSugBox').hidden=!list.length;
+    $('hmSugBox').hidden=!list.length; $('hmSugN').textContent=list.length||'';
     list.slice(0,10).forEach(x=>{ const li=el('li'), t=el('div','t',x.title||''); const meta=[x.client,x.by&&('מ'+x.by)].filter(Boolean).join(' · '); if(meta) t.appendChild(el('span','c',meta)); li.appendChild(t);
       const has=Tk&&Tk.has(x.title); const b=el('button','hm-add',has?'נוסף ✓':'הוספה'); b.type='button'; b.disabled=!!has||!Tk;
-      b.onclick=()=>{ if(!Tk) return; Tk.add({title:x.title,client:x.client||'',scope:x.scope||'day',due:x.due||today(),prio:x.prio||0,note:x.note||''}); b.textContent='נוסף ✓'; b.disabled=true; plan(); };
+      b.onclick=()=>{ if(!Tk) return; Tk.add({title:x.title,client:x.client||'',scope:x.scope||'day',due:x.due||today(),prio:x.prio||0,note:x.note||''}); b.textContent='נוסף ✓'; b.disabled=true; };
       li.appendChild(b); ul.appendChild(li); });
   }
 
   function drafts(){
     const box=$('hmDrafts'); box.textContent=''; const list=[...((brief&&brief.drafts)||[])]; TEAM.forEach(t=>{ const ag=agents[t.id]; if(ag&&Array.isArray(ag.drafts)) ag.drafts.forEach(x=>{ if(!list.some(y=>y.subject===x.subject&&y.to===x.to)) list.push(x); }); });
-    $('hmDrBox').hidden=!list.length;
+    $('hmDrBox').hidden=!list.length; $('hmDrN').textContent=list.length||'';
     list.forEach(x=>{ const d=el('details','hm-dr'), s=el('summary',null,x.subject||'טיוטה'); s.appendChild(el('small',null,x.to||'')); d.appendChild(s);
       const pre=el('pre',null,x.body||''); d.appendChild(pre);
-      const b=el('button','hm-link','העתקת הנוסח'); b.type='button';
-      b.onclick=async()=>{ try{ await navigator.clipboard.writeText(x.body||''); b.textContent='הועתק ✓'; }catch(_){ const r=document.createRange(); r.selectNodeContents(pre); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent='סמנתי, אפשר להעתיק'; } setTimeout(()=>{ b.textContent='העתקת הנוסח'; },2500); };
+      const b=el('button','hm-link','העתקת הנוסח'); b.type='button'; copyBtn(b,x.body,pre);
       d.appendChild(b); box.appendChild(d); });
   }
 
-  function render(){ hello(); health(); plan(); surprise(); boardRender(); sugs(); drafts(); }
+  function render(){ hello(); health(); todayRender(); surprise(); plan(); boardRender(); sugs(); drafts(); }
   window.addEventListener('mh:mail',()=>{ render(); load(false); });
-  window.addEventListener('mh:tasks',()=>plan());
+  window.addEventListener('mh:tasks',()=>render());
   window.addEventListener('hashchange',()=>{ if(!location.hash||location.hash==='#home'){ render(); load(false); } });
   OF.click(id=>{ openAg=openAg===id?null:id; render(); if(openAg){ const d=$('ofDetail'); if(d&&d.scrollIntoView) d.scrollIntoView({block:'nearest',behavior:'smooth'}); } });
   render(); setTimeout(()=>{ render(); load(true); },1200);
