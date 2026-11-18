@@ -844,6 +844,8 @@ body[data-tab="convert"]{--sec:var(--sage)} body[data-tab="edit"]{--sec:var(--bl
 .of-detail .of-st span{font-size:.76rem;background:var(--soft);border-radius:7px;padding:2px 8px;color:var(--muted)}
 .of-detail .of-st b{color:var(--ink)}
 .of-detail .of-st .bad b{color:var(--ml-flag)}
+.lab-set summary{cursor:pointer;font-size:.88rem;padding:4px 0}
+.lab-set li b{font-weight:600;font-size:.84rem;overflow-wrap:anywhere}.lab-set li small{display:block;color:var(--muted);font-size:.76rem}
 .of-detail .of-acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-start}
 /* accordions */
 .hm-acc{display:flex;flex-direction:column;gap:8px}
@@ -3854,7 +3856,7 @@ window.__nf=normalizeFile;
     return {sync,size,click:f=>{ onClick=f; },state:S};
   })();
 
-  let brief=null, agents={}, board=null;
+  let brief=null, agents={}, board=null, labRep=null;
   try{ brief=JSON.parse(localStorage.getItem(BK)||'null'); }catch(_){}
   try{ agents=JSON.parse(localStorage.getItem(AK)||'{}')||{}; }catch(_){ agents={}; }
   try{ board=JSON.parse(localStorage.getItem(BDK)||'null'); }catch(_){}
@@ -3873,10 +3875,11 @@ window.__nf=normalizeFile;
     const M=window.__mhMail; if(!M||!M.hasToken()||loading) return; if(!force&&Date.now()-lastLoad<120000) return;
     loading=true;
     try{
-      const [b,bd,lb,...rest]=await Promise.all([M.get('agent/brief.json',true).catch(()=>null),M.get('team/board.json',true).catch(()=>null),M.get('agents/lab.json',true).catch(()=>null),...TEAM.map(t=>M.get(`agents/${t.id}.json`,true).catch(()=>null))]);
+      const [b,bd,lb,lr,...rest]=await Promise.all([M.get('agent/brief.json',true).catch(()=>null),M.get('team/board.json',true).catch(()=>null),M.get('agents/lab.json',true).catch(()=>null),M.get('team/lab.json',true).catch(()=>null),...TEAM.map(t=>M.get(`agents/${t.id}.json`,true).catch(()=>null))]);
       lastLoad=Date.now();
       if(b&&b.kind==='agent-brief'){ brief=b; window.__mhBrief=b; try{ localStorage.setItem(BK,JSON.stringify(b)); }catch(_){} }
       if(lb&&lb.kind==='agent-status'){ agents.lab=lb; }
+      if(lr&&lr.kind==='ocr-lab'){ labRep=lr; }
       if(bd&&bd.kind==='team-board'){ board=bd; try{ localStorage.setItem(BDK,JSON.stringify(bd)); }catch(_){} }
       TEAM.forEach((t,i)=>{ const a=rest[i]; if(a&&a.kind==='agent-status') agents[t.id]=a; });
       try{ localStorage.setItem(AK,JSON.stringify(agents)); }catch(_){}
@@ -3995,7 +3998,10 @@ window.__nf=normalizeFile;
       ul.appendChild(li); }); box.appendChild(ul); }
     else if(t.id!=='manager') box.appendChild(el('p','hm-hint',`עוד אין דוח מ${t.name}. הריצה הקבועה: ראשון–חמישי ב־${t.run}.`));
     if(a&&a.tip&&a.tip.text) box.appendChild(el('p','hm-hint','💡 '+a.tip.text+(a.tip.source?' ('+a.tip.source+')':'')));
-    const lab=agents.lab; if(t.id==='files'){ const lp=el('p','hm-hint'); lp.textContent=lab&&lab.summary?'🔬 מעבדת זיהוי ('+fmt(new Date(lab.at),{day:'numeric',month:'numeric'})+'): '+lab.summary:'🔬 מעבדת זיהוי: בימי שני וחמישי איתי בודק כמה טוב מהדק מזהה מסמכים ומחפש שיפורים. הדוח הראשון יגיע ביום חמישי.'; box.appendChild(lp); }
+    const lab=agents.lab; if(t.id==='files'){ const lp=el('p','hm-hint'); lp.textContent=lab&&lab.summary?'🔬 מעבדת זיהוי ('+fmt(new Date(lab.at),{day:'numeric',month:'numeric'})+'): '+lab.summary:'🔬 מעבדת זיהוי: איתי בודק כמה טוב מהדק מזהה מסמכים ומחפש שיפורים. כדי לבדוק מסמכים משלך, שלח אותם במייל לעצמך עם המילה "מעבדה" בנושא; התוצאה תופיע כאן למחרת בבוקר.'; box.appendChild(lp);
+      const rec=(labRep&&Array.isArray(labRep.recent))?labRep.recent:[];
+      if(rec.length){ const sets=[...new Set(rec.map(x=>x.set))].slice(0,2); sets.forEach(sn=>{ const rows=rec.filter(x=>x.set===sn), ok=rows.filter(x=>x.ok).length; const d=el('details','lab-set'); d.appendChild(el('summary',null,`המסמכים מ־${String(sn).replace('set-','').split('-').reverse().join('.')}: מהדק זיהה ${ok} מתוך ${rows.length}`));
+        const ul=el('ul'); rows.forEach(x=>{ const li=el('li'); const s=el('span'); s.appendChild(el('b',null,(x.ok?'✓ ':'✗ ')+(x.file||''))); s.appendChild(el('small',null,`נכון: ${x.truth||''} · מהדק: ${x.mahdek||'–'}`+(x.book&&x.book!==x.mahdek?` · עם ספר הספקים: ${x.book}`:'')+(x.why?` · ${x.why}`:''))); li.appendChild(s); li.appendChild(el('i')); ul.appendChild(li); }); d.appendChild(ul); box.appendChild(d); }); } }
     const mine=((board&&board.items)||[]).filter(x=>x.to===t.id&&x.status!=='done');
     if(mine.length){ box.appendChild(el('p','hm-hint','ממתין לו מהצוות:')); const ul=el('ul'); mine.slice(0,5).forEach(x=>{ const li=el('li'); li.appendChild(el('span',null,`${nameOf(x.from)}: ${x.title}`)); li.appendChild(el('i')); ul.appendChild(li); }); box.appendChild(ul); }
     const acts=el('div','of-acts');
