@@ -839,6 +839,15 @@ body[data-tab="convert"]{--sec:var(--sage)} body[data-tab="edit"]{--sec:var(--bl
 .of-today{margin:2px 0 0;padding:0;list-style:none;counter-reset:t;display:flex;flex-direction:column}
 .of-today li{counter-increment:t;display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:start;padding:6px 0;border-top:1px solid var(--rule);font-size:.88rem;line-height:1.45}
 .of-today li::before{content:counter(t);width:20px;height:20px;border-radius:50%;background:var(--soft);color:var(--muted);display:grid;place-items:center;font-size:.72rem;font-weight:600}
+.hm-sur{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start;background:linear-gradient(135deg,var(--soft),var(--paper))}
+.sur-em{font-size:2rem;line-height:1;width:52px;height:52px;border-radius:14px;background:var(--paper);border:1px solid var(--rule);display:grid;place-items:center}
+.hm-sur h3{margin:0 0 4px;font-size:1.02rem}.hm-sur p{margin:0;font-size:.92rem;line-height:1.55}
+.sur-wk{margin:10px 0 0;padding:0;list-style:none;border-top:1px solid var(--rule)}.sur-wk li{padding:5px 0;font-size:.88rem}
+.hm-bo{list-style:none;margin:0;padding:0}
+.hm-bo li{display:grid;grid-template-columns:10px minmax(0,1fr);gap:8px;padding:8px 0;border-top:1px solid var(--rule);font-size:.88rem;line-height:1.45}
+.hm-bo li:first-child{border-top:0}
+.hm-bo i{width:9px;height:9px;border-radius:50%;margin-top:6px;background:#d39b2a}.hm-bo li.done i{background:#3a9266}
+.hm-bo small{display:block;color:var(--muted);font-size:.76rem}
 .of-detail{background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .of-detail h3{margin:0;font-size:1rem;font-weight:600}
 .of-detail p{margin:0;font-size:.9rem;line-height:1.55}
@@ -1239,7 +1248,9 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
       <div class="of-row" id="ofRow"></div>
       <div class="of-detail" id="ofDetail" hidden></div>
     </section>
+    <section class="hm-card hm-sur" id="hmSurBox" hidden><div class="sur-em" id="surEm"></div><div class="sur-b"><h3 id="surT"></h3><p id="surP"></p><div id="surAct"></div><ul class="sur-wk" id="surWk"></ul></div></section>
     <div class="hm-grid">
+      <section class="hm-card" id="hmBoBox"><h3>לוח המשימות של הצוות</h3><p class="hm-hint">מה העובדים מבקשים זה מזה.</p><ul class="hm-bo" id="hmBo"></ul></section>
       <section class="hm-card" id="hmSugBox"><h3>משימות שהצוות מציע</h3><ul class="hm-sug" id="hmSug"></ul></section>
       <section class="hm-card" id="hmDrBox"><h3>טיוטות תשובה</h3><p class="hm-hint">הצוות לא שולח כלום. מעתיקים, עוברים על הנוסח ושולחים מהמייל.</p><div id="hmDrafts"></div></section>
       <section class="hm-card" id="hmHeBox"><h3>בדיקות מערכת</h3><ul class="hm-health" id="hmHealth"></ul></section>
@@ -1330,7 +1341,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 6.4 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 6.5 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -3529,7 +3540,7 @@ window.__nf=normalizeFile;
      Until a worker has run, its desk shows live numbers from the other Mahdek screens. */
   const $=id=>document.getElementById(id);
   const el=(t,c,x)=>{ const e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; };
-  const TZ='Asia/Jerusalem', BK='mahdek.agent.brief.v1', AK='mahdek.agents.v1';
+  const TZ='Asia/Jerusalem', BK='mahdek.agent.brief.v1', AK='mahdek.agents.v1', BDK='mahdek.agent.board.v1';
   const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date());
   const dmy=iso=>{ const [y,m,d]=String(iso).slice(0,10).split('-'); return `${+d}.${+m}`+(y!==today().slice(0,4)?'.'+y:''); };
   const days=iso=>Math.round((Date.parse(iso+'T12:00:00Z')-Date.parse(today()+'T12:00:00Z'))/864e5);
@@ -3732,7 +3743,8 @@ window.__nf=normalizeFile;
     return {sync,size,ctl,click:f=>{ onClick=f; },state:S};
   })();
 
-  let brief=null, agents={};
+  let brief=null, agents={}, board=null;
+  try{ board=JSON.parse(localStorage.getItem(BDK)||'null'); }catch(_){}
   try{ brief=JSON.parse(localStorage.getItem(BK)||'null'); }catch(_){}
   try{ agents=JSON.parse(localStorage.getItem(AK)||'{}')||{}; }catch(_){ agents={}; }
   window.__mhBrief=brief;
@@ -3748,7 +3760,8 @@ window.__nf=normalizeFile;
     const M=window.__mhMail; if(!M||!M.hasToken()||loading) return; if(!force&&Date.now()-lastLoad<120000) return;
     loading=true;
     try{
-      const [b,...rest]=await Promise.all([M.get('agent/brief.json',true).catch(()=>null),...TEAM.map(t=>M.get(`agents/${t.id}.json`,true).catch(()=>null))]);
+      const [b,bd,...rest]=await Promise.all([M.get('agent/brief.json',true).catch(()=>null),M.get('team/board.json',true).catch(()=>null),...TEAM.map(t=>M.get(`agents/${t.id}.json`,true).catch(()=>null))]);
+      if(bd&&bd.kind==='team-board'){ board=bd; try{ localStorage.setItem(BDK,JSON.stringify(bd)); }catch(_){} }
       lastLoad=Date.now();
       if(b&&b.kind==='agent-brief'){ brief=b; window.__mhBrief=b; try{ localStorage.setItem(BK,JSON.stringify(b)); }catch(_){} }
       TEAM.forEach((t,i)=>{ const a=rest[i]; if(a&&a.kind==='agent-status') agents[t.id]=a; });
@@ -3836,12 +3849,31 @@ window.__nf=normalizeFile;
       if(x.mail&&M&&M.mails().some(m=>m.id===x.mail)){ const b=el('button','hm-link','למייל'); b.type='button'; b.onclick=()=>M.open(x.mail); li.appendChild(b); } else li.appendChild(el('i'));
       ul.appendChild(li); }); box.appendChild(ul); }
     else box.appendChild(el('p','hm-hint',`עוד אין דוח מ${t.name}. הריצה הקבועה: ראשון–חמישי ב־${t.run}.`));
+    if(a&&a.tip&&a.tip.text){ const p=el('p','hm-hint','💡 '+a.tip.text+(a.tip.source?' ('+a.tip.source+')':'')); box.appendChild(p); }
+    const mine=((board&&board.items)||[]).filter(x=>x.to===t.id&&x.status!=='done');
+    if(mine.length){ box.appendChild(el('p','hm-hint','ממתין לו מהצוות:')); const ul=el('ul'); mine.slice(0,5).forEach(x=>{ const li=el('li'); li.appendChild(el('span',null,`${nameOf(x.from)}: ${x.title}`)); li.appendChild(el('i')); ul.appendChild(li); }); box.appendChild(ul); }
     const acts=el('div','of-acts');
     if(t.go){ const b=el('button','hm-link',t.id==='mail'?'לתיבת הדואר':'למסך ההידוק'); b.type='button'; b.onclick=()=>{ location.hash=t.go; }; acts.appendChild(b); }
     if(t.id==='reports'){ const b=el('button','hm-link','ליומן המועדים'); b.type='button'; b.onclick=()=>{ const c=$('calBtn'); if(c) c.click(); }; acts.appendChild(b); }
     if(acts.childNodes.length) box.appendChild(acts);
   }
 
+  const nameOf=id=>(TEAM.find(t=>t.id===id)||{name:id}).name;
+  function surprise(){
+    const s=brief&&brief.surprise, w=brief&&brief.weekly, box=$('hmSurBox'); const ok=!!(s&&s.title)||!!(w&&w.lines&&w.lines.length);
+    box.hidden=!ok; if(!ok) return;
+    $('surEm').textContent=(s&&s.emoji)||'📋'; $('surT').textContent=s&&s.title?'הפתעת היום: '+s.title:(w&&w.title)||''; $('surP').textContent=(s&&s.text)||'';
+    const act=$('surAct'); act.textContent=''; const M=window.__mhMail;
+    if(s&&s.mail&&M&&M.mails().some(m=>m.id===s.mail)){ const b=el('button','hm-link','למייל'); b.type='button'; b.style.marginTop='8px'; b.onclick=()=>M.open(s.mail); act.appendChild(b); }
+    const wk=$('surWk'); wk.textContent=''; wk.hidden=!(w&&w.lines&&w.lines.length);
+    if(w&&w.lines){ const h=el('li',null,'📌 '+(w.title||'סיכום השבוע')); h.style.fontWeight='600'; wk.appendChild(h); w.lines.slice(0,5).forEach(x=>wk.appendChild(el('li',null,x))); }
+  }
+  function boardRender(){
+    const ul=$('hmBo'); ul.textContent=''; const list=((board&&board.items)||[]).slice().sort((a,b)=>(a.status==='done')-(b.status==='done')||String(b.day).localeCompare(String(a.day)));
+    $('hmBoBox').hidden=!list.length;
+    list.slice(0,8).forEach(x=>{ const li=el('li',x.status==='done'?'done':''); li.appendChild(el('i')); const d=el('div',null,x.title||''); d.appendChild(el('small',null,`${nameOf(x.from)} ← ${nameOf(x.to)}`.replace(/(.+) ← (.+)/,'$1 ביקש/ה מ$2')+(x.status==='done'&&x.result?' · '+x.result:'')));
+      li.appendChild(d); ul.appendChild(li); });
+  }
   function health(){
     const ul=$('hmHealth'); ul.textContent=''; const items=[]; const M=window.__mhMail;
     const ra=window.__mhRatesAt?new Date(window.__mhRatesAt):null;
@@ -3867,7 +3899,7 @@ window.__nf=normalizeFile;
   }
 
   function drafts(){
-    const box=$('hmDrafts'); box.textContent=''; const list=[...((brief&&brief.drafts)||[])]; const ag=agents.mail; if(ag&&Array.isArray(ag.drafts)) ag.drafts.forEach(x=>{ if(!list.some(y=>y.subject===x.subject&&y.to===x.to)) list.push(x); });
+    const box=$('hmDrafts'); box.textContent=''; const list=[...((brief&&brief.drafts)||[])]; TEAM.forEach(t=>{ const ag=agents[t.id]; if(ag&&Array.isArray(ag.drafts)) ag.drafts.forEach(x=>{ if(!list.some(y=>y.subject===x.subject&&y.to===x.to)) list.push(x); }); });
     $('hmDrBox').hidden=!list.length;
     list.forEach(x=>{ const d=el('details','hm-dr'), s=el('summary',null,x.subject||'טיוטה'); s.appendChild(el('small',null,x.to||'')); d.appendChild(s);
       const pre=el('pre',null,x.body||''); d.appendChild(pre);
@@ -3876,7 +3908,7 @@ window.__nf=normalizeFile;
       d.appendChild(b); box.appendChild(d); });
   }
 
-  function render(){ hello(); health(); plan(); sugs(); drafts(); }
+  function render(){ hello(); health(); plan(); surprise(); boardRender(); sugs(); drafts(); }
   window.addEventListener('mh:mail',()=>{ render(); load(false); });
   window.addEventListener('mh:tasks',()=>plan());
   window.addEventListener('hashchange',()=>{ if(!location.hash||location.hash==='#home'){ render(); load(false); } });
