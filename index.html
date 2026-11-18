@@ -16,7 +16,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "מהדק", "url": "https://fouadrhail.github.io/mahdek/", "applicationCategory": "BusinessApplication", "operatingSystem": "Windows, macOS, Android, iOS", "inLanguage": "he", "description": "מהדק הוא כלי חינמי בעברית לאיחוד קבצי PDF ותמונות לקובץ אחד להדפסה, פיצול תלושי שכר לקובץ לכל עובד, זיהוי ספק וסוג חשבונית, והמרת Word, Excel ותמונות ל־PDF. הקבצים לא עולים לשום שרת.", "image": "https://fouadrhail.github.io/mahdek/og-image.png", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "ILS"}, "featureList": ["איחוד קבצי PDF ותמונות לקובץ אחד להדפסה", "פיצול PDF לקובץ לכל עמוד", "פיצול תלושי שכר לפי שם העובד", "זיהוי ספק וסוג חשבונית", "המרת Word ו־Excel ל־PDF", "המרת PDF לתמונות"]}</script>
-<meta name="theme-color" content="#2f4fe0">
+<meta name="theme-color" content="#141b2b">
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="manifest" href="./manifest.webmanifest">
@@ -51,58 +51,60 @@ if('serviceWorker' in navigator){ window.addEventListener('load',function(){
 /* Layout: print-shop desk. Wordmark + CMYK strip, a drop tray with crop marks,
    a grid of A4 sheet previews in print order, and a sticky output bar. */
 :root{
-  --desk:#f6f3ee; --paper:#ffffff; --ink:#1d2033; --muted:#5f6478; --rule:#e2dfe8;
-  --cobalt:#2f4fe0; --cobalt-ink:#ffffff; --cobalt-soft:#e6ebfd;
+  --desk:#f2f3f6; --paper:#ffffff; --ink:#1a2030; --muted:#5a6276; --rule:#dce0e8;
+  --cobalt:#2b4a9b; --cobalt-ink:#ffffff; --cobalt-soft:#e5eaf5;
   --cyan:#00a3d9; --magenta:#d81b72; --yellow:#f2c200;
   --warn:#9a5600; --warn-soft:#fff1dc; --bad:#b3261e; --shadow:rgba(18,24,43,.12);
-  --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220' fill='none' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' opacity='0.16'%3E %3Cpath d='M20 40v-9h26v9' stroke='%232f4fe0' transform='rotate(-18 33 35)'/%3E %3Cpath d='M150 30c0-6 9-6 9 0v26c0 9-14 9-14 0V34' stroke='%23d81b72' transform='rotate(24 152 44)'/%3E %3Cpath d='M120 150v-9h26v9' stroke='%2300a3d9' transform='rotate(12 133 145)'/%3E %3Cpath d='M40 150c0-6 9-6 9 0v26c0 9-14 9-14 0v-22' stroke='%23f2a900' transform='rotate(-30 42 166)'/%3E %3Cpath d='M190 120v-9h26v9' stroke='%23d81b72' transform='rotate(-40 203 115)'/%3E %3Ccircle cx='95' cy='95' r='2.5' fill='%2300a3d9' stroke='none'/%3E%3Ccircle cx='200' cy='200' r='2' fill='%232f4fe0' stroke='none'/%3E%3Ccircle cx='70' cy='210' r='2' fill='%23f2a900' stroke='none'/%3E %3C/svg%3E"); --wash-a:#fff6e9; --wash-b:#eef4ff; --wash-c:#fbeef6;
+  --bg:#141b2b; --bg-2:#1d2740; --grid:rgba(255,255,255,.035); --on-bg:#e8ecf5; --on-bg-muted:#98a3bf; --side:rgba(255,255,255,.055); --side-rule:rgba(255,255,255,.11);
   --font-display:"Rubik",system-ui,"Segoe UI",Arial,sans-serif;
   --font-body:"Rubik",system-ui,"Segoe UI",Arial,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --desk:#14161f; --paper:#1d2030; --ink:#eceef6; --muted:#a3a8bd; --rule:#30354a;
-  --cobalt:#93a6ff; --cobalt-ink:#11142a; --cobalt-soft:#232a4a;
+  --desk:#141a27; --paper:#1b2233; --ink:#e6e9f2; --muted:#a0a7bb; --rule:#2b3349;
+  --cobalt:#8fa6ec; --cobalt-ink:#0f1424; --cobalt-soft:#222c46;
   --warn:#f3b562; --warn-soft:#2f2414; --bad:#ff8a80; --shadow:rgba(0,0,0,.45);
-  --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220' fill='none' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' opacity='0.16'%3E %3Cpath d='M20 40v-9h26v9' stroke='%232f4fe0' transform='rotate(-18 33 35)'/%3E %3Cpath d='M150 30c0-6 9-6 9 0v26c0 9-14 9-14 0V34' stroke='%23d81b72' transform='rotate(24 152 44)'/%3E %3Cpath d='M120 150v-9h26v9' stroke='%2300a3d9' transform='rotate(12 133 145)'/%3E %3Cpath d='M40 150c0-6 9-6 9 0v26c0 9-14 9-14 0v-22' stroke='%23f2a900' transform='rotate(-30 42 166)'/%3E %3Cpath d='M190 120v-9h26v9' stroke='%23d81b72' transform='rotate(-40 203 115)'/%3E %3Ccircle cx='95' cy='95' r='2.5' fill='%2300a3d9' stroke='none'/%3E%3Ccircle cx='200' cy='200' r='2' fill='%232f4fe0' stroke='none'/%3E%3Ccircle cx='70' cy='210' r='2' fill='%23f2a900' stroke='none'/%3E %3C/svg%3E"); --wash-a:#1c1a22; --wash-b:#151a26; --wash-c:#1f1722; color-scheme:dark}}
+  --bg:#0a0e16; --bg-2:#111a2b; --grid:rgba(255,255,255,.03); --on-bg:#e3e7f1; --on-bg-muted:#8d97b2; --side:rgba(255,255,255,.045); --side-rule:rgba(255,255,255,.09); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --desk:#14161f; --paper:#1d2030; --ink:#eceef6; --muted:#a3a8bd; --rule:#30354a;
-  --cobalt:#93a6ff; --cobalt-ink:#11142a; --cobalt-soft:#232a4a;
+  --desk:#141a27; --paper:#1b2233; --ink:#e6e9f2; --muted:#a0a7bb; --rule:#2b3349;
+  --cobalt:#8fa6ec; --cobalt-ink:#0f1424; --cobalt-soft:#222c46;
   --warn:#f3b562; --warn-soft:#2f2414; --bad:#ff8a80; --shadow:rgba(0,0,0,.45);
-  --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220' fill='none' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' opacity='0.16'%3E %3Cpath d='M20 40v-9h26v9' stroke='%232f4fe0' transform='rotate(-18 33 35)'/%3E %3Cpath d='M150 30c0-6 9-6 9 0v26c0 9-14 9-14 0V34' stroke='%23d81b72' transform='rotate(24 152 44)'/%3E %3Cpath d='M120 150v-9h26v9' stroke='%2300a3d9' transform='rotate(12 133 145)'/%3E %3Cpath d='M40 150c0-6 9-6 9 0v26c0 9-14 9-14 0v-22' stroke='%23f2a900' transform='rotate(-30 42 166)'/%3E %3Cpath d='M190 120v-9h26v9' stroke='%23d81b72' transform='rotate(-40 203 115)'/%3E %3Ccircle cx='95' cy='95' r='2.5' fill='%2300a3d9' stroke='none'/%3E%3Ccircle cx='200' cy='200' r='2' fill='%232f4fe0' stroke='none'/%3E%3Ccircle cx='70' cy='210' r='2' fill='%23f2a900' stroke='none'/%3E %3C/svg%3E"); --wash-a:#1c1a22; --wash-b:#151a26; --wash-c:#1f1722; color-scheme:dark}
+  --bg:#0a0e16; --bg-2:#111a2b; --grid:rgba(255,255,255,.03); --on-bg:#e3e7f1; --on-bg-muted:#8d97b2; --side:rgba(255,255,255,.045); --side-rule:rgba(255,255,255,.09); color-scheme:dark}
 
 *{box-sizing:border-box}
 /* Each service has its own colour */
-body[data-tab="convert"]{--cobalt:#0a8f9c;--cobalt-soft:#e2f5f6}
-body[data-tab="edit"]{--cobalt:#c2185b;--cobalt-soft:#fce8f1}
-body[data-tab="sign"]{--cobalt:#c96a10;--cobalt-soft:#fdf0e1}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) body[data-tab="convert"]{--cobalt:#5fd0da;--cobalt-ink:#06262a;--cobalt-soft:#16323a}
-:root:not([data-theme="light"]) body[data-tab="edit"]{--cobalt:#ff86b6;--cobalt-ink:#2d0716;--cobalt-soft:#3a1a2a}
-:root:not([data-theme="light"]) body[data-tab="sign"]{--cobalt:#ffb466;--cobalt-ink:#2e1702;--cobalt-soft:#3a2816}}
-:root[data-theme="dark"] body[data-tab="convert"]{--cobalt:#5fd0da;--cobalt-ink:#06262a;--cobalt-soft:#16323a}
-:root[data-theme="dark"] body[data-tab="edit"]{--cobalt:#ff86b6;--cobalt-ink:#2d0716;--cobalt-soft:#3a1a2a}
-:root[data-theme="dark"] body[data-tab="sign"]{--cobalt:#ffb466;--cobalt-ink:#2e1702;--cobalt-soft:#3a2816}
+body[data-tab="convert"]{--cobalt:#1b6e75;--cobalt-soft:#e0eff0}
+body[data-tab="edit"]{--cobalt:#8f2a52;--cobalt-soft:#f4e4eb}
+body[data-tab="sign"]{--cobalt:#9c5814;--cobalt-soft:#f5ebdf}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) body[data-tab="convert"]{--cobalt:#6cc3ca;--cobalt-ink:#06262a;--cobalt-soft:#16313a}
+:root:not([data-theme="light"]) body[data-tab="edit"]{--cobalt:#e08aab;--cobalt-ink:#2d0716;--cobalt-soft:#38202c}
+:root:not([data-theme="light"]) body[data-tab="sign"]{--cobalt:#dda266;--cobalt-ink:#2e1702;--cobalt-soft:#372a1c}}
+:root[data-theme="dark"] body[data-tab="convert"]{--cobalt:#6cc3ca;--cobalt-ink:#06262a;--cobalt-soft:#16313a}
+:root[data-theme="dark"] body[data-tab="edit"]{--cobalt:#e08aab;--cobalt-ink:#2d0716;--cobalt-soft:#38202c}
+:root[data-theme="dark"] body[data-tab="sign"]{--cobalt:#dda266;--cobalt-ink:#2e1702;--cobalt-soft:#372a1c}
 
 [hidden]{display:none!important}
 body{background:var(--desk);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.55;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 0;
-  background-image:var(--pattern),linear-gradient(165deg,var(--wash-a) 0%,var(--wash-b) 55%,var(--wash-c) 100%);
-  background-size:220px 220px,auto;background-attachment:fixed;min-height:100%}
-.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+  background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),linear-gradient(180deg,var(--bg-2),var(--bg) 640px);
+  background-size:28px 28px,28px 28px,auto;background-attachment:fixed;min-height:100%}
+.wrap{max-width:1380px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:20px;align-items:start}
+.work{background:var(--desk);border-radius:14px;padding:18px 20px 10px;display:flex;flex-direction:column;gap:22px;min-width:0;box-shadow:0 24px 60px -34px rgba(0,0,0,.7)}
 
 /* Masthead */
 .mast{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:14px}
 .brand svg{width:54px;height:54px;flex:none}
-.brand h1{color:var(--ink);font-family:var(--font-display);font-weight:700;font-size:clamp(2.4rem,7vw,3.4rem);line-height:1;margin:0;letter-spacing:-.01em}
-.brand h1 b{color:var(--magenta);font-weight:700}
-.tag{margin:6px 0 0;color:var(--muted);max-width:44ch;text-wrap:balance}
-.cmyk{display:flex;height:5px;border-radius:99px;overflow:hidden;width:100%;gap:4px}
-.cmyk i{flex:1}.cmyk i:nth-child(1){background:var(--cyan)}.cmyk i:nth-child(2){background:var(--magenta)}.cmyk i:nth-child(3){background:var(--yellow)}.cmyk i:nth-child(4){background:var(--ink)}
+.brand h1{color:var(--on-bg);font-family:var(--font-display);font-weight:600;font-size:clamp(2.2rem,6vw,3rem);line-height:1;margin:0;letter-spacing:-.01em}
+.brand h1 b{color:inherit;font-weight:inherit}
+.tag{margin:6px 0 0;color:var(--on-bg-muted);max-width:52ch;text-wrap:balance}
+.cmyk{display:flex;height:3px;border-radius:2px;overflow:hidden;width:100%;gap:3px;opacity:.85}
+.cmyk i{flex:1}.cmyk i:nth-child(1){background:var(--cyan)}.cmyk i:nth-child(2){background:var(--magenta)}.cmyk i:nth-child(3){background:var(--yellow)}.cmyk i:nth-child(4){background:var(--on-bg)}
 .specs{display:flex;gap:6px;flex-wrap:wrap}
-.spec{font-size:.75rem;padding:4px 10px;border-radius:99px;border:1px solid var(--rule);background:var(--paper);color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.spec{font-size:.75rem;padding:4px 10px;border-radius:6px;border:1px solid var(--side-rule);background:transparent;color:var(--on-bg-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
 
 /* Drop tray with printer's crop marks */
-.tray{position:relative;background:linear-gradient(180deg,var(--paper),var(--cobalt-soft));border-radius:16px;box-shadow:0 10px 26px -18px var(--cobalt);padding:38px 20px;text-align:center;cursor:pointer;
+.tray{position:relative;background:var(--paper);border-radius:12px;padding:38px 20px;text-align:center;cursor:pointer;
   border:1.5px dashed var(--rule);transition:border-color .15s,background .15s}
 .tray::before,.tray::after,.tray .cm::before,.tray .cm::after{content:"";position:absolute;width:22px;height:22px;border-color:var(--cobalt);border-style:solid;opacity:.55;transition:all .15s}
 .tray::before{top:10px;right:10px;border-width:2px 2px 0 0}
@@ -115,7 +117,7 @@ body{background:var(--desk);color:var(--ink);font-family:var(--font-body);font-s
 .tray:focus-visible{outline:3px solid var(--cobalt);outline-offset:4px}
 .tray strong{display:block;font-family:var(--font-display);font-weight:600;font-size:1.4rem;margin-bottom:4px}
 .tray span{color:var(--muted);font-size:.9rem}
-.tray .plus{display:inline-grid;place-items:center;width:48px;height:48px;border-radius:14px;background:var(--cobalt);color:var(--cobalt-ink);font-size:1.5rem;margin-bottom:10px;font-weight:700;transform:rotate(-4deg)}
+.tray .plus{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:10px;background:var(--cobalt);color:var(--cobalt-ink);font-size:1.4rem;margin-bottom:10px;font-weight:600}
 
 /* Section head */
 .head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
@@ -169,7 +171,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 /* Sticky output bar */
 .bar{position:sticky;bottom:0;z-index:20;margin-top:6px;padding-block:14px calc(14px + env(safe-area-inset-bottom,0px));
   background:transparent}
-.bar-in{background:var(--paper);border-radius:16px;border-top:3px solid var(--cobalt)!important;box-shadow:0 10px 30px -10px var(--shadow),0 0 0 1px var(--rule);padding:14px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.bar-in{background:var(--paper);border-radius:12px;border-top:3px solid var(--cobalt)!important;box-shadow:0 10px 30px -10px var(--shadow),0 0 0 1px var(--rule);padding:14px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .sum{flex:1 1 180px;min-width:0}
 .sum b{font-family:var(--font-display);font-weight:600;font-size:1.15rem;display:block;font-variant-numeric:tabular-nums}
 .sum small{color:var(--muted)}
@@ -184,19 +186,19 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .go2:hover:not(:disabled){background:var(--desk)}
 button:disabled.go2{opacity:.45;cursor:default}
 .progress{flex-basis:100%;height:4px;background:var(--rule);border-radius:99px;overflow:hidden}
-.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--cobalt),var(--magenta));transition:width .2s}
+.progress i{display:block;height:100%;width:0;background:var(--cobalt);transition:width .2s}
 .status{flex-basis:100%;font-size:.9rem;min-height:1.4em}
 .status.err{color:var(--bad)}
 .status.ok{color:var(--cobalt)}
 
 /* Tabs */
 .tabs{display:flex;flex-wrap:wrap;gap:6px;max-width:100%}
-.tabs button{border:1px solid var(--rule);border-radius:99px;padding:8px 16px;background:var(--paper);color:var(--ink);font-weight:500;display:flex;align-items:center;gap:8px}
-.tabs button::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--tc);flex:none}
+.tabs button{border:1px solid var(--rule);border-radius:8px;padding:8px 15px;background:var(--paper);color:var(--ink);font-weight:500;display:flex;align-items:center;gap:8px}
+.tabs button::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--tc);flex:none}
 .tabs button[aria-selected="true"]{background:var(--tc);border-color:var(--tc);color:#fff;font-weight:600}
 .tabs button[aria-selected="true"]::before{background:#fff}
 .tabs button:hover{border-color:var(--tc)}
-#t-merge{--tc:#2f4fe0}#t-convert{--tc:#0a8f9c}#t-edit{--tc:#c2185b}#t-sign{--tc:#c96a10}
+#t-merge{--tc:#2b4a9b}#t-convert{--tc:#1b6e75}#t-edit{--tc:#8f2a52}#t-sign{--tc:#9c5814}
 .panel{display:flex;flex-direction:column;gap:22px}
 .soon{background:var(--paper);border-radius:8px;border:1px solid var(--rule);padding:28px 24px;max-width:640px}
 .soon h2{font-family:var(--font-display);font-weight:600;font-size:1.35rem;margin:10px 0 8px;text-wrap:balance}
@@ -227,6 +229,34 @@ button:disabled.go2{opacity:.45;cursor:default}
 .pill{display:inline-block;font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--cobalt-soft);color:var(--cobalt);margin:2px 0 2px 4px}
 .matrix p{margin:10px 0 0;color:var(--muted);font-size:.85rem}
 
+
+/* Side column: live clock and figures for the office */
+.side{position:sticky;top:16px;display:flex;flex-direction:column;gap:12px;color:var(--on-bg);min-width:0}
+.side .card{background:var(--side);border:1px solid var(--side-rule);border-radius:12px;padding:14px 16px}
+.clock .time{font-size:2.5rem;font-weight:500;line-height:1.05;font-variant-numeric:tabular-nums;letter-spacing:.02em;direction:ltr;text-align:right}
+.clock .time small{font-size:.72em;color:var(--on-bg-muted);margin-inline-start:2px}
+.clock .date{margin-top:6px;font-size:.92rem}
+.clock .hdate{color:var(--on-bg-muted);font-size:.85rem}
+.side h3{margin:0 0 8px;font-size:.78rem;font-weight:500;letter-spacing:.06em;color:var(--on-bg-muted)}
+.facts{margin:0;display:grid;gap:0}
+.facts > div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:8px 0;border-top:1px solid var(--side-rule)}
+.facts > div:first-child{border-top:0;padding-top:0}
+.facts dt{font-size:.88rem;color:var(--on-bg-muted)}
+.facts dd{margin:0;font-weight:600;font-variant-numeric:tabular-nums;direction:ltr;text-align:left}
+.facts .note{grid-column:1 / -1;font-size:.75rem;color:var(--on-bg-muted);font-weight:400;direction:rtl;text-align:right}
+.dlist{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.dlist li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 10px;padding:7px 0;border-top:1px solid var(--side-rule);font-size:.86rem}
+.dlist li:first-child{border-top:0;padding-top:0}
+.dlist .when{font-variant-numeric:tabular-nums;color:var(--on-bg-muted);font-size:.78rem}
+.dlist .left{align-self:center;font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:5px;background:var(--side-rule);white-space:nowrap}
+.dlist .soon .left{background:#c98a2b;color:#1b1204}
+.dlist .today .left{background:#d0574a;color:#fff}
+.side .src{margin:0;font-size:.72rem;color:var(--on-bg-muted)}
+@media (max-width:1020px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .side{position:static;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .side .src{grid-column:1 / -1}
+}
 /* Off-screen paper used when turning Word/Excel/text into PDF */
 .render-doc{background:#fff;color:#111;font-family:"Heebo",Arial,sans-serif;font-size:12px;line-height:1.5}
 .render-doc h1,.render-doc h2,.render-doc h3{line-height:1.25;margin:.8em 0 .4em}
@@ -318,8 +348,8 @@ button:disabled.go2{opacity:.45;cursor:default}
 .about{margin-top:28px;display:flex;flex-direction:column;gap:14px}
 .about h2{font-family:var(--font-display);font-weight:600;font-size:1.35rem;margin:0}
 .about-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
-.about-grid>div{background:var(--paper);border:1px solid var(--rule);border-radius:16px;padding:16px 18px 16px;border-top:5px solid var(--c,var(--cobalt))}
-.about-grid>div:nth-child(6n+1){--c:#2f4fe0}.about-grid>div:nth-child(6n+2){--c:#d81b72}.about-grid>div:nth-child(6n+3){--c:#0a8f9c}.about-grid>div:nth-child(6n+4){--c:#f2a900}.about-grid>div:nth-child(6n+5){--c:#c2185b}.about-grid>div:nth-child(6n+6){--c:#2e9b5a}
+.about-grid>div{background:var(--paper);border:1px solid var(--rule);border-radius:16px;padding:16px 18px 16px;border-top:3px solid var(--c,var(--cobalt))}
+.about-grid>div:nth-child(6n+1){--c:#2b4a9b}.about-grid>div:nth-child(6n+2){--c:#8f2a52}.about-grid>div:nth-child(6n+3){--c:#1b6e75}.about-grid>div:nth-child(6n+4){--c:#9c5814}.about-grid>div:nth-child(6n+5){--c:#5a4a9b}.about-grid>div:nth-child(6n+6){--c:#2f6b46}
 .about h3{font-size:1rem;font-weight:600;margin:0 0 4px}
 .about p{margin:0;color:var(--muted);font-size:.9rem;max-width:65ch}
 .go.alt{background:var(--paper);color:var(--bad);border-color:var(--bad)}
@@ -333,7 +363,7 @@ button:disabled.go2{opacity:.45;cursor:default}
 @media (max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.acts{opacity:1}
   .rows li{grid-template-columns:48px minmax(0,1fr) auto;row-gap:8px}.rows .arrow{display:none}
   .rows select{grid-column:2}.rows .rm{grid-column:3}}
-.ver{text-align:center;color:var(--muted);font-size:.78rem;padding-block:6px 18px;font-variant-numeric:tabular-nums}
+.ver{text-align:center;color:var(--on-bg-muted);font-size:.78rem;padding-block:6px 18px;font-variant-numeric:tabular-nums}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -353,6 +383,8 @@ button:disabled.go2{opacity:.45;cursor:default}
     <div class="cmyk" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   </header>
 
+  <div class="layout">
+  <main class="work">
   <div class="tabs" role="tablist" aria-label="שירותים">
     <button type="button" role="tab" id="t-merge" aria-controls="p-merge" aria-selected="true">הידוק לקובץ אחד</button>
     <button type="button" role="tab" id="t-convert" aria-controls="p-convert" aria-selected="false">המרת קבצים</button>
@@ -568,11 +600,23 @@ button:disabled.go2{opacity:.45;cursor:default}
       <div><h3>פרטי ובטוח</h3><p>כל העבודה נעשית בדפדפן, על המחשב שלכם. הקבצים לא עולים לשום שרת, ואף אחד אחר לא רואה אותם. אחרי ההתקנה מהדק עובד גם בלי אינטרנט.</p></div>
     </div>
   </section>
+  </main>
+  <aside class="side" aria-label="שעה ונתונים">
+    <div class="card clock">
+      <div class="time" id="clk" aria-live="off">--:--:--</div>
+      <div class="date" id="clkDate"></div>
+      <div class="hdate" id="clkHeb"></div>
+    </div>
+    <div class="card"><h3>ריבית ושערים</h3><dl class="facts" id="facts"></dl></div>
+    <div class="card"><h3>מועדי דיווח קרובים</h3><ul class="dlist" id="dlist"></ul></div>
+    <p class="src" id="factsSrc">מקורות: בנק ישראל, הלשכה המרכזית לסטטיסטיקה, רשות המסים.</p>
+  </aside>
+  </div>
   <div class="updbar" id="updbar" hidden role="status">
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver">מהדק · גרסה 3.7 · עודכן 18.11.2026</footer>
+  <footer class="ver">מהדק · גרסה 4.0 · עודכן 18.11.2026</footer>
 </div>
 
 <script>
@@ -2052,5 +2096,92 @@ window.__nf=normalizeFile;
 })();
 </script>
 
+
+<script>
+/* Side column: Israel time to the second, Bank of Israel interest, representative rates, CPI and tax deadlines.
+   Figures come from data/rates.json, which a daily job on GitHub refreshes from the Bank of Israel and the CBS. */
+(function(){
+  const $=id=>document.getElementById(id), TZ='Asia/Jerusalem';
+  const fTime=new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  const fDay=new Intl.DateTimeFormat('he-IL',{timeZone:TZ,weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  let fHeb=null; try{ fHeb=new Intl.DateTimeFormat('he-IL-u-ca-hebrew',{timeZone:TZ,day:'numeric',month:'long',year:'numeric'}); }catch(_){}
+  const isoToday=()=>new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+  const dmy=iso=>{ const [y,m,d]=iso.slice(0,10).split('-'); return `${+d}.${+m}.${y}`; };
+  const days=iso=>Math.round((Date.parse(iso.slice(0,10)+'T00:00:00Z')-Date.parse(isoToday()+'T00:00:00Z'))/864e5);
+  const inDays=n=>n===0?'היום':n===1?'מחר':n===2?'מחרתיים':`בעוד ${n} ימים`;
+  /* Hebrew date in letters: ח׳ בכסלו תשפ״ז */
+  function gem(n){
+    const L=[[400,'ת'],[300,'ש'],[200,'ר'],[100,'ק'],[90,'צ'],[80,'פ'],[70,'ע'],[60,'ס'],[50,'נ'],[40,'מ'],[30,'ל'],[20,'כ'],[10,'י'],[9,'ט'],[8,'ח'],[7,'ז'],[6,'ו'],[5,'ה'],[4,'ד'],[3,'ג'],[2,'ב'],[1,'א']];
+    let out=''; n%=1000;
+    while(n>=400){out+='ת';n-=400;}
+    if(n===15||n===16){ out+=n===15?'טו':'טז'; n=0; }
+    for(const [v,c] of L){ if(v>=400) continue; while(n>=v){ if((n===15||n===16)){ out+=n===15?'טו':'טז'; n=0; break; } out+=c; n-=v; } }
+    return out.length>1?out.slice(0,-1)+'״'+out.slice(-1):out+'׳';
+  }
+  function hebDate(d){
+    if(!fHeb) return '';
+    try{ const p=fHeb.formatToParts(d); const day=+p.find(x=>x.type==='day').value, year=+p.find(x=>x.type==='year').value;
+      const month=p.find(x=>x.type==='month').value; return `${gem(day)} ${/^ב/.test(month)?month:'ב'+month} ${gem(year)}`; }
+    catch(_){ return fHeb.format(d); }
+  }
+  let lastDay='';
+  function tick(){
+    const now=new Date(), t=fTime.format(now).split(':');
+    $('clk').innerHTML=`${t[0]}:${t[1]}<small>:${t[2]}</small>`;
+    const day=isoToday();
+    if(day!==lastDay){ lastDay=day; $('clkDate').textContent=fDay.format(now); $('clkHeb').textContent=hebDate(now); if(DATA) render(DATA); }
+    setTimeout(tick,1000-(Date.now()%1000)+5);
+  }
+  /* Statutory dates when the published list runs out: VAT and income-tax advances on the 15th, withholding on the 16th,
+     detailed VAT report on the 23rd, moved past Friday and Saturday. Holidays can move them further. */
+  function statutory(fromIso,count){
+    const out=[], HM=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+    let [y,m]=fromIso.split('-').map(Number);
+    for(let k=0;k<4&&out.length<count;k++){
+      const prev=HM[(m+10)%12];
+      for(const [d,what] of [[15,'מע"מ ומקדמות מס הכנסה'],[16,'ניכויים'],[23,'דוח מע"מ מפורט (874)']]){
+        const dt=new Date(Date.UTC(y,m-1,d)); while(dt.getUTCDay()===5||dt.getUTCDay()===6) dt.setUTCDate(dt.getUTCDate()+1);
+        const iso=dt.toISOString().slice(0,10); if(iso>=fromIso) out.push({date:iso,what:`${what} · ${prev}`,est:true});
+      }
+      m++; if(m>12){m=1;y++;}
+    }
+    return out;
+  }
+  function row(dt,dd,note){ const d=document.createElement('div'); const a=document.createElement('dt'); a.textContent=dt; const b=document.createElement('dd'); b.textContent=dd; d.append(a,b);
+    if(note){ const n=document.createElement('dd'); n.className='note'; n.textContent=note; d.appendChild(n); } return d; }
+  const pct=v=>(+v).toLocaleString('he-IL',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+  let DATA=null;
+  function render(D){
+    const f=$('facts'); f.textContent='';
+    if(D.boi&&isFinite(D.boi.rate)){
+      f.appendChild(row('ריבית בנק ישראל',pct(D.boi.rate),D.boi.since?`בתוקף מ־${dmy(D.boi.since)}`:''));
+      f.appendChild(row('ריבית פריים',pct(D.boi.rate+1.5),'ריבית בנק ישראל + 1.5%'));
+      if(D.boi.next){ const n=days(D.boi.next); if(n>=0) f.appendChild(row('החלטת הריבית הבאה',dmy(D.boi.next),n===0?'היום ב־16:00':inDays(n))); }
+    }
+    const fx=D.fx||{};
+    for(const [k,name] of [['USD','דולר יציג'],['EUR','אירו יציג']]) if(fx[k]&&isFinite(fx[k].rate)) f.appendChild(row(name,'₪'+(+fx[k].rate).toFixed(3),fx[k].date?`לפי ${dmy(fx[k].date)}`:''));
+    if(D.cpi&&isFinite(D.cpi.change)){
+      const [y,m]=D.cpi.month.split('-'); const HM=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+      f.appendChild(row(`מדד ${HM[+m-1]} ${y}`,(D.cpi.change>0?'+':'')+(+D.cpi.change).toFixed(1)+'%',D.cpi.yearly!=null?`ב־12 החודשים האחרונים: ${(+D.cpi.yearly).toFixed(1)}%`:'מדד המחירים לצרכן'));
+    }
+    const today=isoToday();
+    let list=(D.deadlines||[]).filter(x=>x.date>=today);
+    if(list.length<4){ const last=list.length?list[list.length-1].date:today; list=list.concat(statutory(last>today?last.slice(0,8)+'01':today.slice(0,8)+'01',8).filter(x=>x.date>=today&&!list.some(y=>y.date===x.date&&y.what===x.what)&&(!list.length||x.date>list[list.length-1].date))); }
+    const ul=$('dlist'); ul.textContent='';
+    list.slice(0,4).forEach(x=>{ const n=days(x.date); const li=document.createElement('li'); if(n===0) li.className='today'; else if(n<=3) li.className='soon';
+      const a=document.createElement('div'); const w=document.createElement('div'); w.textContent=x.what; const d=document.createElement('div'); d.className='when'; d.textContent=dmy(x.date)+(x.est?' · לפי המועד בחוק':''); a.append(w,d);
+      const b=document.createElement('span'); b.className='left'; b.textContent=inDays(n); li.append(a,b); ul.appendChild(li); });
+    if(D.updated){ const u=new Date(D.updated); if(!isNaN(u)) $('factsSrc').textContent=`מקורות: בנק ישראל, הלשכה המרכזית לסטטיסטיקה, רשות המסים · עודכן ${new Intl.DateTimeFormat('he-IL',{timeZone:TZ,day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'}).format(u)}`; }
+  }
+  const FALLBACK={"updated": "2026-11-18T10:00:00+02:00", "boi": {"rate": 3.25, "since": "2026-10-21", "next": "2026-11-23", "auto": false}, "fx": {"USD": null, "EUR": null}, "cpi": null, "deadlines": [{"date": "2026-11-23", "what": "דוח מע\"מ מפורט (874) · אוקטובר"}, {"date": "2026-12-15", "what": "מע\"מ ומקדמות מס הכנסה · נובמבר"}, {"date": "2026-12-16", "what": "ניכויים · נובמבר"}, {"date": "2026-12-23", "what": "דוח מע\"מ מפורט (874) · נובמבר"}, {"date": "2027-01-18", "what": "מע\"מ ומקדמות מס הכנסה · דצמבר"}, {"date": "2027-01-18", "what": "ניכויים · דצמבר"}, {"date": "2027-01-26", "what": "דוח מע\"מ מפורט (874) · דצמבר"}]};
+  async function load(){
+    for(const u of ['https://raw.githubusercontent.com/fouadrhail/mahdek/main/data/rates.json','./data/rates.json']){
+      try{ const r=await fetch(u,{cache:'no-store'}); if(r.ok){ const j=await r.json(); if(j&&j.boi){ DATA=j; render(j); return; } } }catch(_){}
+    }
+    if(!DATA){ DATA=FALLBACK; render(DATA); }
+  }
+  DATA=FALLBACK; render(DATA); tick(); load(); setInterval(load,60*60*1000);
+})();
+</script>
 </body>
 </html>
