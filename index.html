@@ -884,40 +884,61 @@ body[data-tab="convert"]{--sec:var(--sage)} body[data-tab="edit"]{--sec:var(--bl
 @media (max-width:380px){.of-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* lab */
-#s-lab{display:flex;flex-direction:column;gap:14px;max-width:880px}
+#s-lab{display:flex;flex-direction:column;gap:12px;max-width:860px}
 #s-lab[hidden]{display:none}
-.lb-top h2{margin:0;font-weight:500;font-size:1.45rem;color:var(--ink)}
-.lb-sub{margin:4px 0 0;color:var(--muted);font-size:.92rem;line-height:1.55}
+.lb-top h2{margin:0;font-weight:500;font-size:1.4rem;color:var(--ink)}
+.lb-sub{margin:2px 0 0;color:var(--muted);font-size:.9rem;line-height:1.5}
 .lb-status{margin:0;padding:10px 14px;border-radius:12px;background:var(--soft);font-size:.9rem;line-height:1.5}
 .lb-status.bad{color:var(--ink);border:1px solid var(--rule)}
 .lb-steps{margin:6px 0 0;padding-inline-start:20px;line-height:1.7}
-.lb-steps a{color:var(--navy,var(--ink));font-weight:600}
-.lb-card{display:flex;flex-direction:column;gap:8px}
+.lb-steps a{font-weight:600;color:var(--ink)}
+.lb-card{display:flex;flex-direction:column;gap:10px}
 .lb-card h3{margin:0;font-size:1rem;font-weight:600}
-.lb-drop{display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px dashed var(--rule);border-radius:12px;padding:18px;color:var(--muted);cursor:pointer;font-size:.9rem;text-align:center}
+.lb-need{border-color:#d39b2a}
+.lb-who{display:flex;gap:6px;flex-wrap:wrap}
+.lb-who button{font:inherit;display:flex;align-items:center;gap:7px;padding:5px 12px 5px 8px;border:1px solid var(--rule);border-radius:999px;background:var(--paper);color:var(--ink);cursor:pointer;font-size:.88rem}
+.lb-who button i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-style:normal;font-size:.74rem;font-weight:600}
+.lb-who button[aria-selected="true"]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink) inset}
+.lb-who button b{font-weight:400;font-size:.72rem;color:var(--muted)}
+.lb-corner{display:flex;flex-direction:column;gap:8px}
+.lb-corner .role{margin:0;font-size:.84rem;color:var(--muted)}
+.lb-corner textarea,.lb-teach input,.lb-teach select,.lb-teach textarea,.lb-in input,.lb-in select{font:inherit;font-size:.88rem;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:7px 9px;min-width:0;width:100%;box-sizing:border-box}
+.lb-corner textarea,.lb-teach textarea{resize:vertical;line-height:1.5}
+.lb-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.lb-list,.lb-files{list-style:none;margin:0;padding:0}
+.lb-list li{padding:8px 0;border-top:1px solid var(--rule);font-size:.88rem;line-height:1.5}
+.lb-list li:first-child{border-top:0}
+.lb-list small{display:block;color:var(--muted);font-size:.78rem}
+.lb-list .ans{display:block;margin-top:4px;padding:6px 10px;border-radius:8px;background:var(--soft);font-size:.86rem;white-space:pre-wrap}
+.lb-list .rowb{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.lb-drop{display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px dashed var(--rule);border-radius:12px;padding:14px;color:var(--muted);cursor:pointer;font-size:.88rem;text-align:center}
 .lb-drop:hover,.lb-drop.drag{border-color:var(--ink);color:var(--ink)}
-.lb-files{list-style:none;margin:0;padding:0}
-.lb-f{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;padding:10px 0;border-top:1px solid var(--rule)}
+.lb-f{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;padding:9px 0;border-top:1px solid var(--rule);align-items:center}
 .lb-f:first-child{border-top:0}
-.lb-f .nm{font-size:.88rem;font-weight:600;overflow-wrap:anywhere}
-.lb-f .gs{font-size:.84rem;color:var(--muted)}
+.lb-f .nm{font-size:.86rem;font-weight:600;overflow-wrap:anywhere}
+.lb-f .gs{font-size:.82rem;color:var(--muted);grid-column:1}
 .lb-f .gs b{color:var(--ink);font-weight:600}
-.lb-in{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) minmax(0,1fr);gap:6px}
-.lb-in input,.lb-in select,#lbReq{font:inherit;font-size:.86rem;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:6px 8px;min-width:0;width:100%;box-sizing:border-box}
-#lbReq{resize:vertical;line-height:1.5}
-.lb-row{display:flex;gap:8px;flex-wrap:wrap}
-.lb-reqs,.lb-list{list-style:none;margin:0;padding:0}
-.lb-reqs li,.lb-list li{padding:8px 0;border-top:1px solid var(--rule);font-size:.88rem;line-height:1.5}
-.lb-reqs li:first-child,.lb-list li:first-child{border-top:0}
-.lb-reqs small,.lb-list small{display:block;color:var(--muted);font-size:.78rem}
+.lb-f .act{grid-column:2;grid-row:1/span 3;display:flex;gap:6px}
+.lb-teach{border:1.5px solid var(--ink);border-radius:16px;background:var(--paper);padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.lb-teach h3{margin:0;font-size:1rem}
+.lb-tg{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px}
+.lb-prev{border:1px solid var(--rule);border-radius:10px;overflow:auto;max-height:70vh;background:#fff}
+.lb-prev canvas{display:block;width:100%;height:auto}
+.lb-form{display:flex;flex-direction:column;gap:8px;min-width:0}
+.lb-form label{display:flex;flex-direction:column;gap:3px;font-size:.8rem;color:var(--muted)}
+.lb-form .ck{flex-direction:row;align-items:center;gap:8px;color:var(--ink);font-size:.86rem}
+.lb-form .ck input{width:auto}
+.lb-seen{display:flex;flex-wrap:wrap;gap:5px}
+.lb-seen button{font:inherit;font-size:.76rem;border:1px solid var(--rule);background:var(--soft);border-radius:7px;padding:2px 8px;cursor:pointer;color:var(--ink);direction:ltr}
+.lb-seen button:hover{border-color:var(--ink)}
 .lb-score{display:flex;gap:8px;flex-wrap:wrap}
 .lb-score span{font-size:.8rem;background:var(--soft);border-radius:8px;padding:3px 10px;color:var(--muted)}
 .lb-score b{color:var(--ink)}
 .lb-ver{font-size:.9rem;line-height:1.5;margin:0}
 .lb-ver.ok{color:var(--ml-ok)}.lb-ver.bad{color:var(--ml-flag)}
 .lb-prop{border:1px solid var(--rule);border-radius:12px;padding:10px 12px;background:var(--soft);display:flex;flex-direction:column;gap:6px;font-size:.88rem}
-.lb-card details summary{cursor:pointer;font-size:.88rem;padding:4px 0}
-@media (max-width:560px){.lb-in{grid-template-columns:minmax(0,1fr)}}
+#lbResBody details summary,#lbDocsAcc details summary{cursor:pointer;font-size:.88rem;padding:4px 0}
+@media (max-width:700px){.lb-tg{grid-template-columns:minmax(0,1fr)}.lb-f{grid-template-columns:minmax(0,1fr)}.lb-f .act{grid-column:1;grid-row:auto}}
 /* email analysis */
 .ml-act{border:1px solid var(--rule);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:var(--soft)}
 .ml-act>small{display:block;font-size:.72rem;letter-spacing:.05em;color:var(--muted);margin-bottom:2px}
@@ -1306,31 +1327,32 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
   </section>
 
   <section class="section lb" id="s-lab" role="tabpanel" aria-labelledby="m-lab" hidden>
-    <div class="lb-top"><h2>מעבדה</h2><p class="lb-sub">כאן מנסים דברים. איתי אחראי על המעבדה: מה שנשלח לכאן הוא בודק בתוך שעה (בכל שעה עגולה ועוד 12 דקות, ראשון–חמישי 08:12–19:12), וגם בודק שכל עדכון של מהדק באמת עובד.</p></div>
+    <div class="lb-top"><h2>מעבדה</h2><p class="lb-sub" id="lbSub">נותנים עבודה לעובד, והוא עונה בבדיקה הקרובה.</p></div>
     <p class="lb-status" id="lbStatus" role="status" hidden></p>
-    <section class="hm-card lb-card" id="lbRes">
-      <div class="hm-th"><h3>מה איתי מצא</h3><span class="hm-n" id="lbResAt"></span></div>
-      <div id="lbResBody"><p class="hm-empty">עוד אין בדיקה. שולחים מסמך או בקשה, ואיתי בודק בבדיקה השעתית הקרובה.</p></div>
+    <section class="hm-card lb-card lb-need" id="lbNeed" hidden>
+      <div class="hm-th"><h3>איתי צריך אותך</h3><span class="hm-n" id="lbNeedN"></span></div>
+      <p class="hm-hint">מסמכים שהוא לא הצליח לזהות בכל דרך. פותחים, ומלמדים אותו לפי מה מזהים.</p>
+      <ul class="lb-list" id="lbNeedList"></ul>
     </section>
+    <section class="lb-teach" id="lbTeach" hidden aria-label="ללמד את מהדק"></section>
     <section class="hm-card lb-card">
-      <h3>בדיקת מסמכים</h3>
-      <p class="hm-hint">גוררים מסמכים. מהדק מזהה אותם מיד, ואפשר לכתוב מה נכון. "שליחה לאיתי" שומרת אותם במאגר הפרטי, ואיתי בודק אותם ולומד מהם.</p>
-      <label class="lb-drop" id="lbDrop"><input type="file" id="lbFile" multiple accept=".pdf,image/*" hidden><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><span>גוררים קבצים לכאן או לוחצים לבחירה</span></label>
-      <ol class="lb-files" id="lbFiles"></ol>
-      <div class="lb-row" id="lbFileAct" hidden><button type="button" class="hm-link pri" id="lbClaude" hidden>בדיקה עכשיו עם Claude</button><button type="button" class="hm-link pri" id="lbSend">שליחה לאיתי</button><button type="button" class="hm-link" id="lbClear">ניקוי</button></div>
+      <div class="lb-who" id="lbWho" role="tablist" aria-label="העובדים"></div>
+      <div class="lb-corner" id="lbCorner"></div>
     </section>
-    <section class="hm-card lb-card">
-      <h3>בקשה לאיתי</h3>
-      <p class="hm-hint">מה לבדוק? למשל: "עדכנו את זיהוי הסריקות, תבדוק שזה עובד", או "למה מהדק לא מזהה את בזק".</p>
-      <textarea id="lbReq" rows="3" placeholder="כותבים כאן…"></textarea>
-      <div class="lb-row"><button type="button" class="hm-link pri" id="lbReqSend">שליחה</button></div>
-      <ul class="lb-reqs" id="lbReqs"></ul>
-    </section>
-    <section class="hm-card lb-card">
-      <h3>התיקונים שלי</h3>
-      <p class="hm-hint" id="lbCorrTxt">כשמתקנים שם של ספק במסך "קבצים", מהדק זוכר את התיקון רק במחשב הזה. שליחה לאיתי מכניסה אותם, אחרי בדיקה, לספר הספקים של כל הצוות.</p>
-      <div class="lb-row"><button type="button" class="hm-link" id="lbCorrSend">שליחת התיקונים לאיתי</button></div>
-    </section>
+    <div class="hm-acc">
+      <details class="hm-ac" id="lbDocsAcc"><summary>בדיקת מסמכים ולימוד <b id="lbDocsN"></b></summary><div class="hm-acb">
+        <p class="hm-hint">גוררים מסמכים. מהדק מזהה אותם מיד. אם הוא טועה, לוחצים "ללמד" ומראים לו לפי מה מזהים.</p>
+        <label class="lb-drop" id="lbDrop"><input type="file" id="lbFile" multiple accept=".pdf,image/*" hidden><span>גוררים קבצים לכאן או לוחצים לבחירה</span></label>
+        <ol class="lb-files" id="lbFiles"></ol>
+        <div class="lb-row" id="lbFileAct" hidden><button type="button" class="hm-link" id="lbClaude" hidden>בדיקה עם Claude</button><button type="button" class="hm-link" id="lbSend">שליחה לאיתי לבדיקה</button><button type="button" class="hm-link" id="lbClear">ניקוי</button></div>
+      </div></details>
+      <details class="hm-ac" id="lbResAcc"><summary>מה איתי מצא <b id="lbResAt"></b></summary><div class="hm-acb" id="lbResBody"><p class="hm-empty">עוד אין בדיקה.</p></div></details>
+      <details class="hm-ac"><summary>מה מהדק כבר יודע <b id="lbKnowN"></b></summary><div class="hm-acb">
+        <p class="hm-hint" id="lbKnowTxt"></p>
+        <ul class="lb-list" id="lbKnowList"></ul>
+        <div class="lb-row"><button type="button" class="hm-link" id="lbCorrSend">שליחת מה שלמדתי במחשב הזה לאיתי</button></div>
+      </div></details>
+    </div>
   </section>
   <section class="section hm" id="s-home" role="tabpanel" aria-labelledby="m-home">
     <div class="hm-top">
@@ -1441,7 +1463,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 7.3 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 8.0 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -1566,7 +1588,7 @@ window.__nf=normalizeFile;
       });
       nmIn.addEventListener('mousedown',e=>e.stopPropagation());
       const fn=document.createElement('div'); fn.className='fname orig'; fn.title=it.file.name;
-      fn.textContent=it.file.name+(it.detecting?' · מזהה…':'')+(it.nf&&!it.edited?' · לא זוהה':'')+(it.learnedNow?' · מהדק ילמד את הספק הזה':'')+(!it.edited&&it.res&&it.res.how==='learned'?' · זוהה לפי תיקון קודם':'')+(!it.edited&&it.res&&it.res.how==='registry'?' · אומת ברשם החברות':'')+(!it.edited&&it.res&&it.res.how==='team'?' · זוהה לפי ספר הספקים של הצוות':'')+(it.kind==='other'?' · לא ייכלל בקובץ':'');
+      fn.textContent=it.file.name+(it.detecting?' · מזהה…':'')+(it.nf&&!it.edited?' · לא זוהה':'')+(it.learnedNow?' · מהדק ילמד את הספק הזה':'')+(!it.edited&&it.res&&it.res.how==='learned'?' · זוהה לפי תיקון קודם':'')+(!it.edited&&it.res&&it.res.how==='registry'?' · אומת ברשם החברות':'')+(!it.edited&&it.res&&it.res.how==='team'?` · זוהה לפי מה שהמשרד יודע (${it.res.by||'ספר הספקים'})`:'')+(it.kind==='other'?' · לא ייכלל בקובץ':'');
       c3.append(nmIn,fn);
       const c4=td(); c4.className='pgc'+(it.keep?' cut':'');
       if(it.kind==='pdf'){
@@ -2276,7 +2298,12 @@ window.__nf=normalizeFile;
     const latin=[];
     L.concat(top).forEach(l=>{ const m=l.match(/([A-Z][A-Z0-9&'\-. ]{2,40}?)[\s,]*(?:LTD|Ltd|L\.T\.D|INC|Inc|LLC|CO\.)(?![A-Za-z])/); if(m){ const n=m[1].replace(/[\s.\-]+$/,'').replace(/\s+/g,' ').trim(); if((n.match(/[A-Za-z]/g)||[]).length>=3) latin.push(n); } });
     const transfer=(all.match(/(?:שם\s*(?:ה)?חשבון(?:\s*להעברות)?|שם\s*המוטב|לפקודת)\s*:?\s*([^\n]{3,60})/)||[])[1]||'';
-    return {lines:L,top,ids,recip,recipNames:[...recipNames],names,latin,fileId,ocr:!!opts.ocr,
+    /* every phone number and e-mail on the page (not on the customer's lines): a supplier's own details */
+    const phones=new Set(), emails=new Set();
+    L.map((l,i)=>[l,!recip.has(i)]).concat(top.map(l=>[l,true])).forEach(([l,ok])=>{ if(!ok) return;
+      for(const m of l.matchAll(/(?:\+?972[\s\-]?|(?<!\d)0)(\d{1,2})[\s\-]?(\d{3})[\s\-]?(\d{3,4})(?!\d)/g)){ const d='0'+m[1]+m[2]+m[3]; if(d.length>=9&&d.length<=10) phones.add(d); }
+      for(const m of l.matchAll(/[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}/gi)) emails.add(m[0].toLowerCase()); });
+    return {lines:L,top,ids,recip,recipNames:[...recipNames],names,latin,fileId,ocr:!!opts.ocr,phones:[...phones],emails:[...emails],
       domains:domainsOf(all),header:opts.header||'',topHeader:opts.topHeader||'',
       transfer:transfer?companyOf(transfer):'',text:all};
   }
@@ -2305,6 +2332,17 @@ window.__nf=normalizeFile;
   function resolveSupplier(ev,ctx){
     const r=resolveSupplierCore(ev,ctx); const x=r.id&&ev.ids.find(y=>y.id===r.id); if(x&&x.vatFile) r.vatFile=true; return r;
   }
+  /* What the office already knows about a supplier: business number, e-mail, website, phone, words only it prints, its logo */
+  function knowMatch(ev,tb,issuerIds){
+    for(const x of issuerIds) if(tb.ids[x.id]) return {name:tb.ids[x.id],how:'team',id:x.id,by:'ח.פ/ע.מ'};
+    for(const e of ev.emails||[]) if(tb.emails&&tb.emails[e]) return {name:tb.emails[e],how:'team',id:'',by:'מייל'};
+    for(const d of ev.domains) if(tb.domains[d]) return {name:tb.domains[d],how:'team',id:'',by:'אתר'};
+    for(const p of ev.phones||[]) if(tb.phones&&tb.phones[p]) return {name:tb.phones[p],how:'team',id:'',by:'טלפון'};
+    if(tb.keys&&tb.keys.length){ const head=ev.lines.slice(0,18).concat(ev.top).join(' '); const k=tb.keys.find(k=>k.words.every(w=>head.includes(w))); if(k) return {name:k.name,how:'team',id:'',by:'מילים'}; }
+    if(ev.logo&&tb.logos&&tb.logos.length){ let best=null; tb.logos.forEach(l=>{ const d=hamming(ev.logo,l.h); if(d!=null&&(!best||d<best.d)) best={d,name:l.name}; }); if(best&&best.d<=0.12) return {name:best.name,how:'team',id:'',by:'לוגו'}; }
+    return null;
+  }
+  function hamming(a,b){ if(!a||!b||a.length!==b.length) return null; let n=0; for(let i=0;i<a.length;i++){ let x=parseInt(a[i],16)^parseInt(b[i],16); while(x){ n+=x&1; x>>=1; } } return n/(a.length*4); }
   function resolveSupplierCore(ev,ctx){
     ctx=ctx||{}; const rIds=ctx.recipIds||new Set(), rNames=ctx.recipNames||new Set(), learned=ctx.learned||{ids:{},domains:{}};
     const isRecipName=n=>{ const k=nk(n); if(!k) return true; if(ev.recipNames.includes(k)) return true; for(const r of rNames){ if(r&&(k===r||(r.length>=5&&(k.includes(r)||r.includes(k))))) return true; } return false; };
@@ -2316,7 +2354,7 @@ window.__nf=normalizeFile;
     for(const x of issuerIds) if(learned.ids[x.id]) return {name:learned.ids[x.id],how:'learned',id:x.id};
     for(const d of ev.domains) if(learned.domains[d]) return {name:learned.domains[d],how:'learned',id:''};
     // 1a. the team's supplier book (built by the files clerk from documents he checked)
-    const tb=ctx.team; if(tb){ for(const x of issuerIds) if(tb.ids[x.id]) return {name:tb.ids[x.id],how:'team',id:x.id}; for(const d of ev.domains) if(tb.domains[d]) return {name:tb.domains[d],how:'team',id:''}; }
+    const tb=ctx.team; if(tb){ const k=knowMatch(ev,tb,issuerIds); if(k) return k; }
     const pickId=()=>{ const f=issuerIds.find(x=>x.id===ev.fileId); if(f) return f;
       return issuerIds.find(x=>x.strong&&x.upper)||issuerIds.find(x=>x.strong)||issuerIds.find(x=>x.labelled&&x.upper)||issuerIds.find(x=>x.labelled)||issuerIds[0]||null; };
     const idx=pickId();
@@ -2474,7 +2512,16 @@ window.__nf=normalizeFile;
         if(!docNumber({ocr:true,ids:ev.ids},band)){ try{ band=await numPass(full,box,true); }catch(_){} }
       }
     }
+    if(teamBook&&teamBook.logos&&teamBook.logos.length){ try{ if(!full) full=kind==='image'?await imageCanvas(file):await pdfCanvas(file); ev.logo=logoHash(full); }catch(_){} }
     return {ev,type:docType(ev.lines),num:docNumber(ev,band)};
+  }
+  /* A small fingerprint of the top of the page (where the logo and the business name are): 48×12 brightness steps */
+  function logoHash(canvas){
+    const c=document.createElement('canvas'); c.width=49; c.height=12; const g=c.getContext('2d'); g.imageSmoothingQuality='high';
+    g.fillStyle='#fff'; g.fillRect(0,0,49,12); g.drawImage(canvas,0,0,canvas.width,Math.round(canvas.height*0.22),0,0,49,12);
+    const d=g.getImageData(0,0,49,12).data; let bits='';
+    for(let y=0;y<12;y++) for(let x=0;x<48;x++){ const i=(y*49+x)*4, j=i+4; bits+=(d[i]+d[i+1]+d[i+2])>(d[j]+d[j+1]+d[j+2])?'1':'0'; }
+    let hex=''; for(let i=0;i<bits.length;i+=4) hex+=parseInt(bits.slice(i,i+4),2).toString(16); return hex;
   }
   /* Learned suppliers: when you correct a name, Mahdek remembers the supplier's
      business number and website on this computer. */
@@ -2484,9 +2531,22 @@ window.__nf=normalizeFile;
   function saveLearned(){ try{ localStorage.setItem(LEARN_KEY,JSON.stringify(learned)); }catch(_){} }
   /* The team's supplier book: team/suppliers.json in the private repo, read with the mailbox key; kept in this browser for offline use */
   const TEAM_KEY='mahdek.teamsup.v1'; let teamBook=null;
-  function setBook(b){ if(!b||!Array.isArray(b.suppliers)) return; const t={ids:{},domains:{}};
-    b.suppliers.forEach(s=>{ if(!s||!s.name) return; const id=String(s.id||'').replace(/\D/g,''); if(id.length===9&&validId(id)) t.ids[id]=String(s.name).slice(0,60); (s.domains||[]).forEach(d=>{ if(typeof d==='string'&&d.includes('.')) t.domains[d.toLowerCase()]=String(s.name).slice(0,60); }); });
-    teamBook=t; }
+  let bookRaw=null;
+  const LESSON_KEY='mahdek.lessons.v1'; let lessons=[];
+  try{ const v=JSON.parse(localStorage.getItem(LESSON_KEY)||'[]'); if(Array.isArray(v)) lessons=v; }catch(_){}
+  function indexSuppliers(list){ const t={ids:{},domains:{},emails:{},phones:{},keys:[],logos:[]};
+    (list||[]).forEach(s=>{ if(!s||!s.name) return; const nm=String(s.name).slice(0,60);
+      [s.id].concat(s.ids||[]).forEach(v=>{ const id=String(v||'').replace(/\D/g,''); if(id.length===9&&validId(id)) t.ids[id]=nm; });
+      (s.domains||[]).forEach(d=>{ if(typeof d==='string'&&d.length>2) t.domains[d.toLowerCase().replace(/^www\./,'').split('.')[0]]=nm; });
+      (s.emails||[]).forEach(e=>{ if(typeof e==='string'&&e.includes('@')){ t.emails[e.toLowerCase()]=nm; const dm=e.split('@')[1].split('.')[0].toLowerCase(); if(dm&&!GENERIC_DOMAINS.test(dm)) t.domains[dm]=nm; } });
+      (s.phones||[]).forEach(p=>{ const d=String(p||'').replace(/\D/g,'').replace(/^972/,'0'); if(d.length>=9) t.phones[d]=nm; });
+      (s.keywords||[]).forEach(k=>{ const w=String(k||'').split(/\s+/).filter(x=>x.length>1); if(w.length) t.keys.push({words:w,name:nm}); });
+      (s.logos||[]).forEach(l=>{ if(typeof l==='string'&&/^[0-9a-f]{40,}$/.test(l)) t.logos.push({h:l,name:nm}); }); });
+    return t; }
+  function rebuildKnow(){ teamBook=indexSuppliers(((bookRaw&&bookRaw.suppliers)||[]).concat(lessons)); }
+  function setBook(b){ if(!b||!Array.isArray(b.suppliers)) return; bookRaw=b; rebuildKnow(); }
+  function addLesson(s){ lessons=lessons.filter(x=>x.name!==s.name||x.id!==s.id).concat([s]).slice(-300); try{ localStorage.setItem(LESSON_KEY,JSON.stringify(lessons)); }catch(_){} rebuildKnow(); }
+  rebuildKnow();
   try{ setBook(JSON.parse(localStorage.getItem(TEAM_KEY)||'null')); }catch(_){}
   let bookAt=0;
   async function loadBook(){ const M=window.__mhMail; if(!M||!M.hasToken()||Date.now()-bookAt<600000) return; bookAt=Date.now();
@@ -2674,7 +2734,7 @@ window.__nf=normalizeFile;
   $('pmSave').addEventListener('click',()=>pmClose([...PM.keep].sort((a,b)=>a-b)));
   $('pmodal').addEventListener('click',e=>{if(e.target===$('pmodal')) pmClose(null);});
   $('pmodal').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();pmClose(null);}});
-  window.__mh2={learned:()=>learned,detect:detectDoc,deliver:deliverFiles,pickPages,view:viewDoc,labelBatch,learn:learnSupplier,verifyOnline};
+  window.__mh2={learned:()=>learned,lessons:()=>lessons,addLesson,logoHash,imageCanvas,pdfCanvas,detect:detectDoc,deliver:deliverFiles,pickPages,view:viewDoc,labelBatch,learn:learnSupplier,verifyOnline};
 
   /* ---------- Page editor: one row per page, split and delete ---------- */
   {
@@ -3709,45 +3769,165 @@ window.__nf=normalizeFile;
     return 'בבדיקה הבאה';
   }
   const norm=s=>String(s||'').replace(/["'״׳\-.,()]/g,'').replace(/\s+/g,' ').trim();
-  function instant(it){ const t=it.truth, g=it.guess; if(!g||it.busy) return ''; const out=[];
-    if(t.supplier){ const a=norm(t.supplier), b=norm(g.sup||g.label); out.push(b&&(b.includes(a)||a.includes(b.split(' - ')[0]))?'ספק ✓':'ספק ✗'); }
-    if(t.number4){ out.push(String(g.label||'').includes(t.number4)?'מספר ✓':'מספר ✗'); }
-    if(t.type){ out.push(String(g.label||'').includes(t.type.split(' ')[0])?'סוג ✓':'סוג ✗'); }
-    return out.join(' · '); }
-  /* ---- documents ---- */
+  /* ---- the team: one corner per worker ---- */
+  const WORKERS=[
+    {id:'mail',name:'מאיה',role:'קליטת מיילים: קוראת וממיינת את כל המיילים ושומרת את הקבצים.',color:'#3f6fb5'},
+    {id:'files',name:'איתי',role:'בדיקת קבצים ומעבדת הזיהוי: בודק מסמכים ומלמד את מהדק לזהות אותם.',color:'#c0576a'},
+    {id:'prep',name:'יעל',role:'הכנה לפעולה: מה לעשות עם כל מייל, הדפסה וטיוטות תשובה.',color:'#7a63b0'},
+    {id:'reports',name:'דנה',role:'דיווחים: מועדים, מה חסר מכל לקוח, עדכונים מרשות המסים.',color:'#3a9266'},
+    {id:'manager',name:'נועם',role:'מנהל המשרד: מסדר את היום שלך ומחלק עבודה לצוות.',color:'#2c3a57'}];
+  const WHO_KEY='mahdek.lab.who'; let who='files'; try{ who=localStorage.getItem(WHO_KEY)||'files'; }catch(_){}
+  let reqs=[], teachQ=[];
+  const whoOf=r=>r.to||'files';
+  function drawWho(){
+    const box=$('lbWho'); box.textContent='';
+    WORKERS.forEach(w=>{ const b=el('button'); b.type='button'; b.setAttribute('role','tab'); b.setAttribute('aria-selected',String(w.id===who));
+      const av=el('i',null,w.name[0]); av.style.background=w.color; b.appendChild(av); b.appendChild(document.createTextNode(w.name));
+      const open=reqs.filter(r=>whoOf(r)===w.id&&r.status!=='done').length; if(open) b.appendChild(el('b',null,`(${open})`));
+      b.onclick=()=>{ who=w.id; try{ localStorage.setItem(WHO_KEY,who); }catch(_){} drawWho(); drawCorner(); }; box.appendChild(b); });
+  }
+  function drawCorner(){
+    const w=WORKERS.find(x=>x.id===who)||WORKERS[1], c=$('lbCorner'); c.textContent='';
+    c.appendChild(el('p','role',w.role));
+    const ta=el('textarea'); ta.rows=2; ta.placeholder=`מה לבקש מ${w.name}?`; ta.setAttribute('aria-label',`בקשה ל${w.name}`); c.appendChild(ta);
+    const row=el('div','lb-row'), b=el('button','hm-link pri',`שליחה ל${w.name}`); b.type='button'; row.appendChild(b); row.appendChild(el('span','hm-hint',`${w.name} תענה/יענה ${nextCheck()}`)); c.appendChild(row);
+    b.onclick=()=>sendReq(w,ta,b);
+    const mine=reqs.filter(r=>whoOf(r)===w.id).slice().reverse().slice(0,6);
+    if(mine.length){ const ul=el('ul','lb-list'); mine.forEach(r=>{ const li=el('li'); li.appendChild(document.createTextNode(r.text));
+      li.appendChild(el('small',null,(r.status==='done'?'✓ ':'⏳ ')+fmt(new Date(r.at),{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})+(r.status==='done'?'':' · מחכה לבדיקה')));
+      if(r.result) li.appendChild(el('span','ans',`${w.name}: ${r.result}`)); ul.appendChild(li); }); c.appendChild(ul); }
+  }
+  async function sendReq(w,ta,b){
+    const v=ta.value.trim(); if(!v||needKey()) return; b.disabled=true;
+    try{ const r={id:'r-'+Date.now(),at:new Date().toISOString(),to:w.id,text:v.slice(0,2000),status:'open',result:''};
+      await updateJson('lab/requests.json',d=>{ d=d&&Array.isArray(d.items)?d:{app:'mahdek',kind:'lab-requests',v:1,items:[]}; d.items.push(r); d.items=d.items.slice(-120); return d; },`מעבדה: בקשה ל${w.name}`);
+      reqs.push(r); ta.value=''; drawWho(); drawCorner(); status(`הבקשה נשלחה ל${w.name}. התשובה תופיע כאן ${nextCheck()}.`); }
+    catch(e){ fail(e,'לשלוח את הבקשה'); }
+    b.disabled=false;
+  }
+
+  /* ---- documents: check and teach ---- */
   let items=[];
   const TYPES=['','חשבונית מס','חשבונית מס קבלה','קבלה','חשבונית זיכוי','חשבון עסקה','דרישת תשלום','אחר'];
+  function guessOf(det){ const D=window.__mh2; if(!det) return {label:'',sup:'',how:'',by:''}; const o=D.labelBatch([det])[0]; return {label:o.label,sup:o.res&&o.res.name||'',how:o.res&&o.res.how||'',by:o.res&&o.res.by||''}; }
   function addFiles(list){
     [...list].forEach(f=>{ if(!/\.pdf$/i.test(f.name)&&!/^image\//.test(f.type)) return; if(items.length>=25) return;
-      const it={f,kind:/^image\//.test(f.type)?'image':'pdf',guess:null,busy:true,truth:{supplier:'',type:'',number4:''}}; items.push(it);
-      const D=window.__mh2; if(D&&D.detect){ D.detect(f,it.kind).then(r=>{ it.busy=false; if(r){ const o=D.labelBatch([r])[0]; it.guess={label:o.label,sup:o.res&&o.res.name||'',how:o.res&&o.res.how||''}; } else it.guess={label:'',sup:''}; draw(); }).catch(()=>{ it.busy=false; it.guess={label:'',sup:''}; draw(); }); } else it.busy=false; });
-    draw();
+      const it={f,kind:/^image\//.test(f.type)?'image':'pdf',det:null,guess:null,busy:true}; items.push(it);
+      const D=window.__mh2; if(D&&D.detect){ D.detect(f,it.kind).then(r=>{ it.busy=false; it.det=r; it.guess=guessOf(r); draw(); }).catch(()=>{ it.busy=false; it.guess={label:''}; draw(); }); } else it.busy=false; });
+    draw(); $('lbDocsAcc').open=true;
   }
-  function upd(i){ const c=document.querySelector(`#lbFiles .gs[data-i="${i}"]`); if(c) c.textContent=instant(items[i]); }
   function draw(){
-    const ol=$('lbFiles'); ol.textContent=''; $('lbFileAct').hidden=!items.length;
+    const ol=$('lbFiles'); ol.textContent=''; $('lbFileAct').hidden=!items.length; $('lbDocsN').textContent=items.length||'';
     items.forEach((it,i)=>{ const li=el('li','lb-f'); li.appendChild(el('div','nm',it.f.name));
-      const gs=el('div','gs'); gs.appendChild(document.createTextNode('מהדק זיהה: ')); gs.appendChild(el('b',null,it.busy?'מזהה…':(it.guess&&it.guess.label)||'לא זוהה')); li.appendChild(gs);
-      const row=el('div','lb-in');
-      const s=el('input'); s.placeholder='הספק הנכון (לא חובה)'; s.value=it.truth.supplier; s.oninput=()=>{ it.truth.supplier=s.value.trim(); upd(i); }; s.setAttribute('aria-label','הספק הנכון');
-      const t=el('select'); TYPES.forEach(v=>{ const o=el('option',null,v||'סוג המסמך'); o.value=v; t.appendChild(o); }); t.value=it.truth.type; t.onchange=()=>{ it.truth.type=t.value; upd(i); }; t.setAttribute('aria-label','סוג המסמך');
-      const n=el('input'); n.placeholder='4 ספרות אחרונות'; n.inputMode='numeric'; n.maxLength=4; n.value=it.truth.number4; n.oninput=()=>{ it.truth.number4=n.value.replace(/\D/g,'').slice(-4); upd(i); }; n.setAttribute('aria-label','4 הספרות האחרונות של מספר המסמך');
-      if(it.claude){ const cl=el('div','gs'); if(it.claude.busy) cl.textContent='Claude בודק…'; else if(it.claude.err) cl.textContent='Claude: '+it.claude.err; else { const c=it.claude.res; cl.appendChild(document.createTextNode('Claude קרא: ')); cl.appendChild(el('b',null,[c.supplier,c.type,c.number4].filter(Boolean).join(' · ')||'לא הצליח לקרוא')); if(c.confidence) cl.appendChild(document.createTextNode(c.confidence==='high'?' (בטוח)':c.confidence==='low'?' (לא בטוח)':' (די בטוח)')); if(c.note) cl.appendChild(el('small',null,' '+c.note)); } li.appendChild(cl); }
-      row.appendChild(s); row.appendChild(t); row.appendChild(n); li.appendChild(row);
-      const cmp=el('div','gs'); cmp.dataset.i=i; cmp.textContent=instant(it); li.appendChild(cmp); ol.appendChild(li); });
+      const gs=el('div','gs'); gs.appendChild(document.createTextNode('מהדק זיהה: ')); gs.appendChild(el('b',null,it.busy?'מזהה…':(it.guess&&it.guess.label)||'לא זוהה'));
+      if(it.guess&&it.guess.by) gs.appendChild(document.createTextNode(` (לפי ${it.guess.by})`)); li.appendChild(gs);
+      if(it.taught) li.appendChild(el('div','gs','✓ לימדת: '+it.taught));
+      if(it.claude){ const cl=el('div','gs'); if(it.claude.busy) cl.textContent='Claude בודק…'; else if(it.claude.err) cl.textContent='Claude: '+it.claude.err; else { const c=it.claude.res; cl.appendChild(document.createTextNode('Claude קרא: ')); cl.appendChild(el('b',null,[c.supplier,c.type,c.number4].filter(Boolean).join(' · ')||'לא הצליח לקרוא')); } li.appendChild(cl); }
+      const act=el('div','act'), t=el('button','hm-link'+(it.guess&&it.guess.sup?'':' pri'),'ללמד'); t.type='button'; t.disabled=it.busy; t.onclick=()=>openTeach({file:it.f,kind:it.kind,det:it.det,guess:it.guess,doc:it}); act.appendChild(t); li.appendChild(act);
+      ol.appendChild(li); });
+  }
+  async function uploadFile(f,set){
+    const safe=f.name.replace(/[\\/:*?"<>|#%]/g,'-'), path=`lab/${set}/files/${safe}`;
+    const ex=await getJson(path).catch(()=>({sha:null})); if(!ex.sha) await put(path,await b64file(f),'מעבדה: מסמך'); return path;
   }
   async function sendDocs(){
-    if(needKey()||!items.length) return; const b=$('lbSend'); b.disabled=true; status(`שולח ${items.length} קבצים למעבדה…`);
-    const set='set-'+today(), base=`lab/${set}/`; const sent=[];
-    try{
-      for(const it of items){ const safe=it.f.name.replace(/[\\/:*?"<>|#%]/g,'-'); let name=safe, k=2; while(sent.some(x=>x.name===name)) name=safe.replace(/(\.[^.]+)?$/,`-${k++}$1`);
-        await put(base+'files/'+name,await b64file(it.f),'מעבדה: מסמך לבדיקה'); sent.push({name,it}); status(`נשלחו ${sent.length} מתוך ${items.length}…`); }
-      await updateJson(base+'labels.json',d=>{ d=d&&Array.isArray(d.items)?d:{app:'mahdek',kind:'lab-set',v:1,note:'מסמכים שפואד העלה במסך המעבדה',items:[]};
-        sent.forEach(({name,it})=>{ const t=it.truth, has=t.supplier||t.type||t.number4; d.items=d.items.filter(x=>x.file!=='files/'+name);
-          d.items.push({file:'files/'+name,by:'fouad',at:new Date().toISOString(),mahdek:it.guess&&it.guess.label||'',label:null,fouad:has?{supplier:t.supplier,type:t.type,number4:t.number4}:null,claude:it.claude&&it.claude.res||null}); });
+    if(needKey()||!items.length) return; const b=$('lbSend'); b.disabled=true; status(`שולח ${items.length} קבצים לאיתי…`);
+    const set='set-'+today(); const sent=[];
+    try{ for(const it of items){ const p=await uploadFile(it.f,set); sent.push({p,it}); status(`נשלחו ${sent.length} מתוך ${items.length}…`); }
+      await updateJson(`lab/${set}/labels.json`,d=>{ d=d&&Array.isArray(d.items)?d:{app:'mahdek',kind:'lab-set',v:1,note:'מסמכים שפואד העלה במסך המעבדה',items:[]};
+        sent.forEach(({p,it})=>{ const file=p.replace(`lab/${set}/`,''); d.items=d.items.filter(x=>x.file!==file); d.items.push({file,by:'fouad',at:new Date().toISOString(),mahdek:it.guess&&it.guess.label||'',label:null,taught:it.taught||null,claude:it.claude&&it.claude.res||null}); });
         return d; },'מעבדה: תוויות');
-      status(`נשלחו ${sent.length} קבצים. איתי יבדוק אותם ${nextCheck()}, והתוצאה תופיע למעלה בלי לרענן.`); items=[]; draw();
-    }catch(e){ fail(e,'לשלוח את הקבצים'); }
+      status(`נשלחו ${sent.length} קבצים. איתי יבדוק אותם ${nextCheck()}.`); }
+    catch(e){ fail(e,'לשלוח את הקבצים'); }
+    b.disabled=false;
+  }
+
+  /* ---- teach Mahdek, with the document open in front of you ---- */
+  let teachCtx=null;
+  const splitList=s=>String(s||'').split(/[,\n;]+/).map(x=>x.trim()).filter(Boolean);
+  async function openTeach(ctx){
+    teachCtx=ctx; const box=$('lbTeach'); box.hidden=false; box.textContent='';
+    box.appendChild(el('h3',null,'ללמד את מהדק: '+(ctx.file?ctx.file.name:'')));
+    if(ctx.question) box.appendChild(el('p','hm-hint','איתי: '+ctx.question));
+    const g=el('div','lb-tg'), prev=el('div','lb-prev'), form=el('div','lb-form'); g.appendChild(prev); g.appendChild(form); box.appendChild(g);
+    prev.appendChild(el('p','hm-empty','פותח את המסמך…'));
+    const D=window.__mh2;
+    let canvas=null; try{ canvas=ctx.kind==='image'?await D.imageCanvas(ctx.file):await D.pdfCanvas(ctx.file); prev.textContent=''; prev.appendChild(canvas); }catch(e){ prev.textContent=''; prev.appendChild(el('p','hm-empty','לא הצלחתי לפתוח את המסמך כאן.')); }
+    ctx.canvas=canvas;
+    const ev=ctx.det&&ctx.det.ev||{ids:[],phones:[],emails:[],domains:[]};
+    const ids=ev.ids.filter(x=>!x.recip&&!x.cust).map(x=>x.id), phones=ev.phones||[], emails=ev.emails||[], domains=(ev.domains||[]).filter(d=>!emails.some(e=>e.includes(d)));
+    const field=(label,val,ph)=>{ const l=el('label'); l.appendChild(document.createTextNode(label)); const i=el('input'); i.value=val||''; if(ph) i.placeholder=ph; l.appendChild(i); form.appendChild(l); return i; };
+    form.appendChild(el('p','hm-hint',`מהדק זיהה: ${ctx.guess&&ctx.guess.label||'לא זוהה'}`));
+    const fName=field('שם הספק (כמו שאתה רוצה לראות אותו)',ctx.guess&&ctx.guess.sup||'','חובה');
+    form.appendChild(el('p','hm-hint','לפי מה לזהות אותו? כל מה שתמלא כאן מהדק יבדוק בכל מסמך:'));
+    if(ids.length+phones.length+emails.length+domains.length){ const s=el('div','lb-seen'); form.appendChild(el('span','hm-hint','מה מהדק מצא במסמך (לחיצה מוסיפה):'));
+      const add=(inp,v)=>{ const cur=splitList(inp.value); if(!cur.includes(v)){ cur.push(v); inp.value=cur.join(', '); } };
+      ids.forEach(v=>{ const b=el('button',null,v); b.type='button'; b.onclick=()=>{ fId.value=v; }; s.appendChild(b); });
+      phones.forEach(v=>{ const b=el('button',null,v); b.type='button'; b.onclick=()=>add(fPh,v); s.appendChild(b); });
+      emails.concat(domains).forEach(v=>{ const b=el('button',null,v); b.type='button'; b.onclick=()=>add(fMail,v); s.appendChild(b); });
+      form.appendChild(s); }
+    const fId=field('ע.מ / ח.פ של הספק',ids[0]||'','9 ספרות'); fId.inputMode='numeric';
+    const fPh=field('טלפונים של הספק',phones.join(', '),'מופרדים בפסיק');
+    const fMail=field('מייל או אתר',emails.concat(domains).join(', '),'למשל office@peerpharm.com');
+    const fKey=field('מילים שמופיעות רק אצלו','','למשל: גידול כבשים, אלמסררה');
+    const lg=el('label','ck'), cb=el('input'); cb.type='checkbox'; cb.checked=!!canvas; cb.disabled=!canvas; lg.appendChild(cb); lg.appendChild(document.createTextNode('לזכור את הלוגו והכותרת בראש הדף')); form.appendChild(lg);
+    const lr=el('label'); lr.appendChild(document.createTextNode('איך לזהות אותו, במילים שלך')); const fRule=el('textarea'); fRule.rows=2; fRule.placeholder='למשל: השם באנגלית מעל "עוסק מורשה". הלקוח כתוב למעלה, לא הספק.'; lr.appendChild(fRule); form.appendChild(lr);
+    const r2=el('div','lb-in'); const fType=el('select'); TYPES.forEach(v=>{ const o=el('option',null,v||'סוג המסמך'); o.value=v; fType.appendChild(o); }); fType.value=(ctx.det&&ctx.det.type)||''; const fNum=el('input'); fNum.placeholder='4 ספרות אחרונות'; fNum.inputMode='numeric'; fNum.maxLength=4; fNum.value=ctx.det&&ctx.det.num?String(ctx.det.num).slice(-4):''; r2.appendChild(fType); r2.appendChild(fNum); form.appendChild(r2);
+    const row=el('div','lb-row'), save=el('button','hm-link pri','שמירה ולימוד'), cancel=el('button','hm-link','סגירה'); save.type='button'; cancel.type='button'; row.appendChild(save); row.appendChild(cancel); form.appendChild(row);
+    const out=el('p','hm-hint'); form.appendChild(out);
+    cancel.onclick=()=>{ box.hidden=true; teachCtx=null; };
+    save.onclick=async()=>{
+      const name=fName.value.trim(); if(!name){ fName.focus(); out.textContent='צריך לכתוב את שם הספק.'; return; }
+      const idv=fId.value.replace(/\D/g,''); const mails=splitList(fMail.value);
+      const lesson={name,id:idv.length===9?idv:'',phones:splitList(fPh.value).map(p=>p.replace(/\D/g,'')).filter(p=>p.length>=9),emails:mails.filter(x=>x.includes('@')).map(x=>x.toLowerCase()),domains:mails.filter(x=>!x.includes('@')).map(x=>x.toLowerCase()),keywords:splitList(fKey.value),logos:cb.checked&&canvas?[D.logoHash(canvas)]:[],rule:fRule.value.trim(),type:fType.value,number4:fNum.value.replace(/\D/g,''),at:new Date().toISOString(),by:'fouad'};
+      D.addLesson(lesson);
+      const by=[lesson.id&&'ח.פ',lesson.phones.length&&'טלפון',(lesson.emails.length||lesson.domains.length)&&'מייל/אתר',lesson.keywords.length&&'מילים',lesson.logos.length&&'לוגו'].filter(Boolean).join(', ');
+      let now='';
+      if(ctx.det){ if(lesson.logos.length) ctx.det.ev.logo=lesson.logos[0]; const g=guessOf(ctx.det); now=g.label; if(ctx.doc){ ctx.doc.guess=g; ctx.doc.taught=`${name} (לפי ${by||'השם'})`; draw(); } }
+      out.textContent=`מהדק למד את ${name}${by?` לפי ${by}`:''}. ${now?'עכשיו הוא מזהה: '+now+'.':''}`;
+      save.disabled=true;
+      if(tok()){ try{
+        const path=ctx.path||await uploadFile(ctx.file,'set-'+today());
+        await updateJson('lab/teach.json',d=>{ d=d&&Array.isArray(d.items)?d:{app:'mahdek',kind:'lab-teach',v:1,items:[]};
+          const ex=ctx.q&&d.items.find(x=>x.id===ctx.q.id);
+          if(ex){ ex.status='taught'; ex.lesson=lesson; ex.taughtAt=lesson.at; } else d.items.push({id:'t-'+Date.now(),file:path,from:'fouad',status:'taught',mahdek:ctx.guess&&ctx.guess.label||'',lesson,at:lesson.at});
+          d.items=d.items.slice(-200); return d; },'מעבדה: פואד לימד ספק');
+        out.textContent+=` איתי יבדוק את השיעור ויכניס אותו לספר הספקים של כל הצוות ${nextCheck()}.`;
+        teachQ=teachQ.filter(x=>!ctx.q||x.id!==ctx.q.id); drawNeed(); drawKnow();
+      }catch(e){ fail(e,'לשלוח את השיעור לאיתי'); out.textContent+=' (נשמר במחשב הזה בלבד.)'; } }
+    };
+    box.scrollIntoView({block:'start',behavior:'smooth'});
+  }
+
+  /* ---- documents Itai could not identify: he opens them in front of you ---- */
+  function drawNeed(){
+    const w=teachQ.filter(x=>x.status==='waiting'); $('lbNeed').hidden=!w.length; $('lbNeedN').textContent=w.length?`${w.length} מסמכים`:'';
+    const ul=$('lbNeedList'); ul.textContent='';
+    w.slice(0,10).forEach(q=>{ const li=el('li'), r=el('div','rowb'), t=el('div'); t.appendChild(el('b',null,String(q.file||'').split('/').pop())); if(q.question||q.tried) t.appendChild(el('small',null,[q.question,q.tried&&('ניסיתי: '+q.tried)].filter(Boolean).join(' · ')));
+      const b=el('button','hm-link pri','פתיחה ולימוד'); b.type='button'; b.onclick=()=>openQueued(q,b); r.appendChild(t); r.appendChild(b); li.appendChild(r); ul.appendChild(li); });
+  }
+  async function openQueued(q,b){
+    const M=window.__mhMail; if(!M) return; b.disabled=true; b.textContent='פותח…';
+    try{ const blob=await M.get(q.file,false); if(!blob) throw new Error('missing'); const name=String(q.file).split('/').pop();
+      const kind=/\.(jpe?g|png|webp|heic)$/i.test(name)?'image':'pdf'; const f=new File([blob],name,{type:kind==='image'?(blob.type||'image/jpeg'):'application/pdf'});
+      const det=await Promise.race([window.__mh2.detect(f,kind),new Promise((_,j)=>setTimeout(()=>j(new Error('slow')),40000))]).catch(()=>null); await openTeach({file:f,kind,det,guess:guessOf(det),q,path:q.file,question:q.question}); }
+    catch(e){ status('לא הצלחתי לפתוח את המסמך מהמאגר.',true); }
+    b.disabled=false; b.textContent='פתיחה ולימוד';
+  }
+
+  /* ---- what Mahdek already knows ---- */
+  let bookN=0;
+  function drawKnow(){
+    const D=window.__mh2, L=D&&D.lessons?D.lessons():[], ul=$('lbKnowList'); ul.textContent='';
+    $('lbKnowN').textContent=(bookN+L.length)||'';
+    $('lbKnowTxt').textContent=`בספר הספקים של הצוות: ${bookN} ספקים. מה שלימדת במחשב הזה: ${L.length}. מהדק בודק בכל מסמך: ע.מ/ח.פ, מייל, אתר, טלפון, מילים ייחודיות ולוגו.`;
+    L.slice().reverse().slice(0,12).forEach(s=>{ const li=el('li'); li.appendChild(el('b',null,s.name)); li.appendChild(el('small',null,[s.id&&('ח.פ '+s.id),s.phones&&s.phones.length&&('טלפון '+s.phones.join(', ')),(s.emails||[]).concat(s.domains||[]).join(', '),s.keywords&&s.keywords.length&&('מילים: '+s.keywords.join(', ')),s.logos&&s.logos.length&&'לוגו',s.rule].filter(Boolean).join(' · '))); ul.appendChild(li); });
+  }
+  async function sendCorr(){
+    if(needKey()) return; const D=window.__mh2, L=D.learned?D.learned():{ids:{},domains:{}}, les=D.lessons?D.lessons():[]; const b=$('lbCorrSend'); b.disabled=true;
+    try{ await updateJson('lab/corrections.json',d=>{ d=d&&d.kind==='lab-corrections'?d:{app:'mahdek',kind:'lab-corrections',v:1,ids:{},domains:{}}; Object.assign(d.ids,L.ids||{}); Object.assign(d.domains,L.domains||{}); d.lessons=les; d.at=new Date().toISOString(); d.status='open'; return d; },'מעבדה: מה שפואד לימד במחשב שלו');
+      status(`נשלח לאיתי. אחרי בדיקה זה ייכנס לספר הספקים של כל הצוות ${nextCheck()}.`); }
+    catch(e){ fail(e,'לשלוח'); }
     b.disabled=false;
   }
 
@@ -3770,37 +3950,13 @@ window.__nf=normalizeFile;
       const r=await fetch(url+'/check',{method:'POST',headers:{Authorization:'Bearer '+tok(),'X-Mime':'image/jpeg','Content-Type':'text/plain'},body:b64});
       const j=await r.json().catch(()=>({}));
       if(!r.ok||!j.result){ it.claude={err:ERR[j.error]||(j.error==='claude'?'Claude לא ענה'+(j.status?` (${j.status})`:'')+'. אולי נגמר הקרדיט בחשבון ה־API.':'לא הצלחתי לבדוק את הקובץ.')}; }
-      else { const c=j.result; it.claude={res:c}; const t=it.truth;
-        if(!t.supplier&&c.supplier) t.supplier=String(c.supplier); if(!t.type&&TYPES.includes(c.type)) t.type=c.type; if(!t.number4&&/^\d{1,4}$/.test(String(c.number4||''))) t.number4=String(c.number4); }
+      else { const c=j.result; it.claude={res:c}; }
     }catch(e){ it.claude={err:'השרת לא זמין כרגע.'}; }
     draw();
   }
   async function claudeAll(){ const b=$('lbClaude'); b.disabled=true; for(const it of items) if(!it.claude||it.claude.err) await askClaude(it); b.disabled=false;
-    const n=items.filter(x=>x.claude&&x.claude.res).length; if(n) status(`Claude בדק ${n} קבצים. התשובות שלו מולאו בשדות "מה נכון", ואפשר לתקן לפני השליחה לאיתי.`); }
+    const n=items.filter(x=>x.claude&&x.claude.res).length; if(n) status(`Claude בדק ${n} קבצים. אם מהדק טעה, אפשר ללמד אותו לפי מה ש־Claude קרא.`); }
   serverUrl().then(u=>{ $('lbClaude').hidden=!u; });
-
-  /* ---- requests ---- */
-  let reqs=[];
-  function drawReqs(){ const ul=$('lbReqs'); ul.textContent=''; reqs.slice().reverse().slice(0,8).forEach(r=>{ const li=el('li'); li.appendChild(document.createTextNode(r.text)); li.appendChild(el('small',null,(r.status==='done'?'✓ ':'⏳ ')+fmt(new Date(r.at),{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})+(r.result?' · איתי: '+r.result:' · מחכה לבדיקה של איתי'))); ul.appendChild(li); }); }
-  async function sendReq(){
-    const v=$('lbReq').value.trim(); if(!v||needKey()) return; const b=$('lbReqSend'); b.disabled=true;
-    try{ const r={id:'r-'+Date.now(),at:new Date().toISOString(),text:v.slice(0,1000),status:'open',result:''};
-      await updateJson('lab/requests.json',d=>{ d=d&&Array.isArray(d.items)?d:{app:'mahdek',kind:'lab-requests',v:1,items:[]}; d.items.push(r); d.items=d.items.slice(-60); return d; },'מעבדה: בקשה מפואד');
-      reqs.push(r); drawReqs(); $('lbReq').value=''; status(`הבקשה נשלחה. איתי יטפל בה ${nextCheck()}.`); }
-    catch(e){ fail(e,'לשלוח את הבקשה'); }
-    b.disabled=false;
-  }
-
-  /* ---- my corrections ---- */
-  function corrCount(){ const D=window.__mh2, L=D&&D.learned?D.learned():null; return L?Object.keys(L.ids||{}).length+Object.keys(L.domains||{}).length:0; }
-  async function sendCorr(){
-    if(needKey()) return; const D=window.__mh2, L=D&&D.learned?D.learned():null; const n=corrCount(); if(!n){ status('אין עדיין תיקונים במחשב הזה.'); return; }
-    const b=$('lbCorrSend'); b.disabled=true;
-    try{ await updateJson('lab/corrections.json',d=>{ d=d&&d.kind==='lab-corrections'?d:{app:'mahdek',kind:'lab-corrections',v:1,ids:{},domains:{}}; Object.assign(d.ids,L.ids||{}); Object.assign(d.domains,L.domains||{}); d.at=new Date().toISOString(); d.status='open'; return d; },'מעבדה: תיקוני ספקים מפואד');
-      status(`נשלחו ${n} תיקונים. אחרי שאיתי יבדוק אותם הם ייכנסו לספר הספקים של הצוות.`); }
-    catch(e){ fail(e,'לשלוח את התיקונים'); }
-    b.disabled=false;
-  }
 
   /* ---- results ---- */
   async function approve(branch,btn){
@@ -3831,13 +3987,17 @@ window.__nf=normalizeFile;
   }
   let loadedAt=0;
   async function load(force){
-    const M=window.__mhMail; if(!M||!M.hasToken()) { $('lbResBody').textContent=''; $('lbResBody').appendChild(el('p','hm-empty','כדי לראות תוצאות צריך לחבר את המאגר הפרטי במסך "תיבת דואר".')); return; }
+    const M=window.__mhMail; drawWho(); drawCorner(); drawKnow();
+    if(!M||!M.hasToken()){ const b=$('lbResBody'); b.textContent=''; b.appendChild(el('p','hm-empty','כדי לראות תשובות צריך לחבר את המאגר הפרטי במסך "תיבת דואר".')); return; }
     if(!force&&Date.now()-loadedAt<60000) return; loadedAt=Date.now();
-    try{ const [rep,rq,ap]=await Promise.all([M.get('team/lab.json',true).catch(()=>null),M.get('lab/requests.json',true).catch(()=>null),M.get('lab/approvals.json',true).catch(()=>null)]);
-      if(rq&&Array.isArray(rq.items)){ reqs=rq.items; drawReqs(); }
+    try{ const [rep,rq,ap,tq,bk]=await Promise.all(['team/lab.json','lab/requests.json','lab/approvals.json','lab/teach.json','team/suppliers.json'].map(p=>M.get(p,true).catch(()=>null)));
+      if(rq&&Array.isArray(rq.items)) reqs=rq.items;
+      if(tq&&Array.isArray(tq.items)) teachQ=tq.items;
+      if(bk&&Array.isArray(bk.suppliers)) bookN=bk.suppliers.length;
       if(rep&&rep.kind==='ocr-lab') drawRes(rep,ap&&ap.items);
     }catch(_){}
-    const n=corrCount(); $('lbCorrTxt').textContent=`כשמתקנים שם של ספק במסך "קבצים", מהדק זוכר את התיקון רק במחשב הזה (כרגע ${n} תיקונים). שליחה לאיתי מכניסה אותם, אחרי בדיקה, לספר הספקים של כל הצוות.`;
+    drawWho(); drawCorner(); drawNeed(); drawKnow();
+    $('lbSub').textContent=`נותנים עבודה לעובד, והוא עונה בבדיקה הקרובה (${nextCheck()}). מסמך שמהדק לא מזהה מלמדים במקום.`;
   }
 
   /* wiring */
@@ -3847,14 +4007,14 @@ window.__nf=normalizeFile;
   ['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{ e.preventDefault(); drop.classList.remove('drag'); }));
   drop.addEventListener('drop',e=>addFiles(e.dataTransfer.files));
   $('lbSend').addEventListener('click',sendDocs);
-  $('lbClaude').addEventListener('click',claudeAll);
   $('lbClear').addEventListener('click',()=>{ items=[]; draw(); status(''); });
-  $('lbReqSend').addEventListener('click',sendReq);
+  $('lbClaude').addEventListener('click',claudeAll);
   $('lbCorrSend').addEventListener('click',sendCorr);
   window.addEventListener('hashchange',()=>{ if(location.hash==='#lab') load(false); });
   window.addEventListener('mh:mail',()=>{ if(!$('s-lab').hidden) load(false); });
-  if(location.hash==='#lab') setTimeout(()=>load(true),1500);
   setInterval(()=>{ if(!document.hidden&&!$('s-lab').hidden) load(true); },120000);
+  drawWho(); drawCorner();
+  if(location.hash==='#lab') setTimeout(()=>load(true),1500);
   window.__mhLab={load};
 })();
 </script>
