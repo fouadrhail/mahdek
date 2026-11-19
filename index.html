@@ -1463,7 +1463,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 8.7 · עודכן 19.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 8.8 · עודכן 19.11.2026</span></footer>
 </div>
 
 <script>
@@ -2079,12 +2079,39 @@ window.__nf=normalizeFile;
     }finally{ pdf.destroy(); }
   }
   function docType(lines){
+    { const head=lines.slice(0,14).join(' ');
+      if(!/חשבוני[תה]|קבלה|invoice|receipt/i.test(head)) for(const [re,name] of EXTRA_TYPES) if(re.test(head)) return name; }
     const strip=t=>t.replace(/(?:עבור|תאריך|מס['׳]?|מספר)\s*חשבונית/g,' ');
     const top=strip(lines.slice(0,14).join(' ')), all=strip(lines.join(' '));
     const generic=new Set(['חשבונית','קבלה']);
     for(const src of [top,all]) for(const [re,name] of DOC_TYPES) if(!generic.has(name)&&re.test(src)) return name;
     for(const src of [top,all]) for(const [re,name] of DOC_TYPES) if(re.test(src)) return name;
     return '';
+  }
+  /* Documents that are not invoices: personal papers, tax and payroll forms, bills, contracts, bank papers.
+     Looked for only in the head of the page, and only when no invoice/receipt title is there. */
+  const EXTRA_TYPES=[
+    [/טופס\s*106|דו["״]?ח\s*שנתי\s*למקבל/,'טופס 106'],[/טופס\s*101|כרטיס\s*עובד/,'טופס 101'],[/טופס\s*102/,'טופס 102'],[/טופס\s*126/,'טופס 126'],
+    [/טופס\s*867|אישור\s*שנתי\s*(?:על\s*)?(?:ריבית|ניכוי)/,'טופס 867'],[/טופס\s*161/,'טופס 161'],[/טופס\s*1301|דו["״]?ח\s*שנתי\s*על\s*הכנסות/,'דוח שנתי 1301'],
+    [/אישור\s*(?:על\s*)?ניכוי\s*מס\s*במקור/,'אישור ניכוי מס במקור'],[/אישור\s*(?:על\s*)?ניהול\s*(?:פנקסי\s*)?(?:חשבונות|ספרים)/,'אישור ניהול ספרים'],
+    [/תעודת\s*עוסק\s*(?:מורשה|פטור)|תעודת\s*רישום\s*(?:עוסק|במע["״]?מ)/,'תעודת עוסק'],[/תעודת\s*התאגדות/,'תעודת התאגדות'],[/נסח\s*(?:חברה|רשם|רישום)/,'נסח חברה'],
+    [/הודעת\s*שומה|צו\s*שומה|שומת\s*מס/,'שומה'],[/ביטוח\s*לאומי/,'מסמך ביטוח לאומי'],[/רשות\s*המסים|פקיד\s*השומה/,'מסמך רשות המסים'],
+    [/ארנונה/,'חשבון ארנונה'],[/חברת\s*החשמל|חשבון\s*(?:ה)?חשמל/,'חשבון חשמל'],[/חשבון\s*(?:ה)?מים|תאגיד\s*(?:ה)?מים/,'חשבון מים'],[/חשבון\s*(?:ה)?גז/,'חשבון גז'],
+    [/פירוט\s*(?:עסקאות|חיובים)|דף\s*פירוט\s*(?:חודשי|חיובים)/,'פירוט כרטיס אשראי'],[/אישור\s*יתר(?:ה|ות)|אישור\s*בנק|אישור\s*ניהול\s*חשבון/,'אישור בנק'],
+    [/שובר\s*(?:לתשלום|תשלום)/,'שובר תשלום'],[/שלמו\s*לפקודת|לפקודת\s*:/,"צ'ק"],[/דו["״]?ח\s*נוכחות|שעון\s*נוכחות|דוח\s*שעות/,'דוח נוכחות'],
+    [/פוליס(?:ה|ת\s*ביטוח)|תעודת\s*ביטוח/,'פוליסת ביטוח'],[/קרן\s*פנסיה|קופת\s*גמל|קרן\s*השתלמות|ביטוח\s*מנהלים/,'דוח פנסיה וגמל'],
+    [/הסכם\s*שכירות|חוזה\s*שכירות/,'הסכם שכירות'],[/ייפוי\s*כו?ח|יפוי\s*כו?ח/,'ייפוי כוח'],[/פרוטוקול/,'פרוטוקול'],[/הסכם|חוזה/,'הסכם'],
+    [/רישיון\s*נהיגה|רשיון\s*נהיגה|driving\s*licen[cs]e/i,'רישיון נהיגה'],[/רישיון\s*רכב|רשיון\s*רכב/,'רישיון רכב'],[/דרכון|passport/i,'דרכון'],
+    [/תעודת\s*לידה/,'תעודת לידה'],[/תעודת\s*נישואי/,'תעודת נישואין'],[/ספח/,'ספח תעודת זהות'],[/תעודת\s*זהות|identity\s*card/i,'תעודת זהות'],
+    [/אישור\s*תושבות/,'אישור תושבות'],[/אישור\s*מחלה|תעודת\s*מחלה|אישור\s*רפואי/,'אישור מחלה'],[/קורות\s*חיים/,'קורות חיים'],[/מכתב\s*(?:פיטורין|פיטורים|התפטרות)/,'מכתב סיום עבודה']
+  ];
+  /* Personal papers: named after the person, never after a number printed on them */
+  const PERSONAL_TYPES=new Set(['תעודת זהות','ספח תעודת זהות','רישיון נהיגה','דרכון','תעודת לידה','תעודת נישואין','אישור תושבות','אישור מחלה','קורות חיים','טופס 101','טופס 106']);
+  function personName(lines){
+    const L=lines.slice(0,30), clean=s=>String(s||'').replace(/[^א-ת'"\- ]/g,' ').replace(/\s+/g,' ').trim().split(' ').slice(0,2).join(' ');
+    const after=re=>{ for(let i=0;i<L.length;i++){ const m=L[i].match(re); if(m){ const v=clean(L[i].slice(m.index+m[0].length)); if(v.length>=2) return v; const n=clean(L[i+1]); if(n.length>=2) return n; } } return ''; };
+    const fam=after(/שם\s*(?:ה)?משפחה\s*[:\-]?/), first=after(/שם\s*(?:ה)?פרטי\s*[:\-]?/);
+    return [first,fam].filter(Boolean).join(' ').slice(0,40);
   }
   /* Document number: the number printed next to the document title ("חשבונית מס 11444", "מספר: 02/000327").
      Customer, phone, date, amount, allocation and business numbers around it are skipped. */
@@ -2707,7 +2734,9 @@ window.__nf=normalizeFile;
   function labelBatch(list){
     const evs=list.map(x=>x.ev);
     const batch=batchRecipients(evs);
-    return list.map(x=>{ const res=resolveSupplier(x.ev,{recipIds:batch.ids,recipNames:batch.names,learned,registry,team:teamBook}); return {res,label:labelOf(res.name,x.type,x.num),conf:confOf(res,x.type,x.num,x.ev)}; });
+    return list.map(x=>{ const res=resolveSupplier(x.ev,{recipIds:batch.ids,recipNames:batch.names,learned,registry,team:teamBook}); if(PERSONAL_TYPES.has(x.type)){ const who=personName(x.ev.lines||[]); return {res:{name:who,how:who?'person':'',id:''},label:[x.type,who].filter(Boolean).join(' - '),conf:{score:who?70:55,level:'medium'}}; }
+      if(EXTRA_TYPES.some(t=>t[1]===x.type)&&!/חשבוני|קבלה/.test(x.type)){ const lab=[x.type,res.name].filter(Boolean).join(' - '); return {res,label:lab,conf:confOf(res,x.type,'x',x.ev)}; }
+      return {res,label:labelOf(res.name,x.type,x.num),conf:confOf(res,x.type,x.num,x.ev)}; });
   }
   function learnSupplier(ev,res,name,others){
     name=(name||'').split(' - ')[0].replace(/[\\/:*?"<>|]/g,'-').trim();
