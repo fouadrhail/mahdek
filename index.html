@@ -913,6 +913,14 @@ body[data-tab="convert"]{--sec:var(--sage)} body[data-tab="edit"]{--sec:var(--bl
 .an-f input{font:inherit;font-size:.9rem;color:var(--ink);background:transparent;border:1px solid transparent;border-bottom-color:var(--rule);border-radius:6px;padding:3px 4px;min-width:0;width:100%}
 .an-f input:hover,.an-f input:focus{border-color:var(--rule);outline:none;background:var(--soft)}
 .an-f.miss input{border-bottom-color:var(--ml-flag)}
+.an-f.an-tot{background:var(--an-tot-bg);border-radius:10px;padding:6px 8px;box-shadow:inset 0 0 0 1px var(--an-tot-line)}
+.an-f.an-tot span{color:var(--an-tot-ink);font-weight:600}
+.an-f.an-tot input{font-size:1.15rem;font-weight:700;color:var(--an-tot-ink);border-bottom-color:transparent}
+.an-hit{font-size:.8rem;color:var(--muted);margin:2px 0 6px;overflow-wrap:anywhere}
+.an-hit mark{background:var(--an-tot-bg);color:var(--an-tot-ink);border-radius:3px;padding:0 2px}
+:root{--an-tot-bg:#fff4c2;--an-tot-ink:#5a4300;--an-tot-line:#f0d873}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--an-tot-bg:#3d3310;--an-tot-ink:#ffe08a;--an-tot-line:#6b5a1c}}
+:root[data-theme="dark"]{--an-tot-bg:#3d3310;--an-tot-ink:#ffe08a;--an-tot-line:#6b5a1c}
 .an-chk{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;font-size:.85rem}
 .an-chk li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:6px;color:var(--ink)}
 .an-chk li i{font-style:normal;font-weight:700;text-align:center}
@@ -1513,7 +1521,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 9.2 · עודכן 19.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 9.3 · עודכן 19.11.2026</span></footer>
 </div>
 
 <script>
@@ -4425,26 +4433,34 @@ window.__nf=normalizeFile;
      >5000, <1000, 1000-5000 filter by total; words match supplier, type, date, recipient, file name, checks and status */
   let query='';
   const digits=s=>String(s||'').replace(/[^\d]/g,'');
-  function hay(d){ if(d.busy||d.err) return {text:(d.file.name+' '+(d.err||'')).toLowerCase(),nums:[],ids:[],lvl:''};
+  /* search ignores quotes, gershayim, dashes and extra spaces: בע"מ = בעמ, ארצי finds "בזק ארצי בע"מ" */
+  const sq=s=>String(s||'').toLowerCase().replace(/["'״׳`]/g,'').replace(/[‐-―\-_/\\|]+/g,' ').replace(/\s+/g,' ').trim();
+  function docText(d){ if(d._txt!=null) return d._txt; const ev=d.det&&d.det.ev; const L=ev&&Array.isArray(ev.lines)?ev.lines:[];
+    d._txtRaw=L.map(x=>String(x||'').replace(/\s+/g,' ').trim()).filter(Boolean); d._txt=d._txtRaw.map(sq); return d._txt; }
+  function hay(d){ if(d.busy||d.err) return {text:sq(d.file.name+' '+(d.err||'')),doc:[],nums:[],ids:[],lvl:''};
     const ch=checksOf(d), f=d.f;
     const lvlWords={ok:'תקין תקינים',warn:'לבדיקה בדיקה',bad:'בעיה בעיות שגוי'}[ch.lvl];
-    const text=[f.sup,f.id,f.type,f.no,f.date,f.recip,f.alloc,d.file.name,lvlWords,Object.values(d.src).includes('claude')?'claude':'',ch.list.map(x=>x.text).join(' ')].join(' ').toLowerCase();
-    return {text,nums:['total','before','vat','zero'].map(k=>num(f[k])).filter(x=>x!=null),ids:[f.no,f.id,f.alloc].map(digits).filter(Boolean),total:num(f.total)!=null?num(f.total):num(f.before)};
+    const text=sq([f.sup,f.id,f.type,f.no,f.date,f.recip,f.alloc,d.file.name,lvlWords,Object.values(d.src).includes('claude')?'claude':'',ch.list.map(x=>x.text).join(' '),d.reg&&d.reg.n,d.claudeNote].join(' '));
+    return {text,doc:docText(d),nums:['total','before','vat','zero'].map(k=>num(f[k])).filter(x=>x!=null),ids:[f.no,f.id,f.alloc].map(digits).filter(Boolean),total:num(f.total)!=null?num(f.total):num(f.before)};
   }
   function matches(d){
-    const words=query.trim().toLowerCase().split(/\s+/).filter(Boolean); if(!words.length) return true; const H=hay(d);
+    const words=qWords(); if(!words.length) return true; const H=hay(d); d._hit='';
+    const inDoc=w=>{ const i=H.doc.findIndex(l=>l.includes(w)); if(i<0) return false; if(!d._hit) d._hit=d._txtRaw[i]; return true; };
     return words.every(w=>{
+      const plain=!/[<>]/.test(w)&&!/^[\d,.]+(-[\d,.]+)?$/.test(w);
+      if(plain) return H.text.includes(w)||inDoc(w);
       let m=w.match(/^([<>])=?([\d,.]+)$/); if(m){ const v=parseFloat(m[2].replace(/,/g,'')); return H.total!=null&&(m[1]==='>'?H.total>=v:H.total<=v); }
       m=w.match(/^([\d,.]+)-([\d,.]+)$/); if(m&&!/^\d{1,2}[.\/-]\d{1,2}/.test(w)){ const a=parseFloat(m[1].replace(/,/g,'')), b=parseFloat(m[2].replace(/,/g,'')); return H.total!=null&&H.total>=Math.min(a,b)&&H.total<=Math.max(a,b); }
       if(/^[\d,.]+$/.test(w)&&/\d/.test(w)){
         const v=parseFloat(w.replace(/,/g,'')), hasDec=/\.\d/.test(w);
         if(H.nums&&H.nums.some(x=>hasDec?Math.abs(x-v)<0.005:Math.floor(x)===v||Math.abs(x-v)<0.005)) return true;
         const dg=digits(w); if(dg.length>=3&&H.ids&&H.ids.some(x=>x.includes(dg))) return true;
-        return H.text.includes(w);
+        return H.text.includes(w)||inDoc(w);
       }
-      return H.text.includes(w);
+      return H.text.includes(w)||inDoc(w);
     });
   }
+  function qWords(){ return sq(query).split(' ').filter(Boolean); }
   function shown(){ return docs.filter(matches); }
   function draw(){
     const box=$('anCards'); box.textContent='';
@@ -4462,6 +4478,12 @@ window.__nf=normalizeFile;
     const main=el('div','an-main'); c.appendChild(main);
     const top=el('div','an-top'); main.appendChild(top);
     if(d.busy){ top.appendChild(el('h3',null,d.file.name)); main.appendChild(el('p','an-busy','קורא את המסמך…')); return c; }
+    if(query.trim()&&d._hit){ const p=el('p','an-hit'); p.appendChild(document.createTextNode('נמצא בתוך המסמך: '));
+      const ws=qWords().filter(w=>!/^[<>]/.test(w)).map(w=>[...w].map(ch=>ch.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('["\'״׳]?'));
+      const raw=d._hit.length>140?d._hit.slice(0,140)+'…':d._hit;
+      if(ws.length){ const re=new RegExp('('+ws.join('|')+')','gi'); raw.split(re).forEach((part,k)=>{ p.appendChild(k%2?el('mark',null,part):document.createTextNode(part)); }); }
+      else p.appendChild(document.createTextNode(raw));
+      main.appendChild(p); }
     if(d.err){ top.appendChild(el('h3',null,d.file.name)); main.appendChild(el('p','an-busy',d.err)); return c; }
     const ch=checksOf(d); c.classList.add('st-'+ch.lvl);
     top.appendChild(el('h3',null,[d.f.sup,[d.f.type,d.f.no].filter(Boolean).join(' ')].filter(Boolean).join(' – ')||d.file.name));
@@ -4469,7 +4491,7 @@ window.__nf=normalizeFile;
     if(d.claudeBusy) top.appendChild(el('span','an-pill','Claude קורא…'));
     top.appendChild(el('small',null,d.file.name+(d.fromFiles?' · מהקבצים':'')));
     const g=el('div','an-grid'); main.appendChild(g);
-    FIELDS.forEach(([k,label])=>{ if(k==='zero'&&!d.f.zero) return; const f=el('label','an-f'+(!d.f[k]&&['sup','type','date','total'].includes(k)?' miss':'')); const s=el('span',null,label); if(d.src[k]==='claude'){ s.appendChild(el('i',null,'Claude')); } f.appendChild(s);
+    FIELDS.forEach(([k,label])=>{ if(k==='zero'&&!d.f.zero) return; const f=el('label','an-f'+(k==='total'?' an-tot':'')+(!d.f[k]&&['sup','type','date','total'].includes(k)?' miss':'')); const s=el('span',null,label); if(d.src[k]==='claude'){ s.appendChild(el('i',null,'Claude')); } f.appendChild(s);
       const inp=el('input'); inp.value=d.f[k]||''; if(['before','vat','total','zero','rate','id','alloc','no'].includes(k)) inp.inputMode='decimal';
       inp.onchange=()=>{ d.f[k]=inp.value.trim(); d.src[k]='me'; d.edited=true; draw(); }; f.appendChild(inp); g.appendChild(f); });
     const ul=el('ul','an-chk'); ch.list.forEach(x=>{ const li=el('li',x.level); li.appendChild(el('i',null,x.level==='ok'?'✓':x.level==='warn'?'!':'✗')); li.appendChild(el('span',null,x.text)); ul.appendChild(li); }); main.appendChild(ul);
