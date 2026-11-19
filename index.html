@@ -1463,7 +1463,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 8.4 · עודכן 19.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 8.5 · עודכן 19.11.2026</span></footer>
 </div>
 
 <script>
@@ -3840,9 +3840,8 @@ window.__nf=normalizeFile;
   const norm=s=>String(s||'').replace(/["'״׳\-.,()]/g,'').replace(/\s+/g,' ').trim();
   /* ---- the team: one corner per worker ---- */
   const WORKERS=[
-    {id:'mail',name:'מאיה',role:'קליטת מיילים: קוראת וממיינת את כל המיילים ושומרת את הקבצים.',color:'#3f6fb5'},
+    {id:'mail',name:'מאיה',role:'אחראית המיילים מקצה לקצה: פותחת כל מייל וכל קובץ, מנתחת לעומק, מכינה טיוטות תשובה וחבילות הידוק.',color:'#3f6fb5'},
     {id:'files',name:'איתי',role:'בדיקת קבצים ומעבדת הזיהוי: בודק מסמכים ומלמד את מהדק לזהות אותם.',color:'#c0576a'},
-    {id:'prep',name:'יעל',role:'הכנה לפעולה: מה לעשות עם כל מייל, הדפסה וטיוטות תשובה.',color:'#7a63b0'},
     {id:'reports',name:'דנה',role:'דיווחים: מועדים, מה חסר מכל לקוח, עדכונים מרשות המסים.',color:'#3a9266'},
     {id:'payroll',name:'עומר',role:'חשב שכר: תעריפים, חוקים וחישובי שכר, בדיקת תלושים ושעות.',color:'#c58b1f'},
     {id:'manager',name:'נועם',role:'מנהל המשרד: מסדר את היום שלך ומחלק עבודה לצוות.',color:'#2c3a57'}];
@@ -3869,7 +3868,7 @@ window.__nf=normalizeFile;
   }
   /* instant answer through the office server (cheap model), with the worker's own data as context */
   const israelDay=(d)=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jerusalem'}).format(d||new Date());
-  const CTX={payroll:['team/payroll.json','agents/payroll.json','team/clients.json'],mail:['agents/mail.json','@analysis','team/clients.json'],files:['agents/files.json','agents/lab.json','team/lab.json','@analysis'],prep:['agents/prep.json','@actions','@analysis'],reports:['agents/reports.json','team/clients.json','team/ledger.json'],manager:['agent/brief.json','team/board.json','agents/mail.json','agents/prep.json','agents/reports.json']};
+  const CTX={payroll:['team/payroll.json','agents/payroll.json','team/clients.json'],mail:['agents/mail.json','@analysis','@actions','team/clients.json'],files:['agents/files.json','agents/lab.json','team/lab.json','@analysis'],prep:['agents/mail.json','@actions','@analysis'],reports:['agents/reports.json','team/clients.json','team/ledger.json'],manager:['agent/brief.json','team/board.json','agents/mail.json','agents/prep.json','agents/reports.json']};
   async function contextFor(id){
     const M=window.__mhMail, out=[]; let left=56000;
     const add=(name,obj)=>{ if(!obj||left<=0) return; const s=JSON.stringify(obj).slice(0,Math.min(16000,left)); left-=s.length; out.push(`### ${name}\n${s}`); };
@@ -4150,9 +4149,8 @@ window.__nf=normalizeFile;
 
   const TEAM=[
     {id:'manager',name:'נועם',role:'מנהל המשרד',color:'#2c3a57',run:'07:48',go:null,g:'m'},
-    {id:'mail',name:'מאיה',role:'קליטת מיילים',color:'#3f6fb5',run:'07:06',go:'mail',g:'f'},
-    {id:'files',name:'איתי',role:'בדיקת קבצים',color:'#c0576a',run:'07:20',go:'join',g:'m'},
-    {id:'prep',name:'יעל',role:'הכנה לפעולה',color:'#7a63b0',run:'07:27',go:'mail',g:'f'},
+    {id:'mail',name:'מאיה',role:'אחראית המיילים',color:'#3f6fb5',run:'07:06',go:'mail',g:'f'},
+    {id:'files',name:'איתי',role:'מעבדת זיהוי ועזרה בקבצים',color:'#c0576a',run:'07:40',go:'join',g:'m'},
     {id:'reports',name:'דנה',role:'דיווחים',color:'#3a9266',run:'07:34',go:null,g:'f'},
     {id:'payroll',name:'עומר',role:'חשב שכר',color:'#c58b1f',run:'07:44',go:null,g:'m'}];
 
@@ -4219,7 +4217,7 @@ window.__nf=normalizeFile;
     /* ---- layout ---- */
     const ROWA=106, ROWB=180;
     const SPOT={manager:{c:58,T:114},mail:{c:176,T:ROWA},files:{c:256,T:ROWA},prep:{c:336,T:ROWA},reports:{c:176,T:ROWB},payroll:{c:256,T:ROWB}};
-    const TEAMP=['manager','mail','files','prep','reports','payroll'];
+    const TEAMP=['manager','mail','files','reports','payroll'];
 
     function plant(x,y,big){ const s=big?1:0;
       OB(x,y+10+s*4,12+s*2,10,'#c8794f','#7e4129'); R(x+1,y+11+s*4,10+s*2,2,'#d98d62');
