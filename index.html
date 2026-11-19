@@ -1463,7 +1463,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 8.0 · עודכן 18.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 8.1 · עודכן 18.11.2026</span></footer>
 </div>
 
 <script>
@@ -3790,18 +3790,44 @@ window.__nf=normalizeFile;
     const w=WORKERS.find(x=>x.id===who)||WORKERS[1], c=$('lbCorner'); c.textContent='';
     c.appendChild(el('p','role',w.role));
     const ta=el('textarea'); ta.rows=2; ta.placeholder=`מה לבקש מ${w.name}?`; ta.setAttribute('aria-label',`בקשה ל${w.name}`); c.appendChild(ta);
-    const row=el('div','lb-row'), b=el('button','hm-link pri',`שליחה ל${w.name}`); b.type='button'; row.appendChild(b); row.appendChild(el('span','hm-hint',`${w.name} תענה/יענה ${nextCheck()}`)); c.appendChild(row);
+    const row=el('div','lb-row'), b=el('button','hm-link pri',`שליחה ל${w.name}`); b.type='button'; row.appendChild(b); row.appendChild(el('span','hm-hint',server?'עונה מיד':`${w.name} תענה/יענה ${nextCheck()}`)); c.appendChild(row);
     b.onclick=()=>sendReq(w,ta,b);
     const mine=reqs.filter(r=>whoOf(r)===w.id).slice().reverse().slice(0,6);
     if(mine.length){ const ul=el('ul','lb-list'); mine.forEach(r=>{ const li=el('li'); li.appendChild(document.createTextNode(r.text));
       li.appendChild(el('small',null,(r.status==='done'?'✓ ':'⏳ ')+fmt(new Date(r.at),{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})+(r.status==='done'?'':' · מחכה לבדיקה')));
       if(r.result) li.appendChild(el('span','ans',`${w.name}: ${r.result}`)); ul.appendChild(li); }); c.appendChild(ul); }
   }
+  /* instant answer through the office server (cheap model), with the worker's own data as context */
+  const israelDay=(d)=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jerusalem'}).format(d||new Date());
+  const CTX={mail:['agents/mail.json','@analysis','team/clients.json'],files:['agents/files.json','agents/lab.json','team/lab.json','@analysis'],prep:['agents/prep.json','@actions','@analysis'],reports:['agents/reports.json','team/clients.json','team/ledger.json'],manager:['agent/brief.json','team/board.json','agents/mail.json','agents/prep.json','agents/reports.json']};
+  async function contextFor(id){
+    const M=window.__mhMail, out=[]; let left=56000;
+    const add=(name,obj)=>{ if(!obj||left<=0) return; const s=JSON.stringify(obj).slice(0,Math.min(16000,left)); left-=s.length; out.push(`### ${name}\n${s}`); };
+    const dayFile=async kind=>{ for(let i=0;i<4;i++){ const d=israelDay(new Date(Date.now()-i*864e5)); const j=await M.get(`days/${d}/${kind}.json`,true).catch(()=>null); if(j) return [d,j]; } return [null,null]; };
+    for(const p of CTX[id]||CTX.files){
+      if(p[0]==='@'){ const [d,j]=await dayFile(p.slice(1)); add(`days/${d}/${p.slice(1)}.json`,j); }
+      else add(p,await M.get(p,true).catch(()=>null)); }
+    if(id==='reports'){ try{ const r=await fetch('data/rates.json',{cache:'no-store'}); const j=r.ok?await r.json():null; if(j) add('מועדי דיווח',j.deadlines); }catch(_){} }
+    add('בקשות קודמות',reqs.filter(r=>whoOf(r)===id).slice(-6).map(r=>({text:r.text,result:r.result})));
+    return out.join('\n\n');
+  }
+  async function askNow(w,text){
+    const url=await serverUrl(); if(!url) return null;
+    try{ const ctx=await contextFor(w.id);
+      const r=await fetch(url+'/ask',{method:'POST',headers:{Authorization:'Bearer '+tok(),'Content-Type':'application/json'},body:JSON.stringify({to:w.id,text,context:ctx,day:israelDay()})});
+      const j=await r.json().catch(()=>({})); return r.ok&&j.answer?j.answer:null; }
+    catch(_){ return null; }
+  }
   async function sendReq(w,ta,b){
     const v=ta.value.trim(); if(!v||needKey()) return; b.disabled=true;
     try{ const r={id:'r-'+Date.now(),at:new Date().toISOString(),to:w.id,text:v.slice(0,2000),status:'open',result:''};
+      reqs.push(r); ta.value=''; drawCorner();
+      status(`${w.name} עונה…`);
+      const ans=await askNow(w,r.text);
+      if(ans){ r.result=ans; r.quick=true; if(!/להמשך בריצה המלאה/.test(ans)) r.status='done'; }
       await updateJson('lab/requests.json',d=>{ d=d&&Array.isArray(d.items)?d:{app:'mahdek',kind:'lab-requests',v:1,items:[]}; d.items.push(r); d.items=d.items.slice(-120); return d; },`מעבדה: בקשה ל${w.name}`);
-      reqs.push(r); ta.value=''; drawWho(); drawCorner(); status(`הבקשה נשלחה ל${w.name}. התשובה תופיע כאן ${nextCheck()}.`); }
+      drawWho(); drawCorner();
+      status(ans?(r.status==='done'?`${w.name} ענה/תה.`:`${w.name} ענה/תה, והמשך העבודה ייעשה ${nextCheck()}.`):`הבקשה נשלחה ל${w.name}. התשובה תופיע כאן ${nextCheck()}.`); }
     catch(e){ fail(e,'לשלוח את הבקשה'); }
     b.disabled=false;
   }
@@ -3956,7 +3982,7 @@ window.__nf=normalizeFile;
   }
   async function claudeAll(){ const b=$('lbClaude'); b.disabled=true; for(const it of items) if(!it.claude||it.claude.err) await askClaude(it); b.disabled=false;
     const n=items.filter(x=>x.claude&&x.claude.res).length; if(n) status(`Claude בדק ${n} קבצים. אם מהדק טעה, אפשר ללמד אותו לפי מה ש־Claude קרא.`); }
-  serverUrl().then(u=>{ $('lbClaude').hidden=!u; });
+  serverUrl().then(u=>{ $('lbClaude').hidden=!u; drawCorner(); });
 
   /* ---- results ---- */
   async function approve(branch,btn){
