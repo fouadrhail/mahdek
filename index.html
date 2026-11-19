@@ -1165,6 +1165,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <div class="head">
       <h2>סדר ההדפסה<span class="count" id="count"></span></h2>
       <div class="tools">
+        <button id="toAn" type="button" title="להעביר את הקבצים, עם מה שמהדק כבר זיהה, ללשונית הניתוח">שליחה לניתוח</button>
         <button id="sortName" type="button">מיון לפי שם</button>
         <button id="clearAll" type="button">ניקוי הכול</button>
       </div>
@@ -1512,7 +1513,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 9.1 · עודכן 19.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 9.2 · עודכן 19.11.2026</span></footer>
 </div>
 
 <script>
@@ -1700,6 +1701,12 @@ window.__nf=normalizeFile;
   drop.addEventListener('drop',e=>{if(dragId!=null)return;e.preventDefault();e.stopPropagation();if(e.dataTransfer.files.length)add(e.dataTransfer.files);});
   document.addEventListener('dragover',e=>{if(dragId==null)e.preventDefault();});
   document.addEventListener('drop',e=>{if(dragId==null){e.preventDefault();if($('p-merge').hidden)return;if(e.dataTransfer.files.length)add(e.dataTransfer.files);}});
+  $('toAn').addEventListener('click',()=>{
+    const list=items.filter(x=>x.kind==='pdf'||x.kind==='image');
+    if(!list.length||!window.__mhAn){ setStatus('אין כאן קבצי PDF או תמונות לניתוח.'); return; }
+    window.__mhAn.addPrepared(list.map(x=>({file:x.file,kind:x.kind,det:x.det||null,label:x.edited?x.label:''})));
+    location.hash='an';
+  });
   $('sortName').addEventListener('click',()=>{items.sort((a,b)=>a.file.name.localeCompare(b.file.name,'he',{numeric:true}));render();});
   $('clearAll').addEventListener('click',()=>{items.forEach(x=>x.url&&URL.revokeObjectURL(x.url));items=[];render();setStatus('');setBar(0);});
   /* lets other screens (email analysis) hand files to the merge screen */
@@ -4373,11 +4380,11 @@ window.__nf=normalizeFile;
   async function analyze(d){
     const M=D(); if(!M){ d.err='המנוע של מהדק לא נטען'; draw(); return; }
     try{
-      d.det=await M.detect(d.file,d.kind);
+      if(!d.det) d.det=await M.detect(d.file,d.kind);
       try{ d.canvas=d.kind==='image'?await M.imageCanvas(d.file):await M.pdfCanvas(d.file); }catch(_){}
     }catch(e){ d.err='לא הצלחתי לקרוא את הקובץ'; d.busy=false; draw(); return; }
     if(!d.det){ d.err='לא נמצא טקסט במסמך'; d.busy=false; draw(); return; }
-    relabel(); d.busy=false; draw();
+    relabel(); applyGiven(d); d.busy=false; draw();
     const good=d.how==='consistent'||d.how==='exempt';
     if(!(good&&d.f.date&&d.f.type&&d.conf!=='low')){ d.claudeBusy=true; draw(); const c=await askClaude(d); d.claudeBusy=false;
       if(c) mergeClaude(d,c); draw(); }
@@ -4395,6 +4402,8 @@ window.__nf=normalizeFile;
         Object.fromEntries(Object.entries(d.f||{}).filter(([k])=>keep[k]==='claude')));
       d.src=Object.assign({},keep); });
   }
+  /* a name you typed in the files screen wins */
+  function applyGiven(d){ if(!d.given) return; const sup=String(d.given).split(' - ')[0].trim(); if(sup){ d.f.sup=sup; d.src.sup='me'; } }
   function mergeClaude(d,c){
     const set=(k,v)=>{ if(v==null||v==='') return; const cur=d.f[k]; if(!cur||d.conf==='low'||(['before','vat','total'].includes(k)&&!(d.how==='consistent'))){ d.f[k]=v; d.src[k]='claude'; } };
     set('sup',c.supplier); set('id',String(c.id||'').replace(/\D/g,'')); set('type',c.type); set('no',c.number); set('date',dmy(isoOf(c.date)));
@@ -4458,7 +4467,7 @@ window.__nf=normalizeFile;
     top.appendChild(el('h3',null,[d.f.sup,[d.f.type,d.f.no].filter(Boolean).join(' ')].filter(Boolean).join(' – ')||d.file.name));
     top.appendChild(el('span','an-pill '+ch.lvl,ch.lvl==='ok'?'✓ תקין':ch.lvl==='warn'?'⚠ לבדיקה':'✗ יש בעיה'));
     if(d.claudeBusy) top.appendChild(el('span','an-pill','Claude קורא…'));
-    top.appendChild(el('small',null,d.file.name));
+    top.appendChild(el('small',null,d.file.name+(d.fromFiles?' · מהקבצים':'')));
     const g=el('div','an-grid'); main.appendChild(g);
     FIELDS.forEach(([k,label])=>{ if(k==='zero'&&!d.f.zero) return; const f=el('label','an-f'+(!d.f[k]&&['sup','type','date','total'].includes(k)?' miss':'')); const s=el('span',null,label); if(d.src[k]==='claude'){ s.appendChild(el('i',null,'Claude')); } f.appendChild(s);
       const inp=el('input'); inp.value=d.f[k]||''; if(['before','vat','total','zero','rate','id','alloc','no'].includes(k)) inp.inputMode='decimal';
@@ -4494,7 +4503,14 @@ window.__nf=normalizeFile;
   ['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{ e.preventDefault(); drop.classList.remove('drag'); }));
   drop.addEventListener('drop',e=>addFiles(e.dataTransfer.files));
   serverUrl().then(u=>{ if(u) $('anSub').textContent+=' מסמך שמהדק לא בטוח בו נקרא גם על ידי Claude.'; });
-  window.__mhAn={add:addFiles,docs:()=>docs};
+  /* files handed over from the files screen, with what Mahdek already recognised there */
+  function addPrepared(list){
+    const have=new Set(docs.map(d=>d.file));
+    list.forEach(x=>{ if(!x.file||have.has(x.file)) return; docs.push({file:x.file,kind:x.kind==='image'?'image':'pdf',det:x.det||null,given:x.label||'',busy:true,f:{},src:{},fromFiles:true}); });
+    draw();
+    (async()=>{ for(const d of docs.filter(x=>x.busy&&!x.started)){ d.started=true; await analyze(d); } })();
+  }
+  window.__mhAn={add:addFiles,addPrepared,docs:()=>docs};
 })();
 </script>
 <script>
