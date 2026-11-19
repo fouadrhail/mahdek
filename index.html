@@ -1463,7 +1463,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 8.3 · עודכן 19.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 8.4 · עודכן 19.11.2026</span></footer>
 </div>
 
 <script>
@@ -3844,6 +3844,7 @@ window.__nf=normalizeFile;
     {id:'files',name:'איתי',role:'בדיקת קבצים ומעבדת הזיהוי: בודק מסמכים ומלמד את מהדק לזהות אותם.',color:'#c0576a'},
     {id:'prep',name:'יעל',role:'הכנה לפעולה: מה לעשות עם כל מייל, הדפסה וטיוטות תשובה.',color:'#7a63b0'},
     {id:'reports',name:'דנה',role:'דיווחים: מועדים, מה חסר מכל לקוח, עדכונים מרשות המסים.',color:'#3a9266'},
+    {id:'payroll',name:'עומר',role:'חשב שכר: תעריפים, חוקים וחישובי שכר, בדיקת תלושים ושעות.',color:'#c58b1f'},
     {id:'manager',name:'נועם',role:'מנהל המשרד: מסדר את היום שלך ומחלק עבודה לצוות.',color:'#2c3a57'}];
   const WHO_KEY='mahdek.lab.who'; let who='files'; try{ who=localStorage.getItem(WHO_KEY)||'files'; }catch(_){}
   let reqs=[], teachQ=[];
@@ -3868,7 +3869,7 @@ window.__nf=normalizeFile;
   }
   /* instant answer through the office server (cheap model), with the worker's own data as context */
   const israelDay=(d)=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jerusalem'}).format(d||new Date());
-  const CTX={mail:['agents/mail.json','@analysis','team/clients.json'],files:['agents/files.json','agents/lab.json','team/lab.json','@analysis'],prep:['agents/prep.json','@actions','@analysis'],reports:['agents/reports.json','team/clients.json','team/ledger.json'],manager:['agent/brief.json','team/board.json','agents/mail.json','agents/prep.json','agents/reports.json']};
+  const CTX={payroll:['team/payroll.json','agents/payroll.json','team/clients.json'],mail:['agents/mail.json','@analysis','team/clients.json'],files:['agents/files.json','agents/lab.json','team/lab.json','@analysis'],prep:['agents/prep.json','@actions','@analysis'],reports:['agents/reports.json','team/clients.json','team/ledger.json'],manager:['agent/brief.json','team/board.json','agents/mail.json','agents/prep.json','agents/reports.json']};
   async function contextFor(id){
     const M=window.__mhMail, out=[]; let left=56000;
     const add=(name,obj)=>{ if(!obj||left<=0) return; const s=JSON.stringify(obj).slice(0,Math.min(16000,left)); left-=s.length; out.push(`### ${name}\n${s}`); };
@@ -4153,7 +4154,7 @@ window.__nf=normalizeFile;
     {id:'files',name:'איתי',role:'בדיקת קבצים',color:'#c0576a',run:'07:20',go:'join',g:'m'},
     {id:'prep',name:'יעל',role:'הכנה לפעולה',color:'#7a63b0',run:'07:27',go:'mail',g:'f'},
     {id:'reports',name:'דנה',role:'דיווחים',color:'#3a9266',run:'07:34',go:null,g:'f'},
-    {id:'payroll',name:'עומר',role:'משכורות',color:'#c58b1f',run:null,go:null,soon:true,g:'m'}];
+    {id:'payroll',name:'עומר',role:'חשב שכר',color:'#c58b1f',run:'07:44',go:null,g:'m'}];
 
   /* Pixel office: a worker with work sits at the desk with the laptop open (still); without work, walks around the office. */
   const OF=(function(){
