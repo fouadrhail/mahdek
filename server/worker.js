@@ -3,19 +3,24 @@
    - The Claude API key stays here as a secret (ANTHROPIC_API_KEY); it never reaches the browser.
    - Nothing is stored: each request is answered and forgotten. */
 
-const CHECK_PROMPT = `זה מסמך הנהלת חשבונות ישראלי (חשבונית, קבלה, חשבון עסקה, דרישת תשלום וכדומה). קרא אותו וזהה:
+const CHECK_PROMPT = `זה מסמך הנהלת חשבונות ישראלי (חשבונית מס, חשבונית מס קבלה, קבלה, חשבון עסקה, חשבונית זיכוי, דרישת תשלום, או מסמך אחר). קרא אותו בעיון, כולל כתב יד וחותמות, וזהה:
 - supplier: מי הוציא את המסמך (הספק). לא מי שהמסמך נשלח אליו ("לכבוד", "לקוח").
 - id: מספר עוסק / ח.פ של הספק, 9 ספרות בלבד, או ריק.
 - type: אחד מאלה בלבד: "חשבונית מס", "חשבונית מס קבלה", "קבלה", "חשבונית זיכוי", "חשבון עסקה", "דרישת תשלום", "אחר".
 - number: מספר המסמך כפי שמודפס. number4: 4 הספרות האחרונות שלו.
-- date: תאריך המסמך בפורמט YYYY-MM-DD, או ריק.
+- date: תאריך המסמך בפורמט YYYY-MM-DD (תאריך החשבונית, לא תאריך הדפסה או פירעון), או ריק.
+- before_vat: הסכום החייב במע"מ לפני מע"מ, כמספר, או null.
+- vat: סכום המע"מ כמספר, או null. vat_rate: שיעור המע"מ באחוזים (למשל 18), או null.
+- zero_rated: סכום פטור או בשיעור 0% אם יש, אחרת null.
 - total: הסכום הכולל לתשלום כמספר, או null.
-- recipient: שם הלקוח שהמסמך נשלח אליו, או ריק.
-- confidence: "high" / "medium" / "low" – כמה אתה בטוח בספק ובמספר.
-- note: הערה קצרה בעברית אם משהו לא ברור, אחרת ריק.
-אל תנחש. אם שדה לא קריא, השאר אותו ריק.
+- allocation: מספר הקצאה (9 ספרות) אם מודפס או כתוב, אחרת ריק.
+- recipient: שם הלקוח שהמסמך נשלח אליו, או ריק. recipient_id: ח.פ/ע.מ של הלקוח, או ריק.
+- currency: "ILS" או מטבע אחר.
+- confidence: "high" / "medium" / "low" – כמה אתה בטוח בספק, בסכומים ובמספר.
+- note: הערה קצרה בעברית אם משהו לא ברור או חשוד (למשל "אינו מהווה חשבונית מס" מודפס), אחרת ריק.
+אל תנחש. אם שדה לא קריא, השאר אותו ריק או null. ודא ש-before_vat + vat (+ zero_rated) = total כשכולם קיימים.
 החזר JSON בלבד, בלי שום טקסט נוסף:
-{"supplier":"","id":"","type":"","number":"","number4":"","date":"","total":null,"recipient":"","confidence":"","note":""}`;
+{"supplier":"","id":"","type":"","number":"","number4":"","date":"","before_vat":null,"vat":null,"vat_rate":null,"zero_rated":null,"total":null,"allocation":"","recipient":"","recipient_id":"","currency":"ILS","confidence":"","note":""}`;
 
 
 const ROLES = {
@@ -99,7 +104,7 @@ export default {
     const block = mime === 'application/pdf'
       ? `{"type":"document","source":{"type":"base64","media_type":"application/pdf","data":"${b64}"}}`
       : `{"type":"image","source":{"type":"base64","media_type":"${mime}","data":"${b64}"}}`;
-    const body = `{"model":${JSON.stringify(env.MODEL)},"max_tokens":600,"messages":[{"role":"user","content":[${block},{"type":"text","text":${JSON.stringify(CHECK_PROMPT)}}]}]}`;
+    const body = `{"model":${JSON.stringify(env.MODEL)},"max_tokens":900,"messages":[{"role":"user","content":[${block},{"type":"text","text":${JSON.stringify(CHECK_PROMPT)}}]}]}`;
 
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',

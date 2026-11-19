@@ -884,6 +884,37 @@ body[data-tab="convert"]{--sec:var(--sage)} body[data-tab="edit"]{--sec:var(--bl
 @media (max-width:380px){.of-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* lab */
+#s-an{display:flex;flex-direction:column;gap:12px;max-width:980px}
+#s-an[hidden]{display:none}
+.an-head h2{margin:0 0 2px;font-weight:500;font-size:1.3rem;color:var(--ink)}
+.an-sum{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:12px 16px;font-size:.88rem;color:var(--muted)}
+.an-sum b{color:var(--ink);font-weight:600}
+.an-sum .sp{flex:1}
+.an-sum .ok b{color:var(--ml-ok)}.an-sum .bad b{color:var(--ml-flag)}
+.an-cards{display:flex;flex-direction:column;gap:12px}
+.an-card{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:14px;min-width:0}
+.an-card.st-bad{border-color:color-mix(in srgb,var(--ml-flag) 45%,var(--rule))}
+.an-prev{border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--soft);align-self:start;cursor:zoom-in;max-height:220px}
+.an-prev canvas{display:block;width:100%;height:auto}
+.an-main{min-width:0;display:flex;flex-direction:column;gap:10px}
+.an-top{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.an-top h3{margin:0;font-size:1rem;font-weight:600;color:var(--ink);overflow-wrap:anywhere}
+.an-top small{color:var(--muted);font-size:.76rem;overflow-wrap:anywhere}
+.an-pill{font-size:.74rem;border-radius:99px;padding:2px 10px;white-space:nowrap;border:1px solid var(--rule);color:var(--muted)}
+.an-pill.ok{color:var(--ml-ok);border-color:currentColor}.an-pill.warn{color:#b07a12;border-color:currentColor}.an-pill.bad{color:var(--ml-flag);border-color:currentColor}
+.an-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.an-f{display:flex;flex-direction:column;gap:2px;min-width:0}
+.an-f span{font-size:.72rem;color:var(--muted);display:flex;gap:4px;align-items:center}
+.an-f span i{font-style:normal;font-size:.62rem;border-radius:5px;padding:0 4px;background:var(--soft)}
+.an-f input{font:inherit;font-size:.9rem;color:var(--ink);background:transparent;border:1px solid transparent;border-bottom-color:var(--rule);border-radius:6px;padding:3px 4px;min-width:0;width:100%}
+.an-f input:hover,.an-f input:focus{border-color:var(--rule);outline:none;background:var(--soft)}
+.an-f.miss input{border-bottom-color:var(--ml-flag)}
+.an-chk{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;font-size:.85rem}
+.an-chk li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:6px;color:var(--ink)}
+.an-chk li i{font-style:normal;font-weight:700;text-align:center}
+.an-chk .ok i{color:var(--ml-ok)}.an-chk .warn i{color:#b07a12}.an-chk .bad i{color:var(--ml-flag)}
+.an-busy{font-size:.85rem;color:var(--muted)}
+@media (max-width:640px){.an-card{grid-template-columns:minmax(0,1fr)}.an-prev{max-height:160px}.an-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 #s-lab{display:flex;flex-direction:column;gap:12px;max-width:860px}
 #s-lab[hidden]{display:none}
 .lb-top h2{margin:0;font-weight:500;font-size:1.4rem;color:var(--ink)}
@@ -1100,6 +1131,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <button type="button" role="tab" id="m-tasks" aria-controls="s-tasks" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 9l1.6 1.6L12.5 7.7M8 15l1.6 1.6 2.9-2.9M14.5 9.5H17M14.5 15.5H17"/></svg>משימות<span class="nbadge" id="mTasksBadge" hidden><svg class="lamp" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 18h6M10 21h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3z" fill="currentColor"/></svg><b>0</b></span></button>
     <button type="button" role="tab" id="m-files" aria-controls="s-files" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>קבצים</button>
     <button type="button" role="tab" id="m-mail" aria-controls="s-mail" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>תיבת דואר</button>
+    <button type="button" role="tab" id="m-an" aria-controls="s-an" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><circle cx="11" cy="14" r="2.6"/><path d="m13 16 2.2 2.2"/></svg>ניתוח</button>
     <button type="button" role="tab" id="m-lab" aria-controls="s-lab" aria-selected="false"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5.5 9.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7.5 15h9"/></svg>מעבדה</button>
   </nav>
 
@@ -1326,6 +1358,14 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
   </section>
   </section>
 
+  <section class="section an" id="s-an" role="tabpanel" aria-labelledby="m-an" hidden>
+    <div class="an-head">
+      <div><h2>ניתוח מסמכים</h2><p class="hm-hint" id="anSub">מעלים חשבוניות, קבלות או כל מסמך, ומהדק בודק כל אחד לעומק: סכומים, מע"מ, תאריך, מספר הקצאה, ספק, ואם אפשר לנכות. הניתוח נעשה במחשב שלך.</p></div>
+    </div>
+    <label class="lb-drop an-drop" id="anDrop"><input type="file" id="anFile" multiple accept=".pdf,image/*" hidden><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><span>גוררים לכאן מסמכים או לוחצים לבחירה · PDF ותמונות</span></label>
+    <div class="an-sum" id="anSum" hidden></div>
+    <div class="an-cards" id="anCards"></div>
+  </section>
   <section class="section lb" id="s-lab" role="tabpanel" aria-labelledby="m-lab" hidden>
     <div class="lb-top"><h2>מעבדה</h2><p class="lb-sub" id="lbSub">נותנים עבודה לעובד, והוא עונה בבדיקה הקרובה.</p></div>
     <p class="lb-status" id="lbStatus" role="status" hidden></p>
@@ -1463,7 +1503,7 @@ a.ml-btn,a.ml-btn:visited{color:var(--ink);text-decoration:none}
     <span>יש גרסה חדשה של מהדק.</span>
     <button type="button" onclick="location.reload()">רענון</button>
   </div>
-  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 8.8 · עודכן 19.11.2026</span></footer>
+  <footer class="ver"><svg viewBox="0 0 40 20" width="30" height="15" aria-hidden="true" class="mini-stapler"><path d="M3 16.5h33" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 12.5V10a4 4 0 0 1 4-4h22a5 5 0 0 1 5 5v1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="stamp">מהדק · גרסה 9.0 · עודכן 19.11.2026</span></footer>
 </div>
 
 <script>
@@ -1800,8 +1840,8 @@ window.__nf=normalizeFile;
   /* Tabs */
   let lastFiles='join';
   function show(t){
-    const sec=(!t||t==='home')?'home':t==='tasks'?'tasks':t==='mail'?'mail':t==='lab'?'lab':'files';
-    ['home','files','tasks','mail','lab'].forEach(k=>{$('s-'+k).hidden=k!==sec;$('m-'+k).setAttribute('aria-selected',String(k===sec));});
+    const sec=(!t||t==='home')?'home':t==='tasks'?'tasks':t==='mail'?'mail':t==='lab'?'lab':t==='an'?'an':'files';
+    ['home','files','tasks','mail','an','lab'].forEach(k=>{$('s-'+k).hidden=k!==sec;$('m-'+k).setAttribute('aria-selected',String(k===sec));});
     if(sec!=='files'){ document.body.dataset.tab=sec; ['merge','convert','edit','sign'].forEach(k=>{$('p-'+k).hidden=true;}); return; }
     const key=t==='files'||t==='convert'?'convert':t==='pages'?'edit':t==='sign'?'sign':'merge';
     lastFiles=t&&key!=='merge'?t:'join';
@@ -1812,6 +1852,7 @@ window.__nf=normalizeFile;
   $('m-home').addEventListener('click',()=>{location.hash='home';show('home');});
   $('m-tasks').addEventListener('click',()=>{location.hash='tasks';show('tasks');});
   $('m-mail').addEventListener('click',()=>{location.hash='mail';show('mail');});
+  $('m-an').addEventListener('click',()=>{location.hash='an';show('an');});
   $('m-lab').addEventListener('click',()=>{location.hash='lab';show('lab'); if(window.__mhLab) window.__mhLab.load(true);});
   $('t-merge').addEventListener('click',()=>{location.hash='join';show('join');});
   $('t-convert').addEventListener('click',()=>{location.hash='files';show('files');});
@@ -2483,6 +2524,98 @@ window.__nf=normalizeFile;
     return {ev:Object.assign(mergeEvidence([r.ev].concat(reads.filter(x=>x!==r).map(x=>x.ev))),{lines:r.ev.lines,top:r.ev.top,names:r.ev.names,header:r.ev.header,topHeader:r.ev.topHeader,agree}),type:r.type||type,num:r.num||reads.map(x=>x.num).find(Boolean)||'',pick:best.i};
   }
   function docSupplier(lines){ return resolveSupplier(buildEvidence(lines,{header:lines.header}),{}).name; }
+  /* ---------- Deep analysis of one document: amounts, VAT, date, allocation number, checks ---------- */
+  const MONEY=/(?<![\d.,])(?:₪\s*)?(\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+\.\d{2})(?![\d%])(?!\s*%)/g;
+  const L_TOTAL=/סה["״']?כ\s*(?:ל\s*)?תשלום|לתשלום|סה["״']?כ\s*כולל\s*מע["״']?מ|כולל\s*מע["״']?מ|סה["״']?כ\s*מחיר|סה["״']?כ\s*נותר|סה["״']?כ\s*קבלה|סכום\s*(?:ה)?(?:עסקה|חשבונית)|total|amount\s*due/i;
+  const L_BEFORE=/לפני\s*מע["״']?מ|ללא\s*מע["״']?מ|חייב(?:ים|ת)?\s*(?:ב)?מע["״']?מ|סכום\s*חייב|אחרי\s*הנחה|נטו|subtotal|before\s*vat/i;
+  const L_VAT=/מע["״']?מ|vat/i, L_NOTVAT=/עוסק|תיק|מס['׳]?\s*עוסק|פטור|רשום/;
+  const L_DATE_BAD=/הדפסה|הופק|פירעון|תוקף|לידה|הנפקה\s*כרטיס|valid|exp/i;
+  const r2=x=>Math.round(x*100)/100;
+  const ALLOC_FROM=[['2024-05-05',25000],['2025-01-01',20000],['2026-01-01',10000],['2026-06-01',5000]];
+  function allocThreshold(iso){ let t=null; for(const [d,v] of ALLOC_FROM) if(iso&&iso>=d) t=v; return t; }
+  function moneyOf(line){ const out=[]; let m; MONEY.lastIndex=0; while((m=MONEY.exec(line))){ const v=parseFloat(m[1].replace(/,/g,'')); if(v>0&&v<1e8) out.push(v); } return out; }
+  function findDates(lines){
+    const out=[]; lines.forEach((l,i)=>{ const re=/(?<!\d)(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4}|\d{2})(?!\d)/g; let m;
+      while((m=re.exec(l))){ let d=+m[1], mo=+m[2], y=+m[3]; if(y<100) y+=2000; if(mo<1||mo>12||d<1||d>31||y<2015||y>2035) continue;
+        const iso=`${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`; const lab=/תאריך|date/i.test(l), bad=L_DATE_BAD.test(l.slice(Math.max(0,m.index-18),m.index+12));
+        out.push({iso,i,lab,bad}); } });
+    return out;
+  }
+  function analyzeLines(lines,opts){
+    opts=opts||{}; const type=opts.type||'', ids=opts.ids||[];
+    const L=(lines||[]).map(l=>String(l||'').replace(/([א-ת])\s*(["״'׳`]{1,2})\s*([א-ת])/g,'$1"$3').replace(/\s+/g,' '));
+    const vals=[]; let carry=null;
+    L.forEach((l,i)=>{ const ms=moneyOf(l); const lab={t:L_TOTAL.test(l),b:L_BEFORE.test(l),v:L_VAT.test(l)&&!L_NOTVAT.test(l)&&!L_BEFORE.test(l)&&!/כולל/.test(l)};
+      if(!ms.length){ if(lab.t||lab.b||lab.v) carry={lab,i}; return; }
+      const use=(lab.t||lab.b||lab.v)?lab:(carry&&i-carry.i<=1?carry.lab:{});
+      const sum=/סה"?כ|סכום|total/i.test(l)&&!lab.b&&!lab.v;
+      ms.forEach(v=>vals.push({v,i,t:!!use.t,b:!!use.b,vat:!!use.v,s:sum})); carry=null; });
+    const rateHit=(L.join(' ').match(/(17|18)(?:[.,]0+)?\s*%/)||[])[1];
+    const exempt=/עוסק\s*פטור|פטור\s*ממע["״']?מ|אינו\s*חייב\s*במע/.test(L.join(' '))||type==='קבלה';
+    let best=null;
+    const T=vals.filter(x=>x.t), V=vals.filter(x=>x.vat), all=vals;
+    const near=(a,b)=>Math.abs(a-b)<=Math.max(0.05,Math.abs(b)*0.002);
+    for(const t of (T.length?T:all)) for(const v of all){ if(v.v>=t.v) continue; const b=t.v-v.v;
+      for(const r of [0.18,0.17]){ if(!near(v.v,b*r)) continue;
+        const bHit=all.some(x=>near(x.v,b)); const sc=(t.t?3:0)+(v.vat?3:0)+(bHit?2:0)+(r===0.18?0.5:0)+(String(Math.round(r*100))===rateHit?1:0)+t.v/1e9;
+        if(!best||sc>best.sc) best={sc,total:t.v,vat:v.v,before:r2(b),rate:r*100}; } }
+    /* part of the bill at 0% (phone and utility bills): total = taxable + VAT + zero-rated */
+    if(!best||best.sc<3) for(const t of T) for(const v of V) for(const b of all){ if(b===t||b===v||b.v>=t.v) continue;
+      for(const r of [0.18,0.17]){ if(!near(v.v,b.v*r)) continue; const rest=r2(t.v-b.v-v.v); if(rest<-0.05) continue;
+        const restHit=rest<0.05||all.some(x=>near(x.v,rest)); if(!restHit) continue;
+        const sc=3+3+(b.b?2:0)+(rest>0.05?0.5:1)+t.v/1e9; if(!best||sc>best.sc) best={sc,total:t.v,vat:v.v,before:b.v,rate:r*100,zero:rest>0.05?rest:0}; } }
+    let total=null,vat=null,before=null,rate=null,how='',zero=0;
+    if(best&&best.sc>=3){ ({total,vat,before,rate}=best); zero=best.zero||0; how='consistent'; }
+    else{ const mx=a=>a.length?Math.max(...a.map(x=>x.v)):null;
+      total=mx(T); if(total==null) total=mx(vals.filter(x=>x.s)); vat=V.length?V[V.length-1].v:null; before=mx(vals.filter(x=>x.b));
+      if(exempt&&total!=null){ vat=0; before=total; rate=0; how='exempt'; }
+      else if(total!=null&&vat==null&&before!=null&&before<total){ vat=r2(total-before); how='derived'; }
+      else if(total!=null&&vat!=null&&before==null){ before=r2(total-vat); how='derived'; }
+      else how=total!=null?'partial':'';
+      if(before&&vat) rate=Math.round(vat/before*1000)/10; }
+    const ds=findDates(L); const pick=ds.find(d=>d.lab&&!d.bad)||ds.find(d=>!d.bad)||ds[0]||null;
+    let alloc='', allocLabel=false;
+    for(let i=0;i<L.length;i++){ if(!/הקצאה|allocation/i.test(L[i])) continue; allocLabel=true;
+      for(let k=i;k<=Math.min(L.length-1,i+2)&&!alloc;k++){ const seg=k===i?L[i].slice(L[i].search(/הקצאה|allocation/i)):L[k]; const m=seg.match(/(?<!\d)(\d{9})(?!\d)/); if(m&&!ids.includes(m[1])) alloc=m[1]; } if(alloc) break; }
+    let recipient='';
+    const cleanR=s=>String(s||'').replace(/\d{1,2}[\/.]\d{1,2}[\/.]\d{2,4}/g,' ').replace(/(?:תאריך|מספרכם|הדפסה|שעה|הקצאה|מס\s*\.?\s*לקוח|לקוח|טלפון|ח\s*\.?\s*פ|ע\s*\.?\s*מ)[^א-ת]*(?:[א-ת]+\s*:)?/g,' ').replace(/[\d:()\[\]|]+/g,' ').replace(/\s+/g,' ').trim();
+    for(let i=0;i<L.length;i++){ const m=L[i].match(/לכבוד\s*:?\s*(.*)$/); if(!m) continue;
+      for(const cand of [m[1],L[i+1],L[i+2],L[i+3]]){ const v=cleanR(cand); if((v.match(/[א-תA-Za-z]/g)||[]).length>=3&&!/^מס\b|^מספר|דף\s*מס|עוסק|מורשה|סוכן|מסמך|תוקף|חשבונית/.test(v)){ recipient=v.slice(0,50); break; } } break; }
+    return {total,vat,before,rate,zero,amountsHow:how,exempt,date:pick?pick.iso:'',dateLabelled:!!(pick&&pick.lab),alloc,allocLabel,recipient};
+  }
+  const DEDUCT_TYPES=new Set(['חשבונית מס','חשבונית מס קבלה','חשבונית זיכוי','חשבונית']);
+  function docChecks(a,ctx){
+    ctx=ctx||{}; const out=[], add=(level,text)=>out.push({level,text});
+    const type=ctx.type||'', today=ctx.today||new Date().toISOString().slice(0,10);
+    if(!type) add('warn','סוג המסמך לא זוהה');
+    else if(DEDUCT_TYPES.has(type)) add('ok',`${type}: מאפשר ניכוי מע"מ תשומות`);
+    else if(/קבלה|עסקה|דרישת\s*תשלום|הצעת|משלוח/.test(type)) add('bad',`${type}: לא חשבונית מס, אי אפשר לנכות ממנו מע"מ`);
+    if(a.total==null) add('warn','לא נמצא סכום לתשלום');
+    else if(a.amountsHow==='consistent') add('ok',`החשבון מסתדר: ${fmtN(a.before)} + מע"מ ${fmtN(a.vat)}`+(a.zero?` + פטור/0% ${fmtN(a.zero)}`:'')+` = ${fmtN(a.total)}`);
+    else if(a.amountsHow==='exempt') add('ok','ללא מע"מ (עוסק פטור / קבלה)');
+    else if(a.amountsHow==='derived') add('warn','חלק מהסכומים חושב ולא נמצא מודפס – לבדוק מול המסמך');
+    else add('warn','הסכומים לא מסתדרים או לא נמצאו כולם – לבדוק ידנית');
+    if(a.rate&&a.date){ const exp=a.date>='2025-01-01'?18:17; if(Math.abs(a.rate-exp)>0.6) add('warn',`שיעור המע"מ ${a.rate}% – בתאריך הזה השיעור הוא ${exp}%`); }
+    if(!a.date) add('warn','תאריך המסמך לא נמצא');
+    else{
+      if(a.date>today) add('warn','התאריך במסמך בעתיד');
+      if(DEDUCT_TYPES.has(type)){ const d=new Date(a.date+'T00:00:00'); d.setMonth(d.getMonth()+6); const left=Math.round((d-new Date(today+'T00:00:00'))/864e5);
+        if(left<0) add('bad',`עברו 6 חודשים מתאריך החשבונית – לא ניתן לנכות את המע"מ (מאז ${-left} ימים)`);
+        else if(left<=45) add('warn',`נשארו ${left} ימים לנכות את המע"מ (עד ${d.toISOString().slice(0,10).split('-').reverse().join('.')})`);
+        else add('ok',`אפשר לנכות את המע"מ עד ${d.toISOString().slice(0,10).split('-').reverse().join('.')}`); } }
+    const thr=allocThreshold(a.date);
+    if(DEDUCT_TYPES.has(type)&&a.before!=null&&thr!=null){
+      if(a.before>thr){ if(a.alloc) add('ok',`מספר הקצאה ${a.alloc} (נדרש מעל ${fmtN(thr)} ₪ לפני מע"מ)`); else add('bad',`חסר מספר הקצאה – נדרש מעל ${fmtN(thr)} ₪ לפני מע"מ, ובלעדיו אין ניכוי מע"מ`); }
+      else add('ok',`לא נדרש מספר הקצאה (עד ${fmtN(thr)} ₪ לפני מע"מ)`+(a.alloc?` · מופיע ${a.alloc}`:''));
+    } else if(a.alloc) add('ok',`מספר הקצאה ${a.alloc}`);
+    if(ctx.supplierId){ if(!validId(ctx.supplierId)) add('bad','מספר העוסק של הספק לא תקין (ספרת ביקורת)'); }
+    else if(DEDUCT_TYPES.has(type)) add('warn','לא נמצא מספר עוסק/ח.פ של הספק');
+    if(ctx.dupOf) add('bad',`כפול: אותו ספק ואותו מספר כמו ${ctx.dupOf}`);
+    if(ctx.reg&&ctx.reg.s&&!/פעילה/.test(ctx.reg.s)) add('bad',`ברשם החברות הספק מסומן: ${ctx.reg.s}`);
+    if(ctx.reg&&ctx.reg.v&&/כן|מפר/.test(ctx.reg.v)) add('bad','ברשם החברות הספק מסומן כ"מפרה"');
+    return out;
+  }
+  function fmtN(x){ return x==null?'':Number(x).toLocaleString('he-IL',{minimumFractionDigits:2,maximumFractionDigits:2}); }
   /* Text from a photo or scan, read on this computer */
   let ocrWorker=null;
   async function getOcr(){
@@ -2709,7 +2842,7 @@ window.__nf=normalizeFile;
         const r=await fetch(REG_API+'?resource_id='+set[0]+'&limit=1&filters='+encodeURIComponent(JSON.stringify({[set[1]]:val})),{signal:ctl.signal});
         if(!r.ok) throw new Error('http');
         const j=await r.json(); const rec=j&&j.result&&j.result.records&&j.result.records[0];
-        if(rec){ registry[id]={n:regName(rec),t:Date.now()}; return; }
+        if(rec){ const st=Object.keys(rec).find(k=>/סטטוס/.test(k)), vi=Object.keys(rec).find(k=>/מפר/.test(k)); registry[id]={n:regName(rec),s:st?String(rec[st]||''):'',v:vi?String(rec[vi]||''):'',t:Date.now()}; return; }
       }finally{ clearTimeout(t); }
     }
     registry[id]={n:'',t:Date.now()};
@@ -2730,6 +2863,13 @@ window.__nf=normalizeFile;
       try{ localStorage.setItem(REG_KEY,JSON.stringify(registry)); }catch(_){}
       if(got&&done) done();
     })();
+  }
+  /* Registry details for one corporation number (name, status, violator flag); fetched once and remembered */
+  async function regInfo(id){
+    if(!id||!regSet(id)) return null;
+    const r=registry[id]; if(r&&r.n&&'s' in r&&Date.now()-r.t<30*864e5) return r;
+    try{ await regFetch(id); try{ localStorage.setItem(REG_KEY,JSON.stringify(registry)); }catch(_){} }catch(_){ return null; }
+    return registry[id]||null;
   }
   function labelBatch(list){
     const evs=list.map(x=>x.ev);
@@ -2874,7 +3014,7 @@ window.__nf=normalizeFile;
   $('pmSave').addEventListener('click',()=>pmClose([...PM.keep].sort((a,b)=>a-b)));
   $('pmodal').addEventListener('click',e=>{if(e.target===$('pmodal')) pmClose(null);});
   $('pmodal').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();pmClose(null);}});
-  window.__mh2={learned:()=>learned,lessons:()=>lessons,addLesson,logoHash,layoutHash,confOf,cropPaper,imageCanvas,pdfCanvas,detect:detectDoc,deliver:deliverFiles,pickPages,view:viewDoc,labelBatch,learn:learnSupplier,verifyOnline};
+  window.__mh2={learned:()=>learned,lessons:()=>lessons,addLesson,logoHash,layoutHash,confOf,cropPaper,analyzeLines,docChecks,regInfo,validId,personal:t=>PERSONAL_TYPES.has(t),imageCanvas,pdfCanvas,detect:detectDoc,deliver:deliverFiles,pickPages,view:viewDoc,labelBatch,learn:learnSupplier,verifyOnline};
 
   /* ---------- Page editor: one row per page, split and delete ---------- */
   {
@@ -4182,6 +4322,140 @@ window.__nf=normalizeFile;
   drawWho(); drawCorner();
   if(location.hash==='#lab') setTimeout(()=>load(true),1500);
   window.__mhLab={load};
+})();
+</script>
+<script>
+(function(){
+  /* Document analysis: every file read in depth on this computer; Claude reads the ones Mahdek is not sure about (when the office server is set up) */
+  const $=id=>document.getElementById(id);
+  const el=(t,c,x)=>{ const e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; };
+  const TOK='mahdek.mail.token'; const tok=()=>{ try{ return localStorage.getItem(TOK)||''; }catch(_){ return ''; } };
+  const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jerusalem'}).format(new Date());
+  const D=()=>window.__mh2;
+  const fmt=x=>x==null||x===''?'':Number(x).toLocaleString('he-IL',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const num=s=>{ if(s==null) return null; const v=parseFloat(String(s).replace(/[^\d.\-]/g,'')); return isFinite(v)?v:null; };
+  const isoOf=s=>{ s=String(s||'').trim(); let m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/); if(m) return s; m=s.match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2,4})$/); if(!m) return ''; let y=+m[3]; if(y<100) y+=2000; return `${y}-${String(+m[2]).padStart(2,'0')}-${String(+m[1]).padStart(2,'0')}`; };
+  const dmy=iso=>iso?iso.split('-').reverse().join('.'):'';
+  let docs=[];
+  const FIELDS=[['sup','ספק'],['id','ח.פ / ע.מ'],['type','סוג המסמך'],['no','מספר'],['date','תאריך'],['before','לפני מע"מ'],['vat','מע"מ'],['rate','שיעור מע"מ %'],['zero','פטור / 0%'],['total','סה"כ לתשלום'],['alloc','מספר הקצאה'],['recip','לכבוד']];
+
+  /* the office server (Claude) – optional */
+  let server=null;
+  async function serverUrl(){ if(server!==null) return server; try{ const r=await fetch('data/server.json',{cache:'no-store'}); const j=r.ok?await r.json():null; server=j&&/^https:\/\/[a-z0-9.-]+\.workers\.dev$/.test(j.url)?j.url:''; }catch(_){ server=''; } return server; }
+  async function askClaude(d){
+    const url=await serverUrl(); if(!url||!tok()||!d.canvas) return null;
+    try{ const c=d.canvas, s=Math.min(1,1800/Math.max(c.width,c.height)), t=document.createElement('canvas'); t.width=Math.round(c.width*s); t.height=Math.round(c.height*s); t.getContext('2d').drawImage(c,0,0,t.width,t.height);
+      const b64=t.toDataURL('image/jpeg',0.86).split(',')[1];
+      const r=await fetch(url+'/check',{method:'POST',headers:{Authorization:'Bearer '+tok(),'X-Mime':'image/jpeg','Content-Type':'text/plain'},body:b64});
+      const j=await r.json().catch(()=>({})); return r.ok&&j.result?j.result:null; }catch(_){ return null; }
+  }
+
+  function checksOf(d){
+    const f=d.f, a={total:num(f.total),vat:num(f.vat),before:num(f.before),rate:num(f.rate),zero:num(f.zero)||0,date:isoOf(f.date),alloc:String(f.alloc||'').replace(/\D/g,''),amountsHow:d.how};
+    if(d.edited){ const t=a.total,v=a.vat,b=a.before; a.amountsHow=(t!=null&&v!=null&&b!=null&&Math.abs(b+v+(a.zero||0)-t)<=0.05)?'consistent':(t!=null?'partial':''); }
+    const dup=docs.find(x=>x!==d&&x.f.id&&x.f.id===f.id&&x.f.no&&x.f.no===f.no);
+    let list=D().docChecks(a,{type:f.type,today:today(),supplierId:String(f.id||'').replace(/\D/g,''),dupOf:dup?dup.file.name:'',reg:d.reg});
+    if(d.claudeNote) list=list.concat([{level:'warn',text:'Claude: '+d.claudeNote}]);
+    if(D().personal&&D().personal(f.type)) list=[{level:'ok',text:'מסמך אישי – נבדק במחשב הזה בלבד'}];
+    const lvl=list.some(x=>x.level==='bad')?'bad':list.some(x=>x.level==='warn')?'warn':'ok';
+    return {list,lvl,a};
+  }
+
+  async function analyze(d){
+    const M=D(); if(!M){ d.err='המנוע של מהדק לא נטען'; draw(); return; }
+    try{
+      d.det=await M.detect(d.file,d.kind);
+      try{ d.canvas=d.kind==='image'?await M.imageCanvas(d.file):await M.pdfCanvas(d.file); }catch(_){}
+    }catch(e){ d.err='לא הצלחתי לקרוא את הקובץ'; d.busy=false; draw(); return; }
+    if(!d.det){ d.err='לא נמצא טקסט במסמך'; d.busy=false; draw(); return; }
+    relabel(); d.busy=false; draw();
+    const good=d.how==='consistent'||d.how==='exempt';
+    if(!(good&&d.f.date&&d.f.type&&d.conf!=='low')){ d.claudeBusy=true; draw(); const c=await askClaude(d); d.claudeBusy=false;
+      if(c) mergeClaude(d,c); draw(); }
+    const id=String(d.f.id||'').replace(/\D/g,''); if(id){ const r=await M.regInfo(id).catch(()=>null); if(r){ d.reg=r; if(!d.f.sup&&r.n) d.f.sup=r.n; } draw(); }
+  }
+  function relabel(){
+    const M=D(), ready=docs.filter(x=>x.det&&!x.err); if(!ready.length) return;
+    const out=M.labelBatch(ready.map(x=>x.det));
+    ready.forEach((d,k)=>{ if(d.edited) return; const o=out[k], ev=d.det.ev, type=d.det.type||'';
+      const recip=ev.ids.filter(x=>x.recip||x.cust).map(x=>x.id), sid=o.res&&o.res.id||'';
+      const a=M.analyzeLines(ev.lines,{type,ids:[sid].concat(recip).filter(Boolean)});
+      const keep=d.src||{};
+      d.how=a.amountsHow; d.conf=o.conf&&o.conf.level;
+      d.f=Object.assign({sup:o.res&&o.res.name||'',id:sid,type,no:d.det.num?String(d.det.num):'',date:dmy(a.date),before:fmt(a.before),vat:fmt(a.vat),rate:a.rate==null?'':String(a.rate),zero:a.zero?fmt(a.zero):'',total:fmt(a.total),alloc:a.alloc||'',recip:a.recipient||''},
+        Object.fromEntries(Object.entries(d.f||{}).filter(([k])=>keep[k]==='claude')));
+      d.src=Object.assign({},keep); });
+  }
+  function mergeClaude(d,c){
+    const set=(k,v)=>{ if(v==null||v==='') return; const cur=d.f[k]; if(!cur||d.conf==='low'||(['before','vat','total'].includes(k)&&!(d.how==='consistent'))){ d.f[k]=v; d.src[k]='claude'; } };
+    set('sup',c.supplier); set('id',String(c.id||'').replace(/\D/g,'')); set('type',c.type); set('no',c.number); set('date',dmy(isoOf(c.date)));
+    if(c.before_vat!=null) set('before',fmt(c.before_vat)); if(c.vat!=null) set('vat',fmt(c.vat)); if(c.total!=null) set('total',fmt(c.total));
+    if(c.vat_rate!=null) set('rate',String(c.vat_rate)); if(c.zero_rated) set('zero',fmt(c.zero_rated)); set('alloc',String(c.allocation||'').replace(/\D/g,'')); set('recip',c.recipient);
+    const b=num(d.f.before),v=num(d.f.vat),t=num(d.f.total); if(b!=null&&v!=null&&t!=null&&Math.abs(b+v+(num(d.f.zero)||0)-t)<=0.05) d.how='consistent';
+    if(c.note) d.claudeNote=String(c.note).slice(0,160);
+    d.claude=true;
+  }
+
+  function addFiles(list){
+    [...list].forEach(file=>{ const n=file.name.toLowerCase(); const kind=/^image\//.test(file.type)||/\.(jpe?g|png|webp)$/.test(n)?'image':/\.pdf$/.test(n)||file.type==='application/pdf'?'pdf':''; if(!kind) return;
+      const d={file,kind,busy:true,f:{},src:{}}; docs.push(d); });
+    draw();
+    (async()=>{ for(const d of docs.filter(x=>x.busy&&!x.started)){ d.started=true; await analyze(d); } })();
+  }
+
+  function draw(){
+    const box=$('anCards'); box.textContent='';
+    docs.forEach((d,i)=>box.appendChild(card(d,i)));
+    summary();
+  }
+  function card(d,i){
+    const c=el('article','an-card'); const prev=el('div','an-prev'); c.appendChild(prev);
+    if(d.canvas){ const s=Math.min(1,300/d.canvas.width), t=document.createElement('canvas'); t.width=Math.round(d.canvas.width*s); t.height=Math.round(d.canvas.height*s); t.getContext('2d').drawImage(d.canvas,0,0,t.width,t.height); prev.appendChild(t);
+      prev.title='פתיחת המסמך'; prev.onclick=()=>{ const M=D(); if(M&&M.view) M.view(d.file,d.f.sup||d.file.name,d.kind); }; }
+    const main=el('div','an-main'); c.appendChild(main);
+    const top=el('div','an-top'); main.appendChild(top);
+    if(d.busy){ top.appendChild(el('h3',null,d.file.name)); main.appendChild(el('p','an-busy','קורא את המסמך…')); return c; }
+    if(d.err){ top.appendChild(el('h3',null,d.file.name)); main.appendChild(el('p','an-busy',d.err)); return c; }
+    const ch=checksOf(d); c.classList.add('st-'+ch.lvl);
+    top.appendChild(el('h3',null,[d.f.sup,[d.f.type,d.f.no].filter(Boolean).join(' ')].filter(Boolean).join(' – ')||d.file.name));
+    top.appendChild(el('span','an-pill '+ch.lvl,ch.lvl==='ok'?'✓ תקין':ch.lvl==='warn'?'⚠ לבדיקה':'✗ יש בעיה'));
+    if(d.claudeBusy) top.appendChild(el('span','an-pill','Claude קורא…'));
+    top.appendChild(el('small',null,d.file.name));
+    const g=el('div','an-grid'); main.appendChild(g);
+    FIELDS.forEach(([k,label])=>{ if(k==='zero'&&!d.f.zero) return; const f=el('label','an-f'+(!d.f[k]&&['sup','type','date','total'].includes(k)?' miss':'')); const s=el('span',null,label); if(d.src[k]==='claude'){ s.appendChild(el('i',null,'Claude')); } f.appendChild(s);
+      const inp=el('input'); inp.value=d.f[k]||''; if(['before','vat','total','zero','rate','id','alloc','no'].includes(k)) inp.inputMode='decimal';
+      inp.onchange=()=>{ d.f[k]=inp.value.trim(); d.src[k]='me'; d.edited=true; draw(); }; f.appendChild(inp); g.appendChild(f); });
+    const ul=el('ul','an-chk'); ch.list.forEach(x=>{ const li=el('li',x.level); li.appendChild(el('i',null,x.level==='ok'?'✓':x.level==='warn'?'!':'✗')); li.appendChild(el('span',null,x.text)); ul.appendChild(li); }); main.appendChild(ul);
+    return c;
+  }
+  function summary(){
+    const s=$('anSum'); s.hidden=!docs.length; s.textContent=''; if(!docs.length) return;
+    const done=docs.filter(d=>!d.busy&&!d.err), ch=done.map(checksOf), sum=k=>done.reduce((a,d)=>a+(num(d.f[k])||0),0);
+    const add=(t,cls)=>{ const x=el('span',cls||null); x.innerHTML=t; s.appendChild(x); };
+    add(`<b>${docs.length}</b> מסמכים`+(docs.length>done.length?` · ${docs.length-done.length} בקריאה`:''));
+    add(`לפני מע"מ <b>${fmt(sum('before'))}</b>`); add(`מע"מ <b>${fmt(sum('vat'))}</b>`); add(`סה"כ <b>${fmt(sum('total'))}</b>`);
+    add(`<b>${ch.filter(x=>x.lvl==='ok').length}</b> תקינים`,'ok'); add(`<b>${ch.filter(x=>x.lvl==='warn').length}</b> לבדיקה`); add(`<b>${ch.filter(x=>x.lvl==='bad').length}</b> עם בעיה`,'bad');
+    s.appendChild(el('span','sp'));
+    const x=el('button','hm-link pri','ייצוא לאקסל'); x.type='button'; x.onclick=exportXlsx; s.appendChild(x);
+    const c=el('button','hm-link','ניקוי'); c.type='button'; c.onclick=()=>{ docs=[]; draw(); }; s.appendChild(c);
+  }
+  async function exportXlsx(){
+    try{ await window.__mhNeed('xlsx'); }catch(_){ return; }
+    const rows=docs.filter(d=>!d.busy&&!d.err).map(d=>{ const ch=checksOf(d), f=d.f;
+      const deduct=/חשבונית/.test(f.type||'')&&!ch.list.some(x=>x.level==='bad'&&/ניכוי|הקצאה|6 חודשים|כפול/.test(x.text));
+      return {'קובץ':d.file.name,'ספק':f.sup,'ח.פ / ע.מ':f.id,'סוג':f.type,'מספר':f.no,'תאריך':f.date,'לפני מע"מ':num(f.before),'מע"מ':num(f.vat),'שיעור %':num(f.rate),'פטור / 0%':num(f.zero),'סה"כ':num(f.total),'מספר הקצאה':f.alloc,'לכבוד':f.recip,'ניתן לנכות מע"מ':deduct?'כן':'לא',
+        'מצב':ch.lvl==='ok'?'תקין':ch.lvl==='warn'?'לבדיקה':'יש בעיה','הערות':ch.list.filter(x=>x.level!=='ok').map(x=>x.text).join(' · '),'מקור':Object.values(d.src).includes('claude')?'מהדק + Claude':'מהדק'}; });
+    const ws=XLSX.utils.json_to_sheet(rows); ws['!cols']=[22,22,12,16,12,11,12,11,8,10,12,12,22,10,10,50,12].map(w=>({wch:w}));
+    const wb=XLSX.utils.book_new(); wb.Workbook={Views:[{RTL:true}]}; XLSX.utils.book_append_sheet(wb,ws,'ניתוח');
+    XLSX.writeFile(wb,`ניתוח מסמכים ${today()}.xlsx`);
+  }
+  const drop=$('anDrop');
+  $('anFile').addEventListener('change',e=>{ addFiles(e.target.files); e.target.value=''; });
+  ['dragenter','dragover'].forEach(t=>drop.addEventListener(t,e=>{ e.preventDefault(); drop.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{ e.preventDefault(); drop.classList.remove('drag'); }));
+  drop.addEventListener('drop',e=>addFiles(e.dataTransfer.files));
+  serverUrl().then(u=>{ if(u) $('anSub').textContent+=' מסמך שמהדק לא בטוח בו נקרא גם על ידי Claude.'; });
+  window.__mhAn={add:addFiles,docs:()=>docs};
 })();
 </script>
 <script>
